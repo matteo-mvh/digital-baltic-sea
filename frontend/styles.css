@@ -1719,3 +1719,10 @@ body[data-mode="map"] .maplibregl-ctrl-top-right { top: 88px; bottom: auto; righ
     transform: translateY(0);
   }
 }
+
+.language-name {display:flex; align-items:center; gap:10px;}
+.language-flag {display:inline-flex; flex:none; width:30px; height:18px; overflow:hidden; border-radius:2px; box-shadow:0 0 0 1px #ffffff35;}
+.overlay-info-section-copy a {color:#ace6ff; text-decoration:underline; text-underline-offset:3px;}
+body[data-mode="home"] #map-stage {cursor:pointer;}
+
+#ocean-flow-animation {position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1;}

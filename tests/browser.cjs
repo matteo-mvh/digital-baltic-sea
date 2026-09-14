@@ -34,7 +34,7 @@ const server=http.createServer(async(req,res)=>{
     if(index===1) await new Promise(r=>setTimeout(r,550));
     if(scenario==='missing-frame'&&index===2) {res.statusCode=404;res.end();return;}
     const value=10+index*10;
-    payload={...m.frames[index],values_primary:[[value,value,value],[value,value,value],[value,value,value]],components:{eastward_mps:[[1,1,1],[1,1,1],[1,1,1]],northward_mps:[[0,0,0],[0,0,0],[0,0,0]],bottom_depth_m:[[10,20,30],[40,50,60],[70,80,90]]}};
+    payload={...m.frames[index],values_primary:[[value,value,value],[value,value,value],[value,value,value]],components:{eastward_mps:[[1,1,1],[1,1,1],[1,1,1]],northward_mps:[[0,0,0],[0,0,0],[0,0,0]],eastward_unit:[[1,1,1],[1,1,1],[1,1,1]],northward_unit:[[0,0,0],[0,0,0],[0,0,0]],bottom_depth_m:[[10,20,30],[40,50,60],[70,80,90]]}};
     if(scenario==='wrong-frame'&&index===2) payload.time_utc=times[0];
     if(scenario==='invalid-frame'&&index===2) payload.values_primary[1][1]=-5;
    }
@@ -133,6 +133,28 @@ async function openLayers(page){if(await page.locator('#layers-drawer-toggle').i
    assert.ok(await page.locator('#time-slider').isDisabled());
    await page.close();scenario='normal';
   });
+  await check('English, German and Danish: flags, navigation, guides, UTC and mobile layouts',async()=>{
+   const p=await newPage('no-webgl');
+   await p.locator('#map-fallback-title').click();
+   assert.equal(await p.locator('body').getAttribute('data-mode'),'map');
+   for(const [locale,word,heading] of [['de','Ebenen','Was zeigt die Ebene?'],['da','Lag','Hvad viser laget?'],['en','Layers','What does it show?']]) {
+    await p.locator('#language-button').click();await p.locator(`[data-language="${locale}"]`).click();
+    await p.waitForFunction(locale=>document.documentElement.lang===locale,locale);
+    assert.equal(await p.locator('html').getAttribute('lang'),locale);
+    assert.equal(await p.locator('#language-button svg').count(),1);
+    assert.match(await p.locator('#layers-drawer-toggle').textContent(),new RegExp(word));
+    await p.locator('[data-overlay-info-button="temperature"]').click();
+    assert.match(await p.locator('#overlay-info-body').textContent(),new RegExp(heading.replace('?', '\?')));
+    assert.equal(await p.locator('#overlay-info-body a[href*="wikipedia.org"]').count(),1);
+    assert.equal(await p.locator('#overlay-info-body a:not([href*="wikipedia.org"])').count(),0);
+    await p.locator('#overlay-info-close').click();
+    assert.match(await p.locator('#time-primary').textContent(),/UTC/);
+    await p.locator('#exit-map').click();
+    for(const width of [320,375,430,768,1366]) {await p.setViewportSize({width,height:900});await noOverflow(p);}
+    await enter(p);
+   }
+   await p.close();
+  });
   const page=await newPage();
   if(!await page.evaluate(()=>review.state.mapReady)) {
    console.log('LIMITATION: real WebGL could not initialize in this browser; renderer synchronization tests were not run.');
@@ -164,7 +186,8 @@ async function openLayers(page){if(await page.locator('#layers-drawer-toggle').i
     assert.match(await page.locator('#clicked-primary-value').textContent(),/30.00/);
     await page.locator('[data-overlay-info-button="temperature"]').click();
     await selectTime(page,3);
-    assert.match(await page.locator('#overlay-info-body').textContent(),/20 Aug 2026, 03:00 UTC/);
+    assert.match(await page.locator('#transparency-detail').textContent(),/20 Aug 2026, 03:00 UTC/);
+    assert.equal(await page.locator('#overlay-info-body a:not([href*="wikipedia.org"])').count(),0);
     await page.locator('#overlay-info-close').click();
    });
    await check('rapid layer changes, layer-off invalidation, nearest actual time, bottom sample depth',async()=>{
@@ -196,6 +219,44 @@ async function openLayers(page){if(await page.locator('#layers-drawer-toggle').i
     }
     await p.close();scenario='normal';
    });
+   await check('current and wave motion: visible pixel sizes at every zoom, pause, reduced motion and stale-frame clearing',async()=>{
+    const p=await newPage();await enter(p);
+    for(const id of ['currents','waves']) {
+     await p.evaluate(id=>review.setActiveOceanCondition(id),id);
+     await p.waitForFunction(()=>review.state.frameStatus==='ready');
+     for(const zoom of [4,6,9,12,16]) {
+      await p.evaluate(zoom=>review.state.map.jumpTo({center:[20,59.5],zoom}),zoom);
+      await p.waitForFunction(()=>Number(document.querySelector('#ocean-flow-animation')?.dataset.drawn)>0);
+      await p.waitForTimeout(150);
+      const before=await p.locator('#ocean-flow-animation').evaluate(e=>e.toDataURL());
+      await p.waitForTimeout(160);
+      assert.notEqual(await p.locator('#ocean-flow-animation').evaluate(e=>e.toDataURL()),before);
+      assert.equal(await p.locator('#ocean-flow-animation').getAttribute('data-frame'),await p.locator('#map').getAttribute('data-frame'));
+      await p.locator('[data-render-mode="arrows"]').click();
+      await p.waitForFunction(()=>review.state.frameStatus==='ready');
+      const lengths=await p.evaluate(()=>review.state.flowFeatures.map(f=>{const [a,b]=f.geometry.coordinates.map(c=>review.state.map.project(c));return Math.hypot(b.x-a.x,b.y-a.y);}));
+      assert.ok(lengths.length>0);assert.ok(lengths.every(n=>n>=33 && n<=49));
+      assert.equal(await p.locator('#ocean-flow-animation').isVisible(),false);
+      await p.locator(`[data-render-mode="${id==='currents'?'speedParticles':'heightStreaks'}"]`).click();
+      await p.waitForFunction(()=>Number(document.querySelector('#ocean-flow-animation')?.dataset.drawn)>0 && !document.querySelector('#ocean-flow-animation').hidden);
+     }
+     await p.locator('#flow-motion-toggle').click();
+     const paused=await p.locator('#ocean-flow-animation').evaluate(e=>e.toDataURL());
+     await p.waitForTimeout(160);assert.equal(await p.locator('#ocean-flow-animation').evaluate(e=>e.toDataURL()),paused);
+     await p.locator('#flow-motion-toggle').click();
+    }
+    await p.emulateMedia({reducedMotion:'reduce'});
+    await p.waitForTimeout(100);
+    assert.match(await p.locator('#flow-motion-toggle').textContent(),/Play/);
+    const still=await p.locator('#ocean-flow-animation').evaluate(e=>e.toDataURL());
+    await p.waitForTimeout(160);assert.equal(await p.locator('#ocean-flow-animation').evaluate(e=>e.toDataURL()),still);
+    await selectTime(p,1);
+    assert.equal(await p.locator('#ocean-flow-animation').isVisible(),false);
+    await p.waitForFunction(()=>review.state.frameStatus==='ready');
+    await p.locator('#exit-map').click();
+    assert.equal(await p.locator('#ocean-flow-animation').isVisible(),false);
+    await p.close();
+   });
    await check('infrastructure, noise and colour controls respond; hidden cards leave tab order',async()=>{
     await page.locator('#infrastructure-toggle').click();
     await page.waitForFunction(()=>review.state.infrastructure.loaded);
@@ -204,7 +265,8 @@ async function openLayers(page){if(await page.locator('#layers-drawer-toggle').i
     await page.locator('#noise-toggle').click();
     assert.ok(await page.locator('#noise-panel').isVisible());
     await page.locator('[data-overlay-info-button="noise"]').click();
-    assert.ok((await page.locator('#overlay-info-body a').count())>0);
+    assert.equal(await page.locator('#overlay-info-body a').count(),0);
+    assert.ok((await page.locator('#transparency-detail a').count())>0);
    });
   }
   await page.close();

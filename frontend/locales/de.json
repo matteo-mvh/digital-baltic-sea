@@ -1,1 +1,604 @@
-{}
+{
+  "common": {
+    "comingSoon": "Demnächst",
+    "live": "Verfügbar"
+  },
+  "nav": {
+    "platformTag": "Öffentlicher Prototyp",
+    "platformName": "Digital Baltic Sea",
+    "exploreMap": "Karte erkunden",
+    "backToOverview": "Zurück zur Übersicht",
+    "languageCode": "DE"
+  },
+  "hero": {
+    "kicker": "Digital Baltic Sea",
+    "title": "Entdecke, was über, auf und unter Wasser passiert.",
+    "subtitle": "Entdecke die Ostsee im Wandel anhand wissenschaftlicher Modelle, früherer Bewertungen und Umweltdaten.",
+    "body": "Dieser öffentliche Prototyp verbindet Meeresforschung, verständliche Erklärungen und eine interaktive Karte. So wird die Ostsee als Lebensraum greifbar.",
+    "cta": "Karte erkunden",
+    "pillTemperature": "Temperatur",
+    "pillInfrastructure": "Infrastruktur",
+    "pillNoise": "Lärm"
+  },
+  "preview": {
+    "kicker": "Kartenvorschau",
+    "title": "Die ganze Ostsee",
+    "body": "Erkunde veröffentlichte Modelldaten für die Ostsee und historische Umweltinformationen.",
+    "cta": "Karte erkunden"
+  },
+  "sections": {
+    "whatKicker": "Was siehst du hier?",
+    "whatTitle": "Die Kartenebenen beruhen auf unterschiedlichen Arten von Wissen.",
+    "layersKicker": "Was kannst du erkunden?",
+    "layersTitle": "Eine Plattform für alle, die die Ostsee kennenlernen möchten.",
+    "layersBody": "Die Karte zeigt verfügbare Meeresdaten und historische Vergleichsebenen. Geplante Ergänzungen sind mit „Demnächst“ gekennzeichnet.",
+    "accessibilityKicker": "Barrierefreiheit",
+    "accessibilityTitle": "Wähle eine gut lesbare Farbskala für die Temperatur.",
+    "accessibilityBody": "Nur die Farben ändern sich, die Daten bleiben gleich. Das erleichtert den Vergleich, auch bei unterschiedlichen Arten des Farbsehens.",
+    "whyKicker": "Warum die Ostsee?",
+    "whyTitle": "Ein fast abgeschlossenes, verbundenes und empfindliches Meer.",
+    "sourcesKicker": "Woher stammen die Informationen?",
+    "sourcesTitle": "Die wissenschaftlichen Quellen bleiben nachvollziehbar."
+  },
+  "categories": {
+    "observed": {
+      "title": "Gemessen",
+      "body": "Mit Geräten, Messstationen oder Untersuchungen erfasst."
+    },
+    "modelled": {
+      "title": "Modelliert",
+      "body": "Wissenschaftliche Modelle schätzen den Zustand des Meeres zum ausgewählten Zeitpunkt."
+    },
+    "satellite": {
+      "title": "Satellit",
+      "body": "Aus dem Weltraum gemessene Umweltinformationen."
+    },
+    "historical": {
+      "title": "Historisch",
+      "body": "Ältere Messreihen zeigen, wie sich das Meer verändert."
+    }
+  },
+  "why": {
+    "enclosed": {
+      "title": "Fast abgeschlossen",
+      "body": "Es wird nur wenig Wasser ausgetauscht. Deshalb können Veränderungen jahrelang nachwirken."
+    },
+    "gradient": {
+      "title": "Große Unterschiede",
+      "body": "Salzgehalt, Temperatur und Lebensräume unterscheiden sich stark innerhalb der Ostsee."
+    },
+    "pressure": {
+      "title": "Menschlicher Einfluss",
+      "body": "Schifffahrt, Nährstoffe, Schadstoffe und Fischerei prägen das Meer."
+    },
+    "change": {
+      "title": "Klimawandel",
+      "body": "Erwärmung, Sauerstoffmangel und Veränderungen der Lebensräume sind bereits sichtbar."
+    }
+  },
+  "roadmap": {
+    "ocean": "Zustand des Meeres",
+    "life": "Leben im Meer",
+    "impact": "Menschlicher Einfluss",
+    "climate": "Klima und Wandel"
+  },
+  "layers": {
+    "temperature": "Oberflächentemperatur",
+    "infrastructure": "Infrastruktur an Küste und Meer",
+    "underwaterNoise": "Unterwasserlärm",
+    "currents": "Strömungen",
+    "salinity": "Salzgehalt",
+    "oxygen": "Gelöster Sauerstoff",
+    "waves": "Wellen",
+    "seaLevel": "Meeresspiegel",
+    "biodiversity": "Artenvielfalt",
+    "eelgrass": "Seegras",
+    "fish": "Fische",
+    "mammals": "Meeressäuger",
+    "plankton": "Plankton",
+    "ships": "Schiffsverfolgung in Echtzeit",
+    "shippingNoise": "Schiffslärm",
+    "nutrients": "Nährstoffbelastung",
+    "toxins": "Gift- und Schadstoffe",
+    "microplastics": "Mikroplastik",
+    "fishingPressure": "Fischereidruck",
+    "historicalChange": "Frühere Veränderungen",
+    "heatwaves": "Hitzewellen im Meer",
+    "hypoxia": "Sauerstoffmangel",
+    "futureScenarios": "Zukunftsszenarien"
+  },
+  "sources": {
+    "copernicus": "Copernicus Marine",
+    "helcom": "HELCOM",
+    "emodnet": "EMODnet",
+    "ais": "AIS-Schiffsdaten",
+    "future": "Weitere Datenquellen bei neuen Kartenebenen"
+  },
+  "accessibility": {
+    "scaleButton": "Farbskala",
+    "temperatureColours": "Farben der Kartenebene",
+    "blueRed": "Blau bis Rot",
+    "greenRed": "Grün bis Rot",
+    "grayscale": "Graustufen",
+    "yellowBlue": "Gelb bis Blau",
+    "oxygen": "Sauerstoff · niedrig bis hoch"
+  },
+  "map": {
+    "currentView": "Aktuelle Ansicht",
+    "source": "Quelle",
+    "timeline": "Vorhersagezeitraum",
+    "layers": "Kartenebenen",
+    "layersCaption": "Verfügbare Ebenen kannst du jetzt erkunden. Geplante Ebenen tragen den Hinweis „Demnächst“.",
+    "noiseCategories": "Lärmkategorien",
+    "noiseCaption": "HELCOM-Bewertungen und gemeldete kurze Lärmereignisse dienen als Hintergrund. Es sind keine aktuellen Schallmessungen.",
+    "infrastructureCategories": "Infrastrukturkategorien",
+    "infrastructureCaption": "Häfen, Energieanlagen, Routen und Landnutzung bleiben gleich, wenn du den Zeitpunkt der Meeresdaten änderst.",
+    "hideLabels": "Beschriftung ausblenden",
+    "showLabels": "Beschriftung anzeigen",
+    "closestToNow": "Nächster verfügbarer Zeitpunkt zu jetzt",
+    "hoursAhead": "{count} Stunden voraus",
+    "hoursBehind": "{count} Stunden vor jetzt",
+    "temperatureUnavailable": "Oberflächentemperatur: keine Wasserzelle",
+    "selectedCoordinates": "{lat} - {lon}",
+    "modelledNote": "Modelliert – nicht direkt gemessen",
+    "noOverlayTitle": "Kartenansicht",
+    "noOverlaySubtitle": "Wähle eine Ebene, um die Ostsee zu erkunden"
+  },
+  "status": {
+    "loadingMetadata": "Veröffentlichte Datenangaben werden geladen…",
+    "loadingGrid": "Veröffentlichtes Datengitter wird geladen…",
+    "loadingMap": "Karte wird geladen…",
+    "fallbackMap": "Die Hintergrundkarte konnte nicht geladen werden. Soweit verfügbar, wird der veröffentlichte Küstenumriss verwendet.",
+    "loadingInfrastructure": "Infrastruktur wird geladen…"
+  },
+  "transparency": {
+    "summaryOnline": "Copernicus Marine + EOX Cloudless + OSM-Kartenebene",
+    "summaryOnlineSimple": "Copernicus Marine + EOX Cloudless + OSM-Kartenebene",
+    "summaryOffline": "Copernicus Marine + lokaler Küstenumriss",
+    "temperatureDetail": "Modellierte Temperatur der Meeresoberfläche",
+    "noiseSummary": "HELCOM / ICES – modellierte und gemeldete Unterwasserlärmdaten",
+    "noiseDetail": "Bewertete Lärmbelastung und gemeldete kurze Lärmereignisse",
+    "noisePeriod": "Bewertungszeitraum: {value}",
+    "noiseCaution": "Dauerlärm und kurze Lärmereignisse werden getrennt gezeigt und nicht zu einer Zahl zusammengefasst.",
+    "noiseReporting": "Die Ereignisliste hängt von der Vollständigkeit nationaler Meldungen ab.",
+    "infrastructureSummary": "Zusammengestellter Infrastruktur-Prototyp für die Ostsee",
+    "infrastructureDetail": "Offene Beispieldaten zu Häfen, Energieanlagen, Routen und Landnutzung",
+    "updated": "Letzte Aktualisierung: {value}",
+    "forecastWindow": "Vorhersagezeitraum: {start} bis {end}",
+    "infrastructureSource": "Infrastrukturebene: {value}",
+    "infrastructureLicense": "Lizenzhinweis zur Infrastruktur: {value}"
+  },
+  "infrastructure": {
+    "legendTitle": "Legende",
+    "ports": "Häfen",
+    "powerPlants": "Kraftwerke",
+    "windFarms": "Windparks auf See",
+    "cables": "Seekabel",
+    "pipelines": "Rohrleitungen",
+    "shipping": "Schifffahrtsrouten",
+    "landUse": "Allgemeine Landnutzung",
+    "stylePoint": "Punkte",
+    "styleLine": "Dünne Linien",
+    "styleDashed": "Gestrichelte Linien",
+    "stylePolygon": "Flächen",
+    "styleCorridor": "Verkehrskorridore",
+    "styleMutedFill": "Dezente Landflächen",
+    "dataSource": "Datenquelle",
+    "country": "Land",
+    "type": "Typ",
+    "importance": "Rolle",
+    "energySource": "Energiequelle",
+    "capacity": "Leistung",
+    "status": "Status",
+    "turbines": "Windräder",
+    "connection": "Verbindung",
+    "role": "Rolle",
+    "traffic": "Verkehr",
+    "context": "Hintergrund",
+    "prototypeSource": "Zusammengestellter Prototyp aus offenen Daten",
+    "prototypeLicense": "Verschiedene offene Lizenzen; siehe Dokumentation.",
+    "staticContext": "Statische Hintergrundebene"
+  },
+  "noise": {
+    "continuousNoise": "Dauerlärm",
+    "impulsiveEvents": "Lärmereignisse",
+    "impulsivePressure": "Belastung durch kurze Lärmereignisse",
+    "ecologicalEffect": "Lärmauswirkungen auf bewegliche Tierarten",
+    "assessmentPeriod": "HELCOM-Bewertungen – 2016–2021",
+    "legendTitle": "Lärmlegende",
+    "legendContinuous": "HELCOM-Dauerlärmbelastung",
+    "legendImpulsivePressure": "HELCOM-Belastung durch kurze Lärmereignisse",
+    "legendImpact": "Mögliche Auswirkungen auf bewegliche Tierarten",
+    "legendEvents": "Gemeldete kurze Lärmereignisse",
+    "legendNoDb": "Nicht in dB dargestellt",
+    "legendPressureIndex": "Belastungsindex",
+    "legendImpactIndex": "Auswirkungsindex",
+    "legendReportedEvent": "Gemeldetes Ereignis",
+    "eventPileDriving": "Rammarbeiten",
+    "eventSeismic": "Seismische Messungen / Luftkanonen",
+    "eventExplosion": "Explosionen",
+    "eventSonar": "Sonar / Vergrämung",
+    "eventOther": "Sonstige kurze Lärmereignisse",
+    "eventUnknown": "Unbekanntes Ereignis",
+    "popupReportedEvent": "Gemeldetes kurzes Lärmereignis",
+    "popupUnknownType": "Unbekannter Ereignistyp",
+    "popupEvent": "Ereignis",
+    "popupCountry": "Land",
+    "popupYear": "Jahr",
+    "popupStart": "Beginn",
+    "popupEnd": "Ende",
+    "popupMitigation": "Schutzmaßnahmen",
+    "popupValueCode": "Wertecode",
+    "dataSource": "Datenquelle"
+  },
+  "guides": {
+    "temperature": {
+      "title": "Oberflächentemperatur",
+      "subtitle": "Wie warm oder kalt ist das Wasser nahe der Oberfläche?",
+      "sections": [
+        {
+          "heading": "Was zeigt die Ebene?",
+          "body": "Die Farben zeigen die Temperatur in der obersten Wasserschicht des Modells. Sonne, Wind und Jahreszeiten verändern sie."
+        },
+        {
+          "heading": "Woher wissen wir das?",
+          "body": "Diese Karte nutzt ein Computermodell, keine direkten Messungen an jedem Ort. Satelliten, Bojen und Schiffe können die Temperatur auch messen."
+        },
+        {
+          "heading": "Warum ist das wichtig?",
+          "body": "Fische und andere Meereslebewesen brauchen passende Temperaturen. Warmes Wasser kann weniger Sauerstoff aufnehmen. Sehr warme Zeiten können Tiere und Pflanzen belasten."
+        },
+        {
+          "heading": "Wie lassen sich die Folgen verringern?",
+          "body": "Weniger Treibhausgase begrenzen die langfristige Erwärmung. Sauberes Wasser und gesunde Küstenlebensräume helfen Tieren und Pflanzen, mit Hitze umzugehen."
+        },
+        {
+          "heading": "Was verändert sich mit dem Klima?",
+          "body": "Durch die Erwärmung können heiße Zeiten länger dauern. Sie kann auch die [Schichtung](stratification) verstärken: Wasser bildet Schichten, die sich schlechter mischen. So kann weniger Sauerstoff in die Tiefe gelangen."
+        }
+      ]
+    },
+    "currents": {
+      "title": "Strömungen",
+      "subtitle": "Wohin bewegt sich das Wasser und wie schnell?",
+      "sections": [
+        {
+          "heading": "Was zeigt die Ebene?",
+          "body": "Strömungen sind bewegtes Meerwasser. Farben zeigen die Geschwindigkeit; Richtungsansichten zeigen den Weg. Wind und Unterschiede bei Wasserstand, Salz und Temperatur treiben sie an."
+        },
+        {
+          "heading": "Woher wissen wir das?",
+          "body": "Die Werte stammen aus einem Computermodell. Geräte an Bojen, Schiffen und am Meeresboden können Strömungen direkt messen."
+        },
+        {
+          "heading": "Warum ist das wichtig?",
+          "body": "Strömungen transportieren Wärme, Salz, Sauerstoff und kleine Tiere. Sie können auch Schadstoffe von einem Ort zum anderen tragen."
+        },
+        {
+          "heading": "Wie lassen sich die Folgen verringern?",
+          "body": "Weniger Schadstoffe an der Quelle verhindern, dass Strömungen sie verteilen. Bessere Abwasserreinigung und Pläne für Ölunfälle schützen die Küsten."
+        },
+        {
+          "heading": "Was verändert sich mit dem Klima?",
+          "body": "Veränderungen bei Wind, Regen und Wassertemperatur können Strömungen verändern. Dadurch können sich Wärme und Schadstoffe an anderen Orten sammeln."
+        }
+      ]
+    },
+    "salinity": {
+      "title": "Salzgehalt",
+      "subtitle": "Wie salzig ist das Wasser?",
+      "sections": [
+        {
+          "heading": "Was zeigt die Ebene?",
+          "body": "Salzgehalt beschreibt, wie viel Salz im Wasser ist. In der Ostsee mischt sich Flusswasser mit salzigerem Nordseewasser. Im Westen ist das Wasser meist salziger als im Norden und Osten."
+        },
+        {
+          "heading": "Woher wissen wir das?",
+          "body": "Die Karte zeigt Modellschätzungen. Forschende nutzen auch Sensoren: Sie messen, wie gut Wasser Strom leitet, und bestimmen daraus den Salzgehalt."
+        },
+        {
+          "heading": "Warum ist das wichtig?",
+          "body": "Verschiedene Arten brauchen unterschiedliche Salzgehalte. Salzigeres Wasser ist schwerer und kann unter Süßwasser liegen. Dadurch gelangt Sauerstoff schwerer zum Boden."
+        },
+        {
+          "heading": "Wie lassen sich die Folgen verringern?",
+          "body": "Der Salzgehalt des Meeres lässt sich kaum direkt steuern. Der Schutz verschiedener Lebensräume gibt Tieren und Pflanzen mehr Ausweichmöglichkeiten, wenn sich Bedingungen ändern."
+        },
+        {
+          "heading": "Was verändert sich mit dem Klima?",
+          "body": "Regen und Flüsse bestimmen, wie viel Süßwasser in die Ostsee gelangt. Veränderungen können den Salzgehalt und die Mischung der Wasserschichten beeinflussen."
+        }
+      ]
+    },
+    "oxygen": {
+      "title": "Gelöster Sauerstoff an der Oberfläche",
+      "subtitle": "Diese vorhandenen Dateien zeigen Sauerstoff an der Oberfläche, nicht am Meeresboden.",
+      "sections": [
+        {
+          "heading": "Was zeigt die Ebene?",
+          "body": "Gelöster Sauerstoff ist Sauerstoff im Wasser, den Tiere zum Atmen nutzen. Diese Dateien zeigen die oberste Modellschicht; ihre genaue Tiefe wurde nicht gespeichert. Sie zeigen keinen Sauerstoffmangel am Boden. Bodenwerte werden nach der nächsten manuellen Datenaktualisierung verwendet."
+        },
+        {
+          "heading": "Woher wissen wir das?",
+          "body": "Die Karte nutzt ein Computermodell. Sensoren, die von Schiffen abgesenkt werden, können Sauerstoff in verschiedenen Tiefen messen. Jeder angezeigte Zeitpunkt steht hier für einen Tagesmittelwert."
+        },
+        {
+          "heading": "Warum ist das wichtig?",
+          "body": "Fische und viele Tiere am Boden brauchen Sauerstoff. Bei Mangel müssen sie ausweichen oder können sterben. Die Farben zeigen den Sauerstoffgehalt, keine geprüfte Einstufung in sicher oder gefährlich."
+        },
+        {
+          "heading": "Wie lassen sich die Folgen verringern?",
+          "body": "Weniger Dünger und Abwasser im Meer bedeuten weniger übermäßiges Algenwachstum. Beim Abbau abgestorbener Algen wird Sauerstoff verbraucht. Feuchtgebiete und bessere Abwasserreinigung helfen."
+        },
+        {
+          "heading": "Was verändert sich mit dem Klima?",
+          "body": "Wärmeres Wasser nimmt weniger Sauerstoff auf. [Schichtung](stratification) bedeutet, dass Wasser in schlecht durchmischten Schichten liegt. Dadurch kann weniger frischer Sauerstoff zum Boden gelangen."
+        }
+      ]
+    },
+    "waves": {
+      "title": "Wellen",
+      "subtitle": "Wie bewegt ist das Meer?",
+      "sections": [
+        {
+          "heading": "Was zeigt die Ebene?",
+          "body": "Farben zeigen die [signifikante Wellenhöhe](waves): ungefähr die mittlere Höhe des höchsten Drittels der Wellen. Einzelne Wellen können viel höher sein. Wind, Wassertiefe und Küstenform beeinflussen die Wellen."
+        },
+        {
+          "heading": "Woher wissen wir das?",
+          "body": "Dies sind Schätzungen eines Wellenmodells. Bojen und andere Geräte können Wellen auch messen. Dieser Prototyp dient zum Erkunden, nicht als Navigations- oder Sicherheitsvorhersage."
+        },
+        {
+          "heading": "Warum ist das wichtig?",
+          "body": "Wellen bewegen Sand, tragen Küsten ab und beeinflussen Fähren, Häfen und Arbeiten auf See. Sie können auch Pflanzen und Tiere im flachen Wasser stören."
+        },
+        {
+          "heading": "Wie lassen sich die Folgen verringern?",
+          "body": "Der Schutz von Dünen und Feuchtgebieten an der Küste kann Schäden verringern. Nicht direkt an gefährdeten Ufern zu bauen senkt ebenfalls das Risiko."
+        },
+        {
+          "heading": "Was verändert sich mit dem Klima?",
+          "body": "Veränderte Stürme und weniger Meereis können die Wellenbelastung verändern. Ohne schützendes Wintereis sind manche Ufer länger den Wellen ausgesetzt."
+        }
+      ]
+    },
+    "seaLevel": {
+      "title": "Meeresspiegel",
+      "subtitle": "Wie hoch steht das Wasser?",
+      "sections": [
+        {
+          "heading": "Was zeigt die Ebene?",
+          "body": "Der Meeresspiegel ist die Wasserhöhe gegenüber einem Bezugsniveau. Wind und Luftdruck können ihn heben oder senken. Das genaue Bezugsniveau wurde in diesem Export nicht gespeichert."
+        },
+        {
+          "heading": "Woher wissen wir das?",
+          "body": "Diese Ebene ist für veröffentlichte Modellwerte vorgesehen. Pegel an der Küste können den Wasserstand direkt messen. Fehlende Daten werden als nicht verfügbar angezeigt."
+        },
+        {
+          "heading": "Warum ist das wichtig?",
+          "body": "Hochwasser kann flache Küsten überfluten, besonders bei Stürmen. Die Werte dieses Prototyps sind keine örtlichen Hochwasserwarnungen."
+        },
+        {
+          "heading": "Wie lassen sich die Folgen verringern?",
+          "body": "Lass dem Wasser Platz, schütze Feuchtgebiete an der Küste und plane Entwässerung und Gebäude für künftige Wasserstände."
+        },
+        {
+          "heading": "Was verändert sich mit dem Klima?",
+          "body": "Weltweit steigt der Meeresspiegel. An der Ostsee hängt die örtliche Veränderung auch davon ab, ob sich das Land hebt. Das Risiko ist daher nicht an allen Küsten gleich."
+        }
+      ]
+    },
+    "noise": {
+      "title": "Unterwasserlärm",
+      "subtitle": "Vom Menschen erzeugter Schall kann das Leben unter Wasser stören.",
+      "sections": [
+        {
+          "heading": "Was zeigt die Ebene?",
+          "body": "Diese Ebene zeigt frühere Lärmbewertungen und gemeldete laute Ereignisse, etwa das Einrammen von Pfählen in den Meeresboden. Es ist keine laufende Mikrofonaufnahme."
+        },
+        {
+          "heading": "Woher wissen wir das?",
+          "body": "Die Karte verbindet Modellbewertungen und Meldungen über Aktivitäten. Unterwassermikrofone können Schall direkt messen, doch solche Messungen zeigen diese Kartenfarben nicht."
+        },
+        {
+          "heading": "Warum ist das wichtig?",
+          "body": "Viele Tiere nutzen Schall, um Nahrung zu finden, miteinander zu kommunizieren und sich zu orientieren. Zusätzlicher Lärm kann diese Geräusche überdecken und Fressen oder Fortpflanzung stören."
+        },
+        {
+          "heading": "Wie lassen sich die Folgen verringern?",
+          "body": "Leisere Schiffe, geringere Geschwindigkeiten in empfindlichen Gebieten und leisere Bauweisen können helfen. Laute Arbeiten sollten auch auf Fortpflanzungszeiten Rücksicht nehmen."
+        },
+        {
+          "heading": "Was verändert sich mit dem Klima?",
+          "body": "Die Erwärmung erzeugt diesen menschlichen Lärm nicht direkt. Tiere, die bereits unter Hitze oder Sauerstoffmangel leiden, können aber zusätzlich schlechter mit Lärm umgehen."
+        }
+      ]
+    },
+    "infrastructure": {
+      "title": "Infrastruktur an Küste und Meer",
+      "subtitle": "Wo Verkehr, Energie und das Leben an der Küste auf das Meer treffen.",
+      "sections": [
+        {
+          "heading": "Was zeigt die Ebene?",
+          "body": "Die Ebene zeigt ausgewählte Häfen, Schifffahrtsrouten, Kabel, Rohrleitungen, Windparks und Kraftwerke. Sie gibt auch einen groben Überblick über die Landnutzung."
+        },
+        {
+          "heading": "Woher wissen wir das?",
+          "body": "Dies sind zusammengestellte Referenzangaben. Positionen können ungenau sein und die Liste ist nicht vollständig. Die Ebene bleibt gleich, wenn du die Zeitleiste der Meeresdaten änderst."
+        },
+        {
+          "heading": "Warum ist das wichtig?",
+          "body": "Diese Orte sind wichtig für Verkehr und Energie. Bau und Betrieb können aber Lebensräume stören oder Schadstoffe freisetzen."
+        },
+        {
+          "heading": "Wie lassen sich die Folgen verringern?",
+          "body": "Eine gute Standortwahl, sauberere Häfen und der Schutz empfindlicher Lebensräume können Schäden verringern. Das Meeresleben sollte von Anfang an in die Planung einbezogen werden."
+        },
+        {
+          "heading": "Was verändert sich mit dem Klima?",
+          "body": "Steigende Wasserstände und veränderte Küsten beeinflussen Gebäude und Verkehr. Neue Energieprojekte auf See brauchen ebenfalls Platz und sorgfältige Planung."
+        }
+      ]
+    },
+    "oxygenBottom": {
+      "title": "Gelöster Sauerstoff am Boden",
+      "subtitle": "Sauerstoff in der tiefsten verfügbaren Wasserzelle an jedem Ort im Modell.",
+      "body": "Diese Ebene nimmt den tiefsten vorhandenen Sauerstoffwert an jedem Ort. Die Tiefe variiert und wird beim Auswählen einer Zelle angezeigt. Es ist eine Modellschätzung nahe dem Boden, keine direkte Messung am Meeresboden."
+    }
+  },
+  "messages": {
+    "Available": "Verfügbar",
+    "No data": "Keine Daten",
+    "Timestamp unavailable": "Zeitpunkt nicht verfügbar",
+    "Surface dissolved oxygen": "Gelöster Sauerstoff an der Oberfläche",
+    "Bottom dissolved oxygen": "Gelöster Sauerstoff am Boden",
+    "Ocean condition": "Zustand des Meeres",
+    "No published time steps for this layer": "Keine veröffentlichten Zeitpunkte für diese Ebene",
+    "Choose another layer to browse available data.": "Wähle eine andere Ebene, um verfügbare Daten zu sehen.",
+    ". Nearest available time used.": ". Der nächste verfügbare Zeitpunkt wird verwendet.",
+    "Archived forecast — not current conditions.": "Archivierte Vorhersage – keine aktuellen Bedingungen.",
+    "Modelled analysis / forecast; not a direct observation.": "Modellierte Analyse / Vorhersage; keine direkte Messung.",
+    "This layer has no published data.": "Für diese Ebene sind keine Daten veröffentlicht.",
+    "Dataset last successful update: {time}": "Letzte erfolgreiche Datenaktualisierung: {time}",
+    "Loading location value…": "Wert für den Ort wird geladen…",
+    "Tap the map to sample an interpolated water value.": "Tippe auf die Karte, um einen aus benachbarten Wasserzellen geschätzten Wert zu sehen.",
+    "Location sampling needs the interactive map.": "Ortswerte benötigen die interaktive Karte.",
+    "Loading selected frame…": "Ausgewählter Zeitschritt wird geladen…",
+    "This frame could not be loaded. Choose another time or layer.": "Dieser Zeitschritt konnte nicht geladen werden. Wähle einen anderen Zeitpunkt oder eine andere Ebene.",
+    "{count} invalid values excluded; source values have not been clamped.": "{count} ungültige Werte ausgeschlossen; die Quelldaten wurden nicht auf Grenzwerte gesetzt.",
+    "Published data are unavailable for this layer. Its explanatory guide remains available.": "Für diese Ebene sind keine veröffentlichten Daten verfügbar. Die Erklärung bleibt zugänglich.",
+    "Colour scale · {palette}": "Farbskala · {palette}",
+    "Frame range contains invalid negative values": "Der Wertebereich enthält ungültige negative Werte",
+    "Frame data range: {range}": "Datenbereich dieses Zeitschritts: {range}",
+    "Frame data range unavailable": "Datenbereich dieses Zeitschritts nicht verfügbar",
+    "Sources and dataset context": "Quellen und Angaben zum Datensatz",
+    "Data are updated manually in this prototype. All times are UTC.": "Die Daten werden in diesem Prototyp manuell aktualisiert. Alle Zeiten sind in UTC.",
+    "Data are updated manually in this prototype.": "Die Daten werden in diesem Prototyp manuell aktualisiert.",
+    "Close layers": "Ebenen schließen",
+    "Layers & info": "Ebenen & Infos",
+    "The interactive map is unavailable": "Die interaktive Karte ist nicht verfügbar",
+    "Your browser could not start or load the map. You can still explore layer guides, dataset details and published timestamps. Try a browser with WebGL enabled to use the interactive map.": "Dein Browser konnte die Karte nicht starten oder laden. Erklärungen, Datenangaben und veröffentlichte Zeitpunkte bleiben zugänglich. Nutze einen Browser mit aktiviertem WebGL für die interaktive Karte.",
+    "Map unavailable in this browser. The layer guides, dataset details and timeline remain available.": "Karte in diesem Browser nicht verfügbar. Erklärungen, Datenangaben und Zeitleiste bleiben zugänglich.",
+    "Map unavailable. Layer guides and published timestamps remain available.": "Karte nicht verfügbar. Erklärungen und veröffentlichte Zeitpunkte bleiben zugänglich.",
+    "Published dataset details are currently unavailable.": "Angaben zum veröffentlichten Datensatz sind derzeit nicht verfügbar.",
+    "{layer} dataset last successful update: {updated}. Selected data time: {selected}.": "{layer}: letzte erfolgreiche Datenaktualisierung: {updated}. Ausgewählter Datenzeitpunkt: {selected}.",
+    "No valid water value at this location": "Kein gültiger Wasserwert an diesem Ort",
+    "Value unavailable for this frame": "Wert für diesen Zeitschritt nicht verfügbar",
+    " at {depth} m model depth (selected cell)": " bei {depth} m Modelltiefe (gewählte Zelle)",
+    "One published time step": "Ein veröffentlichter Zeitpunkt",
+    "between published frames": "zwischen veröffentlichten Zeitschritten",
+    "(irregular)": "(unregelmäßig)",
+    "layer": "Ebene",
+    "layers": "Ebenen",
+    "Oxygen · low to high": "Sauerstoff · niedrig bis hoch",
+    "Arrows": "Pfeile",
+    "Height + streaks": "Höhe + Linien",
+    "Streaks only": "Nur Linien",
+    "Speed + streaks": "Geschwindigkeit + Linien",
+    "Current field": "Strömungen",
+    "Wave field": "Wellen",
+    "Choose language": "Sprache wählen",
+    "Choose colour scale": "Farbskala wählen",
+    "Layer colour palettes": "Farbpaletten der Kartenebene",
+    "Interactive Baltic Sea map": "Interaktive Karte der Ostsee",
+    "Map navigation": "Kartennavigation",
+    "Layer guide": "Erklärung zur Kartenebene",
+    "Overlay guide": "Ebene erklärt",
+    "Close overlay guide": "Erklärung schließen",
+    "Close": "Schließen",
+    "Layers and dataset details": "Kartenebenen und Datenangaben",
+    "Map overlays": "Kartenebenen",
+    "Switch major overlays on the map. Active overlays show their details on the map itself.": "Wähle die Kartenebenen aus. Zu aktiven Ebenen erscheinen weitere Bedienelemente.",
+    "Other overlays": "Weitere Ebenen",
+    "Selected data time (UTC)": "Ausgewählter Datenzeitpunkt (UTC)",
+    "Colour scale: fixed across published times. Frame data range is shown separately.": "Farbskala: gleich für alle veröffentlichten Zeitpunkte. Der Datenbereich des Zeitschritts wird getrennt gezeigt.",
+    "Baltic Sea explorer": "Ostsee entdecken",
+    "Loading the interactive map…": "Interaktive Karte wird geladen…",
+    "Layer guides and dataset details remain available while the map loads.": "Erklärungen und Datenangaben bleiben verfügbar, während die Karte lädt.",
+    "The static coastline, when available, is a reference outline and does not show the selected data frame.": "Der statische Küstenumriss dient der Orientierung und zeigt nicht die Daten des ausgewählten Zeitpunkts.",
+    "Coastline mask from the published Baltic model grid; static reference only": "Küstenumriss aus dem veröffentlichten Ostseemodell; nur zur Orientierung",
+    "Map rendering and location sampling are unavailable. You can select ocean layers to browse timestamps and use the information buttons to read guides.": "Karte und Ortswerte sind nicht verfügbar. Wähle Meeresebenen, um Zeitpunkte anzusehen, und öffne die Erklärungen über die Infotasten.",
+    "Copernicus Marine — used model data": "Copernicus Marine – verwendete Modelldaten",
+    "HELCOM — used historical assessments": "HELCOM – verwendete historische Bewertungen",
+    "Infrastructure — curated reference bundle": "Infrastruktur – zusammengestellte Referenzdaten",
+    "AIS vessel feed — planned integration": "AIS-Schiffspositionen – geplant",
+    "EMODnet services — planned integration; current bundle uses selected references": "EMODnet-Dienste – geplant; die aktuellen Daten nutzen ausgewählte Referenzen",
+    "About {layer}": "Über {layer}",
+    "Language could not be loaded. Please try again.": "Die Sprache konnte nicht geladen werden. Bitte versuche es erneut.",
+    "Source": "Quelle",
+    "Status": "Status",
+    "Selected data timestamp (UTC)": "Ausgewählter Datenzeitpunkt (UTC)",
+    "No published frames": "Keine veröffentlichten Zeitschritte",
+    "Dataset last successful update (retrieval / processing)": "Letzte erfolgreiche Datenaktualisierung (Abruf / Verarbeitung)",
+    "Update note": "Hinweis zur Aktualisierung",
+    "This is the dataset export’s recorded retrieval / processing time, not the selected model time or a separate download time for every retained frame.": "Dies ist der gespeicherte Abruf- bzw. Verarbeitungszeitpunkt des Datenexports. Er ist weder der gewählte Modellzeitpunkt noch ein eigener Downloadzeitpunkt für jeden enthaltenen Zeitschritt.",
+    "Product": "Produkt",
+    "Dataset": "Datensatz",
+    "Vertical level": "Tiefe / Höhenbezug",
+    "Sea surface": "Meeresoberfläche",
+    "Shallowest model level (surface); exact depth in metres not recorded": "Oberste Modellschicht (Oberfläche); genaue Tiefe in Metern nicht gespeichert",
+    "Not recorded in published metadata": "Nicht in den veröffentlichten Datenangaben enthalten",
+    "Published spatial grid": "Veröffentlichtes räumliches Gitter",
+    "Grid coordinates accompany the published query index; exact grid not loaded for this layer.": "Die Gitterkoordinaten stehen im veröffentlichten Abfrageindex; das genaue Gitter wurde für diese Ebene nicht geladen.",
+    "{rows} × {cols} cells; approximately {lat}° latitude × {lon}° longitude spacing": "{rows} × {cols} Zellen; Abstand etwa {lat}° Breite × {lon}° Länge",
+    "Source time resolution": "Zeitliche Auflösung der Quelle",
+    "Published time spacing": "Abstand veröffentlichter Zeitpunkte",
+    " means": " Mittelwerte",
+    " instantaneous values": " Momentanwerte",
+    "Hourly": "Stündlich",
+    "Daily": "Täglich",
+    "3-hourly": "Alle 3 Stunden",
+    "Units": "Einheiten",
+    "Limitations": "Einschränkungen",
+    "Model output, not direct observations. The map simplifies the grid by zoom level; location values are interpolated. Colour-scale bounds stay fixed across published times. Missing or invalid cells are excluded.": "Modellwerte, keine direkten Messungen. Die Karte vereinfacht das Gitter je nach Zoomstufe; Ortswerte werden aus benachbarten Zellen berechnet. Die Farbskala bleibt für alle veröffentlichten Zeitpunkte gleich. Fehlende und ungültige Werte werden ausgelassen.",
+    "Bottom oxygen": "Sauerstoff am Boden",
+    "Deepest non-missing value per model water column; depth varies by location. A cell value and model depth are shown when sampled. Daily means; the palette is not a hypoxia classification.": "Tiefster vorhandener Wert je Wassersäule im Modell; die Tiefe variiert je nach Ort. Beim Auswählen werden Zellwert und Modelltiefe gezeigt. Tagesmittelwerte; die Farben sind keine Einstufung des Sauerstoffmangels.",
+    "Frame model depth range": "Bereich der Modelltiefen dieses Zeitschritts",
+    "Surface oxygen only": "Nur Oberflächensauerstoff",
+    "These existing files do not represent bottom-water hypoxia. Bottom extraction is configured for the next manually triggered update. The sequential palette shows relative concentration, not hypoxia categories; each timestamp represents a daily mean.": "Diese vorhandenen Dateien zeigen keinen Sauerstoffmangel am Boden. Die Auswahl der Bodenwerte ist für die nächste manuell gestartete Aktualisierung eingerichtet. Die Farben zeigen den Sauerstoffgehalt, keine Mangelkategorien. Jeder Zeitpunkt steht für einen Tagesmittelwert.",
+    "Reference level": "Bezugsniveau",
+    "The vertical datum is not recorded in this export. Do not interpret these values as a local flood threshold.": "Das genaue Höhenbezugsniveau ist in diesem Export nicht gespeichert. Diese Werte sind keine örtliche Überschwemmungsgrenze.",
+    "Forecast window": "Vorhersagezeitraum",
+    "Historical modelled assessment pressure and reported activity events, 2016–2021": "Historisch modellierte Belastungsbewertung und gemeldete Ereignisse, 2016–2021",
+    "Data timestamp": "Datenzeitpunkt",
+    "Assessment period 2016–2021; continuous noise uses representative model year 2018. Independent of the ocean timeline.": "Bewertungszeitraum 2016–2021; Dauerlärm nutzt das repräsentative Modelljahr 2018. Unabhängig von der Zeitleiste der Meeresdaten.",
+    "Dataset update time": "Aktualisierungszeitpunkt des Datensatzes",
+    "Not recorded in the supplied assessment metadata": "Nicht in den mitgelieferten Bewertungsangaben enthalten",
+    "Vertical / spatial resolution": "Vertikale / räumliche Auflösung",
+    "Not specified in the supplied layer metadata; not a depth-resolved microphone measurement.": "Nicht in den mitgelieferten Datenangaben beschrieben; keine Mikrofonmessung in einzelnen Tiefen.",
+    "Reported event locations / areas": "Gemeldete Ereignisorte / Flächen",
+    "Pressure and impact indices are not sound levels in dB and must not be added together. Event coverage depends on national reporting.": "Belastungs- und Auswirkungsindizes sind keine Schallpegel in dB und dürfen nicht addiert werden. Die Ereignisliste hängt von nationalen Meldungen ab.",
+    "Historical / static curated prototype references; approximate features, not a complete operational inventory.": "Historische / statische Referenzdaten des Prototyps; ungefähre Angaben, kein vollständiges Betriebsverzeichnis.",
+    "Dataset update": "Datenaktualisierung",
+    " (date only; no time recorded)": " (nur Datum; keine Uhrzeit gespeichert)",
+    "Not recorded": "Nicht gespeichert",
+    "Timestamp / resolution / vertical level": "Zeitpunkt / Auflösung / Höhenbezug",
+    "Static features, independent of the ocean timeline. Uniform spatial resolution and vertical level are not supplied.": "Statische Objekte, unabhängig von der Zeitleiste der Meeresdaten. Einheitliche räumliche Auflösung und Höhenangaben fehlen.",
+    "Feature locations and areas; no shared numerical unit": "Objektorte und Flächen; keine gemeinsame Maßeinheit",
+    "Provenance and planned integrations": "Herkunft und geplante Ergänzungen",
+    "Current bundle notes": "Hinweise zum aktuellen Datenpaket",
+    "Data": "Daten",
+    "Published metadata unavailable. The educational guide remains accessible.": "Veröffentlichte Datenangaben fehlen. Die Erklärung bleibt zugänglich.",
+    "Not recorded in the published metadata": "Nicht in den veröffentlichten Datenangaben enthalten",
+    "Speed + particles": "Geschwindigkeit + Bewegung",
+    "Particles only": "Nur Bewegung",
+    "Play animation": "Animation starten",
+    "Pause animation": "Animation pausieren",
+    "Motion shows direction at the selected time; animation speed is illustrative. It does not advance the timeline.": "Die Bewegung zeigt die Richtung zum ausgewählten Zeitpunkt; das Animationstempo dient der Darstellung. Die Zeitleiste bleibt unverändert.",
+    "Modelled analysis and forecast": "Modellierte Analyse und Vorhersage",
+    "15-minute": "Alle 15 Minuten",
+    "This infrastructure category could not be loaded. Its source details remain available.": "Diese Infrastrukturkategorie konnte nicht geladen werden. Die Quellenangaben bleiben verfügbar.",
+    "This noise category could not be loaded. Its historical guide remains available.": "Diese Lärmkategorie konnte nicht geladen werden. Die Erklärung bleibt verfügbar.",
+    "The infrastructure overlay could not be loaded. You can still read its guide.": "Die Infrastrukturebene konnte nicht geladen werden. Die Erklärung bleibt lesbar.",
+    "Published ocean data could not be loaded. The overview and layer guides are still available.": "Die veröffentlichten Meeresdaten konnten nicht geladen werden. Übersicht und Erklärungen bleiben verfügbar.",
+    "A noise layer could not be loaded. Its historical guide is still available.": "Eine Lärmebene konnte nicht geladen werden. Die Erklärung bleibt verfügbar.",
+    "{layer} is not configured in the current manifest.": "{layer} ist im aktuellen Datenverzeichnis nicht eingerichtet.",
+    "Zoom in": "Vergrößern",
+    "Zoom out": "Verkleinern",
+    "Reset north": "Nach Norden ausrichten",
+    "No published data for this layer": "Keine veröffentlichten Daten für diese Ebene",
+    "Digital Baltic Sea — Explore the Baltic": "Digital Baltic Sea — Die Ostsee entdecken",
+    "Deepest available model level at each location (depth varies)": "Tiefste verfügbare Modellschicht an jedem Ort (Tiefe variiert)",
+    "Direction only — no colour field": "Nur Richtung – kein Farbfeld"
+  }
+}

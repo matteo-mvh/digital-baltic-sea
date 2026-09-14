@@ -1,4 +1,4 @@
-import { formatTimestamp, readableUnit, nonnegativeQuantity, displayRangeForMetadata, cleanFrame, nearestFrameIndexForTimestamp, forecastArchived, intervalLabel } from "./ocean-data.mjs";
+import { formatTimestamp as formatUtcTimestamp, readableUnit, nonnegativeQuantity, displayRangeForMetadata, cleanFrame, nearestFrameIndexForTimestamp, forecastArchived, intervalLabel as publishedIntervalLabel } from "./ocean-data.mjs";
 
 const OCEAN_MANIFEST_URL = new URL("./data/ocean/manifest.json", window.location.href).toString();
 const MAPLIBRE_JS_URL = "https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js";
@@ -13,8 +13,8 @@ const EOX_COASTLINE_TILES = "https://tiles.maps.eox.at/wmts/1.0.0/coastline_3857
 
 const SUPPORTED_LANGUAGES = [
   { code: "en", label: "English", short: "EN", enabled: true },
-  { code: "da", label: "Dansk", short: "DA", enabled: false },
-  { code: "de", label: "Deutsch", short: "DE", enabled: false },
+  { code: "da", label: "Dansk", short: "DA", enabled: true },
+  { code: "de", label: "Deutsch", short: "DE", enabled: true },
   { code: "pl", label: "Polski", short: "PL", enabled: false },
   { code: "lt", label: "Lietuvių", short: "LT", enabled: false },
   { code: "lv", label: "Latviešu", short: "LV", enabled: false },
@@ -122,13 +122,13 @@ const CONTROL_CARD_DEFINITIONS = {
   noise: {
     controlPriority: 30,
     active: () => state.noise.active,
-    summary: () => `${activeNoiseCategoryCount()} ${activeNoiseCategoryCount() === 1 ? "layer" : "layers"}`
+    summary: () => `${activeNoiseCategoryCount()} ${msg(activeNoiseCategoryCount() === 1 ? "layer" : "layers")}`
   },
   infrastructure: {
     controlPriority: 40,
     active: () => state.infrastructure.active,
     summary: () =>
-      `${activeInfrastructureCategoryCount()} ${activeInfrastructureCategoryCount() === 1 ? "layer" : "layers"}`
+      `${activeInfrastructureCategoryCount()} ${msg(activeInfrastructureCategoryCount() === 1 ? "layer" : "layers")}`
   }
 };
 
@@ -382,216 +382,6 @@ const OCEAN_RENDER_MODE_OPTIONS = {
   ]
 };
 
-const OVERLAY_INFO_CONTENT = {
-  temperature: {
-    title: "Surface temperature",
-    subtitle: "The uppermost model layer’s temperature shapes seasons, mixing, species stress and coastal life.",
-    sections: [
-      {
-        heading: "What is it?",
-        body: "Surface temperature shows how warm or cold the uppermost ocean layer is. In the Baltic Sea it changes quickly with season, sunlight, wind and freshwater input, so it is one of the clearest ways to see the sea reacting to weather and climate."
-      },
-      {
-        heading: "How do we measure it?",
-        body: "Here it is shown from Copernicus Marine model data, which combines observations, physics and forecasting systems. In practice, surface temperature is also tracked by satellites, buoys, ships and coastal stations."
-      },
-      {
-        heading: "Why is it important?",
-        body: "Temperature affects oxygen levels, algae growth, fish habitat, stratification and how comfortable or stressful the sea is for marine life. Warmer surface waters can also strengthen heat stress in shallow coastal areas."
-      },
-      {
-        heading: "How can the impacts be reduced?",
-        body: "We cannot locally 'turn down' sea temperature, but we can reduce the damage it causes by cutting nutrient pollution, restoring habitats such as eelgrass, protecting refuges for marine life and lowering global greenhouse-gas emissions."
-      },
-      {
-        heading: "How is it connected to climate change?",
-        body: "Climate change is pushing the Baltic toward warmer average conditions, more marine heat extremes and longer warm seasons. That amplifies oxygen stress, shifts ecosystems and can make harmful blooms and coastal impacts more likely."
-      }
-    ]
-  },
-  currents: {
-    title: "Currents",
-    subtitle: "Currents move heat, salt, oxygen, larvae, nutrients and pollution through the Baltic.",
-    sections: [
-      {
-        heading: "What is it?",
-        body: "Currents describe the direction and speed of moving seawater. In the Baltic they are shaped by wind, sea-level differences, narrow straits, coastline geometry and density contrasts between fresher and saltier water."
-      },
-      {
-        heading: "How do we measure it?",
-        body: "This layer is based on Copernicus Marine model output. Currents can also be measured with drifting buoys, coastal radars, ship instruments and moored current profilers."
-      },
-      {
-        heading: "Why is it important?",
-        body: "Currents control how quickly oxygen, nutrients, heat and contaminants are redistributed. They also matter for larval transport, shipping conditions, search and rescue, spill response and how coastal ecosystems are connected."
-      },
-      {
-        heading: "How can the impacts be reduced?",
-        body: "We cannot directly engineer Baltic circulation at large scale, but we can reduce risks carried by the water itself by cutting pollution releases, improving wastewater treatment, preparing for spill events and protecting coastal habitats that buffer local impacts."
-      },
-      {
-        heading: "How is it connected to climate change?",
-        body: "Climate change can alter winds, river runoff, stratification and sea-level patterns, which can all reshape circulation. Even subtle current changes matter because they influence where heat, salt, oxygen stress and pollutants accumulate."
-      }
-    ]
-  },
-  salinity: {
-    title: "Salinity",
-    subtitle: "Salinity is one of the Baltic Sea’s defining features and controls which species can live where.",
-    sections: [
-      {
-        heading: "What is it?",
-        body: "Salinity describes how much dissolved salt is in the water. The Baltic is brackish, not fully marine, and its strong salinity gradient from west to east is a major reason the region has such distinctive ecosystems."
-      },
-      {
-        heading: "How do we measure it?",
-        body: "This map uses Copernicus Marine model data. In the field, salinity is commonly measured with conductivity sensors on buoys, research vessels, gliders and monitoring stations."
-      },
-      {
-        heading: "Why is it important?",
-        body: "Salinity influences density, layering, circulation and oxygen exchange. It also sets biological limits: some marine species need saltier water, while freshwater species tolerate much lower salinity."
-      },
-      {
-        heading: "How can the impacts be reduced?",
-        body: "Salinity itself is mostly controlled by climate, runoff and exchanges with the North Sea, so direct management is limited. What we can do is manage ecosystems and coastal planning around the stress that salinity shifts create."
-      },
-      {
-        heading: "How is it connected to climate change?",
-        body: "Climate-driven changes in rainfall, river discharge and large-scale circulation can freshen or redistribute Baltic waters. That can shift habitats, alter stratification and change how oxygen and nutrients move through the system."
-      }
-    ]
-  },
-  oxygen: {
-    title: "Surface dissolved oxygen",
-    subtitle: "This surface layer does not represent bottom-water hypoxia.",
-    sections: [
-      {
-        heading: "What is it?",
-        body: "This layer shows dissolved oxygen at the shallowest model level, selected by the prototype pipeline. Its exact depth in metres was not retained in the published files. It does not show bottom-water oxygen or diagnose hypoxia at the seabed."
-      },
-      {
-        heading: "How do we measure it?",
-        body: "Here it comes from Copernicus Marine biogeochemical model data. Oxygen is also measured directly with monitoring stations, ship surveys and sensor packages lowered through the water column."
-      },
-      {
-        heading: "Why is it important?",
-        body: "Low-oxygen and hypoxic areas are among the Baltic’s best-known environmental problems. Oxygen stress harms benthic life, changes food webs, can release more nutrients from sediments and reduces the resilience of the whole sea."
-      },
-      {
-        heading: "How can the impacts be reduced?",
-        body: "The biggest lever is reducing nutrient pollution from agriculture, wastewater and runoff. Protecting wetlands, restoring coastal habitats and improving land-based nutrient management all help reduce the conditions that fuel oxygen depletion."
-      },
-      {
-        heading: "How is it connected to climate change?",
-        body: "Warmer water holds less oxygen, and stronger stratification can reduce ventilation of deeper layers. Climate change therefore makes an existing Baltic problem harder to solve, especially when nutrient inputs remain high."
-      }
-    ]
-  },
-  waves: {
-    title: "Waves",
-    subtitle: "Waves connect weather, coastlines, safety and ecosystem stress across the Baltic.",
-    sections: [
-      {
-        heading: "What is it?",
-        body: "This layer focuses on significant wave height, which is a standard way to describe the overall sea state. Waves are generated mainly by wind and are shaped by fetch, storms, coastline geometry and water depth."
-      },
-      {
-        heading: "How do we measure it?",
-        body: "The map uses Copernicus Marine wave-model output. In reality, waves are also measured with buoys, offshore platforms, coastal radars and ship observations."
-      },
-      {
-        heading: "Why is it important?",
-        body: "Waves affect coastal erosion, harbour operations, ferry safety, offshore work and habitat disturbance in shallow waters. They also influence sediment transport and how exposed coastlines absorb storm energy."
-      },
-      {
-        heading: "How can the impacts be reduced?",
-        body: "We cannot stop storms, but we can reduce wave damage by protecting dunes and wetlands, avoiding risky coastal construction, improving harbour planning and maintaining natural shoreline buffers instead of hardening every edge."
-      },
-      {
-        heading: "How is it connected to climate change?",
-        body: "Climate change can alter storm tracks, ice cover and coastal exposure. Less seasonal sea ice in parts of the Baltic can leave shorelines exposed to wave action for longer periods, increasing erosion and infrastructure stress."
-      }
-    ]
-  },
-  seaLevel: {
-    title: "Sea level",
-    subtitle: "Sea level links open-water conditions, coasts, flooding risk and long-term adaptation.",
-    sections: [
-      {
-        heading: "What is it?",
-        body: "Sea level describes the height of the sea surface relative to a reference level. In the Baltic it changes because of winds, atmospheric pressure, circulation, freshwater inflow and longer-term regional sea-level trends."
-      },
-      {
-        heading: "How do we measure it?",
-        body: "This layer uses Copernicus Marine model data. Sea level is also monitored through coastal tide gauges, harbour measurements and satellite altimetry."
-      },
-      {
-        heading: "Why is it important?",
-        body: "Sea level matters for flooding, storm surge exposure, port operations, drainage systems, coastal ecosystems and long-lived infrastructure. Even modest changes can matter when they combine with storms and waves."
-      },
-      {
-        heading: "How can the impacts be reduced?",
-        body: "The best responses are adaptation and smart planning: avoid building in the most exposed zones, redesign drainage and flood protection, restore coastal buffers and plan infrastructure for higher future water levels."
-      },
-      {
-        heading: "How is it connected to climate change?",
-        body: "Global sea-level rise raises the baseline onto which Baltic storms and surges are added. That means events that used to be unusual can become more frequent or more damaging over time."
-      }
-    ]
-  },
-  noise: {
-    title: "Underwater noise",
-    subtitle: "Sound pollution is an invisible pressure that travels far in water and affects marine animals.",
-    sections: [
-      {
-        heading: "What is it?",
-        body: "This overlay shows underwater-noise pressure and reported impulsive events such as pile driving or seismic activity. It is environmental context rather than a live microphone feed."
-      },
-      {
-        heading: "How do we measure it?",
-        body: "The current layer is based on HELCOM assessment products and reported activity records. Underwater noise can also be measured directly with hydrophones and specialised monitoring stations."
-      },
-      {
-        heading: "Why is it important?",
-        body: "Many marine animals rely on sound to navigate, communicate, find food and avoid danger. Too much human-made noise can mask those signals, create stress and disturb migration, feeding or breeding behaviour."
-      },
-      {
-        heading: "How can the impacts be reduced?",
-        body: "We can reduce noise by slowing ships in sensitive areas, changing routes, improving propeller and hull design, using quieter construction methods and planning noisy activities away from key habitats or seasons."
-      },
-      {
-        heading: "How is it connected to climate change?",
-        body: "Climate change does not create underwater noise directly, but it interacts with it by adding stress. Species already challenged by warming, oxygen loss or habitat shifts may become less resilient to chronic sound disturbance."
-      }
-    ]
-  },
-  infrastructure: {
-    title: "Coastal and marine infrastructure",
-    subtitle: "Infrastructure reveals how strongly the Baltic Sea is tied to transport, energy and coastal economies.",
-    sections: [
-      {
-        heading: "What is it?",
-        body: "This overlay combines ports, routes, cables, pipelines, wind farms, power plants and land-use context. It helps explain where human systems meet the sea and where ecological pressures or conflicts can concentrate."
-      },
-      {
-        heading: "How do we measure it?",
-        body: "The current version is a curated open-data prototype assembled from multiple sources. Unlike the ocean-condition layers, it is mostly static reference context rather than a continuously updating model field."
-      },
-      {
-        heading: "Why is it important?",
-        body: "Infrastructure shapes shipping, energy supply, risk exposure, coastal development and how easily pollution or disturbance can spread through busy marine areas. It is essential context for understanding where environmental pressure comes from."
-      },
-      {
-        heading: "How can the impacts be reduced?",
-        body: "Better planning matters: place new infrastructure carefully, reduce conflicts with habitats, improve port and shipping efficiency, harden vulnerable assets against storms and design projects around ecological constraints rather than after them."
-      },
-      {
-        heading: "How is it connected to climate change?",
-        body: "Climate change raises the stakes for coastal infrastructure by increasing heat stress, flood risk, shoreline change and storm exposure. At the same time, the energy transition is adding new marine infrastructure such as offshore wind, which must be planned well."
-      }
-    ]
-  }
-};
 
 const state = {
   locale: "en",
@@ -657,7 +447,7 @@ const state = {
 
 const TEMPERATURE_PALETTES = {
   oxygen: {
-    labelKey: "accessibility.oxygen", fallbackLabel: "Oxygen · low to high",
+    labelKey: "accessibility.oxygen", fallbackLabel: msg("Oxygen · low to high"),
     stops: [{stop: 0, color: "#440154"}, {stop: 0.25, color: "#3b528b"}, {stop: 0.5, color: "#21918c"}, {stop: 0.75, color: "#5ec962"}, {stop: 1, color: "#fde725"}]
   },
   blueRed: {
@@ -713,6 +503,56 @@ const TEMPERATURE_PALETTES = {
 const TRANSPARENT_IMAGE_URL =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAuMBg6nxsVgAAAAASUVORK5CYII=";
 
+function msg(english, params = {}) {
+  const text = state.translations.messages?.[english] ?? english ?? "";
+  return String(text).replace(/\{(\w+)\}/g, (_, key) => String(params[key] ?? `{${key}}`));
+}
+
+function formatTimestamp(value) {
+  return msg(formatUtcTimestamp(value, {en: "en-GB", de: "de-DE", da: "da-DK"}[state.locale]));
+}
+
+function intervalLabel(metadata) {
+  return publishedIntervalLabel(metadata).replace("One published time step", msg("One published time step"))
+    .replace("between published frames", msg("between published frames")).replace("(irregular)", msg("(irregular)"));
+}
+
+function layerLabel(id) {
+  if (id === "oxygen") return msg(state.oceanConditions.oxygen?.condition?.depth_mode === "bottom" ? "Bottom dissolved oxygen" : "Surface dissolved oxygen");
+  return t(`layers.${id === "noise" ? "underwaterNoise" : id}`, state.oceanConditions[id]?.condition?.label || id);
+}
+
+function flagSvg(locale) {
+  const contents = locale === "de" ? '<path fill="#161616" d="M0 0h30v6H0z"/><path fill="#d00" d="M0 6h30v6H0z"/><path fill="#ffce00" d="M0 12h30v6H0z"/>'
+    : locale === "da" ? '<path fill="#c8102e" d="M0 0h30v18H0z"/><path fill="#fff" d="M9 0h3v18H9zM0 7.5h30v3H0z"/>'
+    : '<path fill="#003399" d="M0 0h30v18H0z"/>' + Array.from({length:12}, (_, i) => {
+      const angle = i * Math.PI / 6;
+      return `<path fill="#fc0" transform="translate(${15+5.7*Math.sin(angle)} ${9-5.7*Math.cos(angle)})" d="M0-1.1 .26-.35 1.05-.34 .42.14 .65.9 0 .45-.65.9-.42.14-1.05-.34-.26-.35Z"/>`;
+    }).join("");
+  return `<svg viewBox="0 0 30 18" width="30" height="18" aria-hidden="true" focusable="false">${contents}</svg>`;
+}
+
+// Guide markup accepts only two known glossary tokens, never arbitrary HTML or URLs.
+function appendGuideText(root, text) {
+  const links = {
+    stratification: {en: "https://en.wikipedia.org/wiki/Stratification_(water)", de: "https://de.wikipedia.org/wiki/Temperaturschichtung", da: "https://da.wikipedia.org/wiki/Springlag"},
+    waves: {en: "https://en.wikipedia.org/wiki/Significant_wave_height", de: "https://de.wikipedia.org/wiki/Wellenh%C3%B6he", da: "https://en.wikipedia.org/wiki/Significant_wave_height"}
+  };
+  let cursor = 0;
+  for (const match of text.matchAll(/\[([^\]]+)\]\((stratification|waves)\)/g)) {
+    root.append(document.createTextNode(text.slice(cursor, match.index)));
+    const link = document.createElement("a");
+    link.href = links[match[2]][state.locale];
+    link.textContent = match[1];
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.title = state.locale === "da" && match[2] === "waves" ? "Wikipedia (engelsk)" : "Wikipedia";
+    root.append(link);
+    cursor = match.index + match[0].length;
+  }
+  root.append(document.createTextNode(text.slice(cursor)));
+}
+
 function getTranslationValue(path, params = {}) {
   const value = path.split(".").reduce((current, key) => current?.[key], state.translations);
   if (typeof value !== "string") {
@@ -725,12 +565,16 @@ function t(path, fallback, params = {}) {
   return getTranslationValue(path, params) ?? fallback;
 }
 
+let localeRequest = 0;
 async function loadTranslations(locale) {
+  const request = ++localeRequest;
   const response = await fetch(`./locales/${locale}.json`, { cache: "no-store" });
   if (!response.ok) {
     throw new Error(`Locale ${locale} could not be loaded.`);
   }
-  state.translations = await response.json();
+  const translations = await response.json();
+  if (request !== localeRequest) return;
+  state.translations = translations;
   state.locale = locale;
 }
 
@@ -747,9 +591,18 @@ function renderLanguageMenu() {
 
     const label = document.createElement("span");
     label.textContent = language.label;
+    label.className = "language-name";
+    if (language.enabled) {
+      const flag = document.createElement("span");
+      flag.className = "language-flag";
+      flag.innerHTML = flagSvg(language.code);
+      label.prepend(flag);
+    }
+    button.dataset.language = language.code;
+    button.setAttribute("aria-pressed", String(language.code === state.locale));
     const meta = document.createElement("span");
     meta.className = "language-meta";
-    meta.textContent = language.enabled ? t("common.live", "Available") : t("common.comingSoon", "Coming soon");
+    meta.textContent = language.enabled ? t("common.live", msg("Available")) : t("common.comingSoon", "Coming soon");
     button.append(label, meta);
 
     button.addEventListener("click", async () => {
@@ -757,9 +610,15 @@ function renderLanguageMenu() {
         closeLanguageMenu();
         return;
       }
-      await loadTranslations(language.code);
-      applyTranslations();
-      closeLanguageMenu();
+      try {
+        await loadTranslations(language.code);
+        applyTranslations();
+        closeLanguageMenu();
+        languageButtonEl.focus();
+      } catch (error) {
+        console.error(error);
+        setStatus(msg("Language could not be loaded. Please try again."), "warning");
+      }
     });
 
     languageMenuEl.appendChild(button);
@@ -768,6 +627,9 @@ function renderLanguageMenu() {
 
 function applyTranslations() {
   document.documentElement.lang = state.locale;
+  document.title = msg("Digital Baltic Sea — Explore the Baltic");
+  localizeMapControls();
+  for (const node of document.querySelectorAll(".roadmap-list li")) node.dataset.availability = t(node.classList.contains("is-live") ? "common.live" : "common.comingSoon", "");
   for (const node of document.querySelectorAll("[data-i18n]")) {
     const key = node.dataset.i18n;
     const translated = getTranslationValue(key);
@@ -776,11 +638,25 @@ function applyTranslations() {
     }
   }
   languageCurrentEl.textContent = t("nav.languageCode", "EN");
+  languageButtonEl.querySelector(".language-flag").innerHTML = flagSvg(state.locale);
+  for (const node of document.querySelectorAll("[data-message]")) node.textContent = msg(node.dataset.message);
+  for (const attr of ["aria-label", "alt"]) {
+    for (const node of document.querySelectorAll(`[data-message-${attr}]`)) node.setAttribute(attr, msg(node.getAttribute(`data-message-${attr}`)));
+  }
+  for (const button of overlayInfoButtonEls) button.setAttribute("aria-label", msg("About {layer}", {layer:layerLabel(button.dataset.overlayInfoButton)}));
   renderLanguageMenu();
   updateViewToggle();
   updateLayerToggleUi();
   updateStaticPanels();
   updatePaletteButtons();
+  renderOverlayInfoPanel();
+  updateTransparencyPanel();
+  updateDataSummary();
+  syncPanelAccess();
+  updateStatusForVisibleLayers();
+  if (state.mapFailed) renderMapFailureText();
+  else if (state.mapReady && !state.satelliteWorking) setStatus(t("status.fallbackMap", ""), "warning");
+  if (state.selectedLocation && state.mapReady) updateSelectedLocationValues();
   if (state.metadata) {
     updateChrome();
   }
@@ -847,6 +723,7 @@ function setMode(mode) {
   syncPanelAccess();
   (mode === "map" ? document.getElementById("exit-map") : heroEnterMapEl).focus();
   state.map?.resize();
+  syncFlowAnimation();
 }
 
 function setStatus(message, tone = "neutral") {
@@ -867,7 +744,8 @@ function formatCoordinate(value, positiveLabel, negativeLabel) {
 }
 
 function activeConditionDefinition() {
-  return state.oceanConditions[state.activeConditionId]?.condition ?? null;
+  const condition = state.oceanConditions[state.activeConditionId]?.condition;
+  return condition ? {...condition, label: layerLabel(state.activeConditionId), value_label: layerLabel(state.activeConditionId)} : null;
 }
 
 function activeConditionMetadata() {
@@ -925,10 +803,10 @@ function oceanScalarLayerVisible() {
     return false;
   }
   if (state.activeConditionId === "currents") {
-    return activeRenderModeId() === "speedParticles";
+    return ["speedParticles", "arrows"].includes(activeRenderModeId());
   }
   if (state.activeConditionId === "waves") {
-    return activeRenderModeId() === "heightStreaks";
+    return ["heightStreaks", "arrows"].includes(activeRenderModeId());
   }
   return true;
 }
@@ -1167,6 +1045,9 @@ function ensureOceanSources() {
     },
     beforeLayerId
   );
+  state.map.addLayer({id: "ocean-vector-halo", type: "line", source: "ocean-vector-source",
+    paint: {"line-color": "#102d3e", "line-width": 6, "line-opacity": 0},
+    layout: {"line-join": "round", "line-cap": "round"}}, beforeLayerId);
   state.map.addLayer(
     {
       id: "ocean-vector-shaft",
@@ -1212,7 +1093,7 @@ function updateOceanLayerStyles() {
   }
 
   const ready = state.renderedSelectionVersion === state.selectionVersion;
-  for (const id of ["ocean-scalar-fill", "ocean-shoreline", "ocean-vector-shaft", "ocean-vector-head"]) {
+  for (const id of ["ocean-scalar-fill", "ocean-shoreline", "ocean-vector-shaft", "ocean-vector-head", "ocean-vector-halo"]) {
     state.map.setLayoutProperty(id, "visibility", ready && oceanLayerVisible() ? "visible" : "none");
   }
   const mode = activeRenderModeId();
@@ -1226,20 +1107,16 @@ function updateOceanLayerStyles() {
     if (mode === "arrows") {
       shaftOpacity = 0.88;
       headOpacity = 0.88;
-    } else if (mode === "particlesOnly" || mode === "streaksOnly") {
-      shaftOpacity = 0.9;
-      dashArray = [0.5, 1.4];
-    } else {
-      shaftOpacity = 0.72;
-      dashArray = [1, 0.9];
     }
   }
+  state.map.setPaintProperty("ocean-vector-halo", "line-opacity", mode === "arrows" ? 0.9 : 0);
 
   state.map.setPaintProperty("ocean-scalar-fill", "fill-opacity", scalarOpacity);
   state.map.setPaintProperty("ocean-shoreline", "line-opacity", shorelineOpacity);
   state.map.setPaintProperty("ocean-vector-shaft", "line-opacity", shaftOpacity);
   state.map.setPaintProperty("ocean-vector-shaft", "line-dasharray", dashArray);
   state.map.setPaintProperty("ocean-vector-head", "line-opacity", headOpacity);
+  syncFlowAnimation();
 }
 
 function buildOceanRenderCollections(queryIndex, frameData, metadata, condition, frameIndex, zoom) {
@@ -1306,7 +1183,7 @@ function buildOceanRenderCollections(queryIndex, frameData, metadata, condition,
     step,
     subdivision,
     stride
-  );
+  ) + JSON.stringify([zoom, state.map.getBearing(), state.map.getPitch(), west, south, east, north, mapContainerEl.clientWidth, mapContainerEl.clientHeight]);
   const cachedCollections = state.oceanVisuals.renderCache.get(cacheKey);
   if (cachedCollections) {
     return cachedCollections;
@@ -1479,14 +1356,15 @@ function buildOceanRenderCollections(queryIndex, frameData, metadata, condition,
   if (Array.isArray(eastwardGrid) && Array.isArray(northwardGrid)) {
     const range = displayRangeForMetadata(metadata);
     const span = Math.max(range.max - range.min, 1e-6);
-    for (let rowIndex = rowStart; rowIndex < rowEndExclusive; rowIndex += stride) {
-      for (let columnIndex = colStart; columnIndex < colEndExclusive; columnIndex += stride) {
-        if (numericGridValue(frameGrid, rowIndex, columnIndex) === null) {
-          continue;
-        }
-
-        const centerLatitude = Number(latitudes[rowIndex]);
-        const centerLongitude = Number(longitudes[columnIndex]);
+    const width = mapContainerEl.clientWidth, height = mapContainerEl.clientHeight;
+    const spacing = Math.max(64, Math.sqrt(width * height / 650));
+    for (let y = 32; y < height; y += spacing) {
+      for (let x = 32; x < width; x += spacing) {
+        const center = state.map.unproject([x, y]);
+        const centerLatitude = center.lat, centerLongitude = center.lng;
+        if (centerLatitude < latEdges[0] || centerLatitude > latEdges.at(-1) || centerLongitude < lonEdges[0] || centerLongitude > lonEdges.at(-1)) continue;
+        const rowIndex = findIntervalIndex(latEdges, centerLatitude), columnIndex = findIntervalIndex(lonEdges, centerLongitude);
+        if (numericGridValue(frameGrid, rowIndex, columnIndex) === null) continue;
         const vector = interpolateVectorAt(centerLatitude, centerLongitude, latitudes, longitudes, eastwardGrid, northwardGrid, latEdges, lonEdges);
         if (!vector) {
           continue;
@@ -1497,7 +1375,7 @@ function buildOceanRenderCollections(queryIndex, frameData, metadata, condition,
         }
 
         const directionScale = clamp((magnitude - range.min) / span, 0.15, 1);
-        const lengthDegrees = 0.32 * directionScale * Math.max(latEdges[rowIndex + 1] - latEdges[rowIndex], 0.02);
+        const lengthPixels = 34 + 14 * directionScale;
         const vectorMagnitude = Math.hypot(vector.eastward, vector.northward);
         if (!Number.isFinite(vectorMagnitude) || vectorMagnitude <= 1e-6) {
           continue;
@@ -1505,14 +1383,15 @@ function buildOceanRenderCollections(queryIndex, frameData, metadata, condition,
         const eastwardUnit = vector.eastward / vectorMagnitude;
         const northwardUnit = vector.northward / vectorMagnitude;
         const cosLatitude = Math.max(Math.cos((centerLatitude * Math.PI) / 180), 0.2);
-        const deltaLatitude = northwardUnit * lengthDegrees;
-        const deltaLongitude = (eastwardUnit * lengthDegrees) / cosLatitude;
-        const start = [centerLongitude - deltaLongitude / 2, centerLatitude - deltaLatitude / 2];
-        const end = [centerLongitude + deltaLongitude / 2, centerLatitude + deltaLatitude / 2];
-        const normalizedMagnitude = clamp((magnitude - range.min) / span, 0, 1);
-        const strokeColor = rgbaString(interpolatePaletteColor(normalizedMagnitude, TEMPERATURE_PALETTES[oceanPaletteName(condition.id)]), 0.94);
-        const strokeWidth = 1 + normalizedMagnitude * 1.6;
-
+        const projected = state.map.project([centerLongitude + eastwardUnit * 0.001 / cosLatitude, centerLatitude + northwardUnit * 0.001]);
+        const norm = Math.hypot(projected.x - x, projected.y - y);
+        if (norm < 1e-8) continue;
+        const dx = (projected.x - x) / norm, dy = (projected.y - y) / norm;
+        const startPixel = [x - dx * lengthPixels / 2, y - dy * lengthPixels / 2];
+        const endPixel = [x + dx * lengthPixels / 2, y + dy * lengthPixels / 2];
+        const start = state.map.unproject(startPixel).toArray(), end = state.map.unproject(endPixel).toArray();
+        const strokeColor = "#f4fcff";
+        const strokeWidth = 3;
         vectorFeatures.push({
           type: "Feature",
           properties: {
@@ -1526,18 +1405,9 @@ function buildOceanRenderCollections(queryIndex, frameData, metadata, condition,
           }
         });
 
-        const heading = Math.atan2(northwardUnit, eastwardUnit);
-        const headLength = lengthDegrees * 0.28;
-        const leftAngle = heading + Math.PI - 0.55;
-        const rightAngle = heading + Math.PI + 0.55;
-        const leftPoint = [
-          end[0] + (Math.cos(leftAngle) * headLength) / cosLatitude,
-          end[1] + Math.sin(leftAngle) * headLength
-        ];
-        const rightPoint = [
-          end[0] + (Math.cos(rightAngle) * headLength) / cosLatitude,
-          end[1] + Math.sin(rightAngle) * headLength
-        ];
+        const headLength = 12, headWidth = 7;
+        const leftPoint = state.map.unproject([endPixel[0] - dx * headLength - dy * headWidth, endPixel[1] - dy * headLength + dx * headWidth]).toArray();
+        const rightPoint = state.map.unproject([endPixel[0] - dx * headLength + dy * headWidth, endPixel[1] - dy * headLength - dx * headWidth]).toArray();
         vectorFeatures.push({
           type: "Feature",
           properties: {
@@ -1594,6 +1464,7 @@ async function refreshOceanVisuals(selection = selectionSnapshot()) {
     setGeoJsonSourceData("ocean-vector-source", collections.vector);
     // GeoJSON is processed in a worker; old geometry stays hidden until the new sources finish.
     if (!await waitForOceanSources(state.map, selection, token)) return;
+    state.flowFeatures = collections.vector.features.filter(feature => feature.properties.kind === "shaft");
     state.renderedSelectionVersion = selection.version;
     state.frameStatus = "ready";
     state.frameQuality = frameData.quality;
@@ -1943,7 +1814,7 @@ function updateBottomLeftVisibility() {
 }
 
 function overlayInfoEntry(overlayId) {
-  return OVERLAY_INFO_CONTENT[overlayId] ?? null;
+  return state.translations.guides?.[overlayId] ?? null;
 }
 
 function renderOverlayInfoPanel() {
@@ -1964,23 +1835,22 @@ function renderOverlayInfoPanel() {
   }
 
   const bottomOxygen = state.overlayInfoId === "oxygen" && state.oceanConditions.oxygen?.condition?.depth_mode === "bottom";
-  overlayInfoTitleEl.textContent = bottomOxygen ? "Bottom dissolved oxygen" : entry.title;
-  overlayInfoSubtitleEl.textContent = bottomOxygen ? "Oxygen at the deepest available model level in each water column." : entry.subtitle;
-  const sections = entry.sections.map((section, index) => bottomOxygen && index === 0 ? {...section, body: "This layer uses the deepest non-missing oxygen value at each location. Model depth varies with local bathymetry; the selected cell’s depth is shown when sampled. It provides bottom-water context, not a validated hypoxia classification or an in-situ seabed measurement."} : section);
-  overlayInfoBodyEl.innerHTML = sections
-    .map(
-      (section) => `
-        <section class="overlay-info-section">
-          <p class="overlay-info-section-title">${section.heading}</p>
-          <p class="overlay-info-section-copy">${section.body}</p>
-        </section>
-      `
-    )
-    .join("");
-  const metadataSection = document.createElement("section");
-  metadataSection.className = "overlay-info-section";
-  appendLayerMetadata(metadataSection, state.overlayInfoId);
-  overlayInfoBodyEl.prepend(metadataSection);
+  const bottom = state.translations.guides.oxygenBottom;
+  overlayInfoTitleEl.textContent = bottomOxygen ? bottom.title : entry.title;
+  overlayInfoSubtitleEl.textContent = bottomOxygen ? bottom.subtitle : entry.subtitle;
+  overlayInfoBodyEl.replaceChildren();
+  entry.sections.forEach((section, index) => {
+    const container = document.createElement("section");
+    container.className = "overlay-info-section";
+    const heading = document.createElement("p");
+    heading.className = "overlay-info-section-title";
+    heading.textContent = section.heading;
+    const copy = document.createElement("p");
+    copy.className = "overlay-info-section-copy";
+    appendGuideText(copy, bottomOxygen && index === 0 ? bottom.body : section.body);
+    container.append(heading, copy);
+    overlayInfoBodyEl.append(container);
+  });
   overlayInfoPanelEl.hidden = false;
   overlayInfoPanelEl.classList.add("is-open");
 
@@ -2012,7 +1882,7 @@ function activeHeadlineState() {
   if (condition) {
     return {
       title: condition.label,
-      subtitle: "Placeholder until processed data is available"
+      subtitle: msg("No published data for this layer")
     };
   }
 
@@ -2067,7 +1937,7 @@ function renderInfrastructureCategoryButtons() {
     button.addEventListener("click", () => {
       toggleInfrastructureCategory(categoryId).catch((error) => {
         console.error(error);
-        setStatus("This infrastructure category could not be loaded. Its source details remain available.", "error");
+        setStatus(msg("This infrastructure category could not be loaded. Its source details remain available."), "error");
       });
     });
     infrastructureCategoryListEl.appendChild(button);
@@ -2161,7 +2031,7 @@ function renderNoiseCategoryButtons() {
     button.addEventListener("click", () => {
       toggleNoiseCategory(categoryId).catch((error) => {
         console.error(error);
-        setStatus("This noise category could not be loaded. Its historical guide remains available.", "error");
+        setStatus(msg("This noise category could not be loaded. Its historical guide remains available."), "error");
       });
     });
     noiseCategoryListEl.appendChild(button);
@@ -2796,29 +2666,31 @@ function updateChrome() {
   const headline = activeHeadlineState();
   mapHeadlineTitleEl.textContent = headline.title;
   mapHeadlineTimeEl.textContent = headline.subtitle;
-  oceanConditionCardLabelEl.textContent = condition?.label || "Ocean condition";
+  oceanConditionCardLabelEl.textContent = condition?.label || msg("Ocean condition");
   oceanConditionCardSummaryEl.textContent = oceanConditionCardSummary();
-  timePrimaryEl.textContent = frame ? formatTimestamp(frame.time_utc) : "No published time steps for this layer";
+  timePrimaryEl.textContent = frame ? formatTimestamp(frame.time_utc) : msg("No published time steps for this layer");
   timeSliderEl.setAttribute("aria-valuetext", timePrimaryEl.textContent);
-  timeSecondaryEl.textContent = frame ? `${intervalLabel(metadata)}${state.requestedTimeUtc && frame.time_utc !== state.requestedTimeUtc ? ". Nearest available time used." : ""}` : "Choose another layer to browse available data.";
+  timeSecondaryEl.textContent = frame ? `${intervalLabel(metadata)}${state.requestedTimeUtc && frame.time_utc !== state.requestedTimeUtc ? msg(". Nearest available time used.") : ""}` : msg("Choose another layer to browse available data.");
   const notice = document.getElementById("forecast-notice");
-  notice.textContent = forecastArchived(metadata) ? "Archived forecast — not current conditions." : (frame ? "Modelled analysis / forecast; not a direct observation." : "This layer has no published data.");
-  document.getElementById("dataset-update").textContent = `Dataset last successful update: ${formatTimestamp(metadata?.provenance?.retrieved_at_utc)}`;
+  notice.textContent = forecastArchived(metadata) ? msg("Archived forecast — not current conditions.") : (frame ? msg("Modelled analysis / forecast; not a direct observation.") : msg("This layer has no published data."));
+  document.getElementById("dataset-update").textContent = msg("Dataset last successful update: {time}", {time: formatTimestamp(metadata?.provenance?.retrieved_at_utc)});
   const currentValue = state.selectedLocation?.sampleText;
-  oceanConditionCurrentValueEl.textContent = currentValue || (state.selectedLocation && state.mapReady && frame ? "Loading location value…" : `${condition?.value_label || condition?.label || ""} · ${readableUnit(condition?.units)}`);
-  oceanConditionCurrentNoteEl.textContent = state.selectedLocation ? `${formatCoordinate(state.selectedLocation.latitude, "N", "S")} · ${formatCoordinate(state.selectedLocation.longitude, "E", "W")}` : (state.mapReady ? "Tap the map to sample an interpolated water value." : "Location sampling needs the interactive map.");
+  oceanConditionCurrentValueEl.textContent = currentValue || (state.selectedLocation && state.mapReady && frame ? msg("Loading location value…") : `${condition?.value_label || condition?.label || ""} · ${readableUnit(condition?.units)}`);
+  oceanConditionCurrentNoteEl.textContent = state.selectedLocation ? `${formatCoordinate(state.selectedLocation.latitude, "N", "S")} · ${formatCoordinate(state.selectedLocation.longitude, "E", "W")}` : (state.mapReady ? msg("Tap the map to sample an interpolated water value.") : msg("Location sampling needs the interactive map."));
   const loadStatus = document.getElementById("frame-load-status");
-  loadStatus.textContent = state.frameStatus === "loading" ? "Loading selected frame…" : state.frameStatus === "error" ? "This frame could not be loaded. Choose another time or layer." : state.frameQuality?.invalidCount ? `${state.frameQuality.invalidCount} invalid values excluded; source values have not been clamped.` : "";
+  loadStatus.textContent = state.frameStatus === "loading" ? msg("Loading selected frame…") : state.frameStatus === "error" ? msg("This frame could not be loaded. Choose another time or layer.") : state.frameQuality?.invalidCount ? msg("{count} invalid values excluded; source values have not been clamped.", {count:state.frameQuality.invalidCount}) : "";
   oceanConditionLegendEl.hidden = !frame;
   oceanConditionPlaceholderEl.hidden = Boolean(frame);
-  oceanConditionPlaceholderEl.textContent = frame ? "" : "Published data are unavailable for this layer. Its explanatory guide remains available.";
+  oceanConditionPlaceholderEl.textContent = frame ? "" : msg("Published data are unavailable for this layer. Its explanatory guide remains available.");
   if (frame) {
     const range = displayRangeForMetadata(metadata, condition);
     const min = state.frameQuality ? state.frameQuality.min : frame.min_celsius ?? frame.min_value ?? frame.min;
     const max = state.frameQuality ? state.frameQuality.max : frame.max_celsius ?? frame.max_value ?? frame.max;
     const invalidRange = nonnegativeQuantity(condition) && min < 0;
-    oceanConditionLegendTitleEl.textContent = `Colour scale · ${t(getPaletteDefinition().labelKey, getPaletteDefinition().fallbackLabel)}`;
-    oceanConditionLegendRangeEl.textContent = invalidRange ? "Frame range contains invalid negative values" : (Number.isFinite(min) && Number.isFinite(max) ? `Frame data range: ${min.toFixed(2)}–${max.toFixed(2)} ${readableUnit(condition.units)}` : "Frame data range unavailable");
+    const directionOnly = oceanVectorLayerVisible() && !oceanScalarLayerVisible();
+    for (const node of oceanConditionLegendEl.querySelectorAll(".timeline-legend-bar, .legend-scale, .scale-note")) node.hidden = directionOnly;
+    oceanConditionLegendTitleEl.textContent = directionOnly ? msg("Direction only — no colour field") : msg("Colour scale · {palette}", {palette:t(getPaletteDefinition().labelKey, getPaletteDefinition().fallbackLabel)});
+    oceanConditionLegendRangeEl.textContent = invalidRange ? msg("Frame range contains invalid negative values") : (Number.isFinite(min) && Number.isFinite(max) ? msg("Frame data range: {range}", {range:`${min.toFixed(2)}–${max.toFixed(2)} ${readableUnit(condition.units)}`}) : msg("Frame data range unavailable"));
     oceanConditionLegendMinEl.textContent = String(range.min);
     oceanConditionLegendMaxEl.textContent = String(range.max);
     oceanConditionLegendUnitEl.textContent = readableUnit(condition.units);
@@ -2830,13 +2702,13 @@ function updateChrome() {
 }
 
 function updateTransparencyPanel() {
-  sourceSummaryEl.textContent = "Sources and dataset context";
-  sourceDetailEl.textContent = "Data are updated manually in this prototype. All times are UTC.";
+  sourceSummaryEl.textContent = msg("Sources and dataset context");
+  sourceDetailEl.textContent = msg("Data are updated manually in this prototype. All times are UTC.");
   transparencyDetailEl.replaceChildren();
   for (const id of [state.activeConditionId, state.noise.active && "noise", state.infrastructure.active && "infrastructure"].filter(Boolean)) {
     const details = document.createElement("details");
     const summary = document.createElement("summary");
-    summary.textContent = state.oceanConditions[id]?.condition?.label || overlayInfoEntry(id)?.title || id;
+    summary.textContent = layerLabel(id);
     details.append(summary);
     if (id === state.activeConditionId) details.open = true;
     appendLayerMetadata(details, id);
@@ -3008,7 +2880,7 @@ function setLayerButton(button, label, active) {
 }
 
 function updateStatusForVisibleLayers() {
-  if (state.mapFailed) setStatus("Map unavailable. Layer guides and published timestamps remain available.", "warning");
+  if (state.mapFailed) setStatus(msg("Map unavailable. Layer guides and published timestamps remain available."), "warning");
 }
 
 function updateOceanConditionButtons() {
@@ -3018,15 +2890,15 @@ function updateOceanConditionButtons() {
       continue;
     }
     const entry = state.oceanConditions[conditionId];
-    const label = entry?.condition?.label || overlayInfoEntry(conditionId)?.title || conditionId;
+    const label = layerLabel(conditionId);
     setLayerButton(button, label, state.activeConditionId === conditionId);
     const badge = document.createElement("span");
     badge.className = "availability-badge";
-    badge.textContent = entry?.available ? "Available" : "No data";
+    badge.textContent = entry?.available ? msg("Available") : msg("No data");
     button.append(badge);
     const roadmap = document.querySelector(`.roadmap-list [data-i18n="layers.${conditionId}"]`);
     if (roadmap) {
-      roadmap.dataset.availability = entry?.available ? "Available" : "No data";
+      roadmap.dataset.availability = entry?.available ? msg("Available") : msg("No data");
       roadmap.classList.toggle("is-live", Boolean(entry?.available));
     }
     button.disabled = false;
@@ -3053,13 +2925,31 @@ function renderOceanRenderModes() {
         <button class="infrastructure-category-toggle${activeRenderModeId() === mode.id ? " is-selected" : ""}" type="button" data-render-mode="${mode.id}">
           <span class="infrastructure-category-main">
             <span class="layer-tick">${activeRenderModeId() === mode.id ? "✓" : ""}</span>
-            <span>${mode.label}</span>
+            <span>${msg(mode.label)}</span>
           </span>
-          <span class="infrastructure-category-meta">${state.activeConditionId === "currents" ? "Current field" : "Wave field"}</span>
+          <span class="infrastructure-category-meta">${state.activeConditionId === "currents" ? msg("Current field") : msg("Wave field")}</span>
         </button>
       `
     )
     .join("");
+  const motion = document.createElement("button");
+  motion.type = "button";
+  motion.id = "flow-motion-toggle";
+  motion.className = "ghost-button";
+  const paused = flowPaused();
+  motion.textContent = msg(paused ? "Play animation" : "Pause animation");
+  motion.setAttribute("aria-pressed", String(!paused));
+  motion.hidden = activeRenderModeId() === "arrows";
+  motion.addEventListener("click", () => {
+    state.motionPaused = !flowPaused();
+    renderOceanRenderModes();
+    syncFlowAnimation();
+    document.getElementById("flow-motion-toggle")?.focus();
+  });
+  const note = document.createElement("p");
+  note.className = "scale-note";
+  note.textContent = msg("Motion shows direction at the selected time; animation speed is illustrative. It does not advance the timeline.");
+  oceanConditionRenderModeListEl.append(motion, note);
   oceanConditionRenderModeListEl.querySelectorAll("[data-render-mode]").forEach((button) => {
     button.addEventListener("click", () => {
       state.oceanRenderModes[state.activeConditionId] = button.dataset.renderMode;
@@ -3083,7 +2973,7 @@ function updateLayerToggleUi() {
 function setActiveOceanCondition(conditionId) {
   const entry = state.oceanConditions[conditionId];
   if (!entry?.condition) {
-    setStatus(`${conditionId} is not configured in the current manifest.`, "warning");
+    setStatus(msg("{layer} is not configured in the current manifest.", {layer:layerLabel(conditionId)}), "warning");
     return;
   }
 
@@ -3160,16 +3050,16 @@ async function updateSelectedLocationValues(selection = selectionSnapshot()) {
     const sample = await fetchOceanSample(location.latitude, location.longitude, selection);
     if (requestToken !== state.selectedLocationRequestToken || location !== state.selectedLocation || !selectionIsCurrent(selection)) return;
     const value = sample.primary_value;
-    location.sampleText = typeof value === "number" ? `${value.toFixed(2)} ${readableUnit(sample.primary_unit)}${Number.isFinite(sample.bottom_depth_m) ? ` at ${sample.bottom_depth_m.toFixed(1)} m model depth (selected cell)` : ""}` : "No valid water value at this location";
+    location.sampleText = typeof value === "number" ? `${value.toFixed(2)} ${readableUnit(sample.primary_unit)}${Number.isFinite(sample.bottom_depth_m) ? msg(" at {depth} m model depth (selected cell)", {depth:sample.bottom_depth_m.toFixed(1)}) : ""}` : msg("No valid water value at this location");
     clickedPrimaryValueEl.textContent = location.sampleText;
-    clickedLayerNameEl.textContent = selection.condition.label;
+    clickedLayerNameEl.textContent = layerLabel(selection.conditionId);
     clickedTimeEl.textContent = formatTimestamp(sample.time_utc);
     clickedCoordinatesEl.textContent = `${formatCoordinate(location.latitude, "N", "S")} · ${formatCoordinate(location.longitude, "E", "W")}`;
     clickPanelEl.hidden = state.mode !== "map";
   } catch (error) {
     if (!selectionIsCurrent(selection) || requestToken !== state.selectedLocationRequestToken) return;
     console.error(error);
-    location.sampleText = "Value unavailable for this frame";
+    location.sampleText = msg("Value unavailable for this frame");
   }
   renderActiveOverlayControls();
   updateChrome();
@@ -3229,6 +3119,10 @@ function registerInteractions(maplibregl) {
     });
   });
 
+  state.map.on("resize", () => {
+    refreshOceanVisuals().catch(console.error);
+  });
+
   state.map.on("zoomend", () => {
     refreshOceanVisuals().catch((error) => {
       console.error(error);
@@ -3239,6 +3133,7 @@ function registerInteractions(maplibregl) {
 function initializeMapUi() {
   if (state.mapReady || state.mapFailed) return;
   state.mapReady = true;
+  localizeMapControls();
   document.getElementById("map-fallback").hidden = true;
   bodyEl.dataset.mapState = "ready";
   addOceanLayers();
@@ -3301,7 +3196,7 @@ function bindUi() {
   infrastructureToggleEl?.addEventListener("click", () => {
     toggleInfrastructureOverlay().catch((error) => {
       console.error(error);
-      setStatus("The infrastructure overlay could not be loaded. You can still read its guide.", "error");
+      setStatus(msg("The infrastructure overlay could not be loaded. You can still read its guide."), "error");
     });
   });
   viewToggleEl.addEventListener("click", toggleLabelsLayer);
@@ -3310,7 +3205,8 @@ function bindUi() {
       setPalette(button.dataset.palette);
     });
   });
-  mapContainerEl.addEventListener("click", () => {
+  document.getElementById("map-stage").addEventListener("click", (event) => {
+    if (event.target.closest("button, a, #map-toolbar, #map-sidebar-shell, #map-bottom-left")) return;
     if (state.mode === "home") {
       setMode("map");
     }
@@ -3361,7 +3257,7 @@ async function bootstrap() {
     state.oceanConditions = Object.fromEntries((state.oceanManifest.conditions || []).map(entry => {
       const definition = entry.metadata?.condition || entry.condition;
       const condition = {...definition, units: readableUnit(definition?.units)};
-      if (entry.id === "oxygen" && String(condition.depth_mode).startsWith("surface")) condition.label = "Surface dissolved oxygen";
+      if (entry.id === "oxygen" && String(condition.depth_mode).startsWith("surface")) condition.label = msg("Surface dissolved oxygen");
       return [entry.id, {...entry, condition}];
     }));
     state.activeConditionId = state.oceanManifest.default_condition_id || "temperature";
@@ -3370,7 +3266,7 @@ async function bootstrap() {
     state.requestedTimeUtc = currentFrame()?.time_utc ?? null;
   } catch (error) {
     console.error(error);
-    setStatus("Published ocean data could not be loaded. The overview and layer guides are still available.", "warning");
+    setStatus(msg("Published ocean data could not be loaded. The overview and layer guides are still available."), "warning");
   }
   updateLayerToggleUi(); updatePaletteButtons(); updateOverlayFrame();
   ensureInfrastructureManifest().then(() => updateTransparencyPanel()).catch(error => console.error(error));
@@ -3400,7 +3296,7 @@ async function bootstrap() {
       if (state.mapFailed) return;
       const message = String(event.error?.message || "");
       if (/webgl|context lost/i.test(message)) failMap(event.error);
-      else if (/helcom/i.test(message + event.error?.url)) setStatus("A noise layer could not be loaded. Its historical guide is still available.", "warning");
+      else if (/helcom/i.test(message + event.error?.url)) setStatus(msg("A noise layer could not be loaded. Its historical guide is still available."), "warning");
       else {state.satelliteWorking = false; updateFallbackAppearance();}
     });
   } catch (error) {failMap(error);}
@@ -3427,6 +3323,8 @@ async function readStaticJson(relativeUrl) {
 }
 
 function clearOceanVisuals() {
+  state.flowFeatures = [];
+  stopFlowAnimation();
   state.renderWaitCancel?.();
   state.renderedSelectionVersion = null;
   delete mapContainerEl.dataset.frame;
@@ -3471,7 +3369,7 @@ function syncPanelAccess() {
   mapContainerEl.inert = !mapMode || !state.mapReady;
   const toggle = document.getElementById("layers-drawer-toggle");
   toggle.setAttribute("aria-expanded", String(drawer));
-  toggle.textContent = drawer ? "Close layers" : "Layers & info";
+  toggle.textContent = drawer ? msg("Close layers") : msg("Layers & info");
   viewToggleEl.disabled = !state.mapReady;
   noiseToggleEl.disabled = !state.mapReady;
   infrastructureToggleEl.disabled = !state.mapReady;
@@ -3487,6 +3385,7 @@ function closeOverlayGuide() {
 }
 
 function failMap(error) {
+  stopFlowAnimation();
   console.error("Interactive map unavailable", error);
   if (state.mapFailed) return;
   state.mapFailed = true;
@@ -3501,9 +3400,7 @@ function failMap(error) {
   try {failedMap?.remove();} catch (cleanupError) {console.error(cleanupError);}
   bodyEl.dataset.mapState = "unavailable";
   document.getElementById("map-fallback").hidden = false;
-  document.getElementById("map-fallback-title").textContent = "The interactive map is unavailable";
-  document.getElementById("map-fallback-message").textContent = "Your browser could not start or load the map. You can still explore layer guides, dataset details and published timestamps. Try a browser with WebGL enabled to use the interactive map.";
-  document.getElementById("home-map-status").textContent = "Map unavailable in this browser. The layer guides, dataset details and timeline remain available.";
+  renderMapFailureText();
   const preview = document.getElementById("fallback-coastline");
   const url = activeConditionMetadata()?.fallback?.land_mask_url;
   if (url) {preview.src = url; preview.hidden = false; preview.onerror = () => {preview.hidden = true;};}
@@ -3515,23 +3412,23 @@ function failMap(error) {
 function updateDataSummary() {
   const metadata = activeConditionMetadata();
   document.getElementById("home-data-update").textContent = metadata
-    ? `${activeConditionDefinition()?.label} dataset last successful update: ${formatTimestamp(metadata.provenance?.retrieved_at_utc)}. Selected data time: ${formatTimestamp(currentFrame()?.time_utc)}.`
-    : "Published dataset details are currently unavailable.";
-  document.getElementById("home-forecast-status").textContent = forecastArchived(metadata) ? "Archived forecast — not current conditions." : "";
+    ? msg("{layer} dataset last successful update: {updated}. Selected data time: {selected}.", {layer:activeConditionDefinition()?.label,updated:formatTimestamp(metadata.provenance?.retrieved_at_utc),selected:formatTimestamp(currentFrame()?.time_utc)})
+    : msg("Published dataset details are currently unavailable.");
+  document.getElementById("home-forecast-status").textContent = forecastArchived(metadata) ? msg("Archived forecast — not current conditions.") : "";
 }
 
 function metadataRow(root, label, value, href) {
   const row = document.createElement("p");
   const name = document.createElement("strong");
-  name.textContent = `${label}: `;
+  name.textContent = `${msg(label)}: `;
   row.append(name);
   if (href) {
     const link = document.createElement("a");
-    link.textContent = value;
+    link.textContent = msg(value);
     const url = new URL(href, window.location.href);
     if (["https:", "http:"].includes(url.protocol)) link.href = url.href;
     row.append(link);
-  } else row.append(document.createTextNode(value || "Not recorded in the published metadata"));
+  } else row.append(document.createTextNode(msg(value) || msg("Not recorded in the published metadata")));
   root.append(row);
 }
 
@@ -3543,52 +3440,142 @@ function appendLayerMetadata(root, id) {
     const frame = id === state.activeConditionId ? currentFrame() : metadata?.frames?.[nearestFrameIndexForTimestamp(metadata, state.requestedTimeUtc)];
     metadataRow(root, "Source", provenance.source || "Copernicus Marine", product ? `https://data.marine.copernicus.eu/product/${encodeURIComponent(product)}/description` : "https://marine.copernicus.eu/");
     metadataRow(root, "Status", provenance.type || condition.dataset_type);
-    metadataRow(root, "Selected data timestamp (UTC)", frame ? formatTimestamp(frame.time_utc) : "No published frames");
-    metadataRow(root, "Dataset last successful update (retrieval / processing)", formatTimestamp(provenance.retrieved_at_utc));
-    if (metadata) metadataRow(root, "Update note", "This is the dataset export’s recorded retrieval / processing time, not the selected model time or a separate download time for every retained frame.");
-    metadataRow(root, "Product", product);
-    metadataRow(root, "Dataset", provenance.dataset_id || condition.dataset_id);
+    metadataRow(root, msg("Selected data timestamp (UTC)"), frame ? formatTimestamp(frame.time_utc) : msg("No published frames"));
+    metadataRow(root, msg("Dataset last successful update (retrieval / processing)"), formatTimestamp(provenance.retrieved_at_utc));
+    if (metadata) metadataRow(root, msg("Update note"), msg("This is the dataset export’s recorded retrieval / processing time, not the selected model time or a separate download time for every retained frame."));
+    metadataRow(root, msg("Product"), product);
+    metadataRow(root, msg("Dataset"), provenance.dataset_id || condition.dataset_id);
     const surface = String(condition.depth_mode).startsWith("surface");
-    metadataRow(root, "Vertical level", metadata?.depth_label || (surface ? (id === "waves" || id === "seaLevel" ? "Sea surface" : "Shallowest model level (surface); exact depth in metres not recorded") : "Not recorded in published metadata"));
+    metadataRow(root, msg("Vertical level"), metadata?.depth_label || (surface ? (id === "waves" || id === "seaLevel" ? msg("Sea surface") : msg("Shallowest model level (surface); exact depth in metres not recorded")) : msg("Not recorded in published metadata")));
     const q = state.oceanQueryIndices[id];
-    metadataRow(root, "Published spatial grid", q ? `${q.latitudes.length} × ${q.longitudes.length} cells; approximately ${Math.abs(q.latitudes[1]-q.latitudes[0]).toFixed(5)}° latitude × ${Math.abs(q.longitudes[1]-q.longitudes[0]).toFixed(5)}° longitude spacing` : "Grid coordinates accompany the published query index; exact grid not loaded for this layer.");
-    metadataRow(root, "Source time resolution", condition.time_resolution_label + (id === "oxygen" ? " means" : " instantaneous values"));
-    if (metadata) metadataRow(root, "Published time spacing", intervalLabel(metadata));
-    metadataRow(root, "Units", readableUnit(condition.units));
-    metadataRow(root, "Limitations", "Model output, not direct observations. The map simplifies the grid by zoom level; location values are interpolated. Colour-scale bounds stay fixed across published times. Missing or invalid cells are excluded.");
+    metadataRow(root, msg("Published spatial grid"), q ? msg("{rows} × {cols} cells; approximately {lat}° latitude × {lon}° longitude spacing", {rows:q.latitudes.length,cols:q.longitudes.length,lat:Math.abs(q.latitudes[1]-q.latitudes[0]).toFixed(5),lon:Math.abs(q.longitudes[1]-q.longitudes[0]).toFixed(5)}) : msg("Grid coordinates accompany the published query index; exact grid not loaded for this layer."));
+    metadataRow(root, msg("Source time resolution"), msg(condition.time_resolution_label) + (id === "oxygen" ? msg(" means") : msg(" instantaneous values")));
+    if (metadata) metadataRow(root, msg("Published time spacing"), intervalLabel(metadata));
+    metadataRow(root, msg("Units"), readableUnit(condition.units));
+    metadataRow(root, msg("Limitations"), msg("Model output, not direct observations. The map simplifies the grid by zoom level; location values are interpolated. Colour-scale bounds stay fixed across published times. Missing or invalid cells are excluded."));
     if (id === "oxygen") {
       if (condition.depth_mode === "bottom") {
-        metadataRow(root, "Bottom oxygen", "Deepest non-missing value per model water column; depth varies by location. A cell value and model depth are shown when sampled. Daily means; the palette is not a hypoxia classification.");
-        if (frame?.bottom_depth_range_m) metadataRow(root, "Frame model depth range", `${frame.bottom_depth_range_m.min}–${frame.bottom_depth_range_m.max} m`);
-      } else metadataRow(root, "Surface oxygen only", "These existing files do not represent bottom-water hypoxia. Bottom extraction is configured for the next manually triggered update. The sequential palette shows relative concentration, not hypoxia categories; each timestamp represents a daily mean.");
+        metadataRow(root, msg("Bottom oxygen"), msg("Deepest non-missing value per model water column; depth varies by location. A cell value and model depth are shown when sampled. Daily means; the palette is not a hypoxia classification."));
+        if (frame?.bottom_depth_range_m) metadataRow(root, msg("Frame model depth range"), `${frame.bottom_depth_range_m.min}–${frame.bottom_depth_range_m.max} m`);
+      } else metadataRow(root, msg("Surface oxygen only"), msg("These existing files do not represent bottom-water hypoxia. Bottom extraction is configured for the next manually triggered update. The sequential palette shows relative concentration, not hypoxia categories; each timestamp represents a daily mean."));
     }
-    if (id === "seaLevel") metadataRow(root, "Reference level", "The vertical datum is not recorded in this export. Do not interpret these values as a local flood threshold.");
-    if (forecastArchived(metadata)) metadataRow(root, "Forecast window", "Archived forecast — not current conditions.");
+    if (id === "seaLevel") metadataRow(root, msg("Reference level"), msg("The vertical datum is not recorded in this export. Do not interpret these values as a local flood threshold."));
+    if (forecastArchived(metadata)) metadataRow(root, msg("Forecast window"), msg("Archived forecast — not current conditions."));
     return;
   }
   if (id === "noise") {
-    metadataRow(root, "Status", "Historical modelled assessment pressure and reported activity events, 2016–2021");
-    metadataRow(root, "Data timestamp", "Assessment period 2016–2021; continuous noise uses representative model year 2018. Independent of the ocean timeline.");
-    metadataRow(root, "Dataset update time", "Not recorded in the supplied assessment metadata");
-    metadataRow(root, "Vertical / spatial resolution", "Not specified in the supplied layer metadata; not a depth-resolved microphone measurement.");
+    metadataRow(root, "Status", msg("Historical modelled assessment pressure and reported activity events, 2016–2021"));
+    metadataRow(root, msg("Data timestamp"), msg("Assessment period 2016–2021; continuous noise uses representative model year 2018. Independent of the ocean timeline."));
+    metadataRow(root, msg("Dataset update time"), msg("Not recorded in the supplied assessment metadata"));
+    metadataRow(root, msg("Vertical / spatial resolution"), msg("Not specified in the supplied layer metadata; not a depth-resolved microphone measurement."));
     for (const category of NOISE_CATEGORY_ORDER.filter(key => !state.noise.active || state.noise.categories[key])) {
       const layer = NOISE_LAYER_DEFINITIONS[category];
       const url = layer.pointsUrl ? layer.pointsUrl.split("/query")[0] : layer.tiles[0].split("/export")[0] + "/" + ({continuousNoise:201, impulsivePressure:202, ecologicalEffect:223})[category];
-      metadataRow(root, layer.fallbackLabel, `${layer.source} · ${layer.units || "Reported event locations / areas"}`, url);
+      metadataRow(root, layer.fallbackLabel, `${layer.source} · ${layer.units || msg("Reported event locations / areas")}`, url);
     }
-    metadataRow(root, "Limitations", "Pressure and impact indices are not sound levels in dB and must not be added together. Event coverage depends on national reporting.");
+    metadataRow(root, msg("Limitations"), msg("Pressure and impact indices are not sound levels in dB and must not be added together. Event coverage depends on national reporting."));
   } else if (id === "infrastructure") {
     const manifest = state.infrastructure.manifest;
-    metadataRow(root, "Status", "Historical / static curated prototype references; approximate features, not a complete operational inventory.");
-    metadataRow(root, "Dataset update", manifest?.overlay?.updated_at ? `${manifest.overlay.updated_at} (date only; no time recorded)` : "Not recorded");
-    metadataRow(root, "Timestamp / resolution / vertical level", "Static features, independent of the ocean timeline. Uniform spatial resolution and vertical level are not supplied.");
+    metadataRow(root, "Status", msg("Historical / static curated prototype references; approximate features, not a complete operational inventory."));
+    metadataRow(root, msg("Dataset update"), manifest?.overlay?.updated_at ? manifest.overlay.updated_at + msg(" (date only; no time recorded)") : msg("Not recorded"));
+    metadataRow(root, msg("Timestamp / resolution / vertical level"), msg("Static features, independent of the ocean timeline. Uniform spatial resolution and vertical level are not supplied."));
     for (const layer of manifest?.categories || []) {
       if (state.infrastructure.active && !state.infrastructure.categories[layer.id]) continue;
       metadataRow(root, layer.name, `${layer.source_name} · ${layer.license}`, layer.source_url);
     }
-    metadataRow(root, "Units", "Feature locations and areas; no shared numerical unit");
-    metadataRow(root, "Provenance and planned integrations", "Current bundle notes", "./infrastructure/README.md");
-  } else metadataRow(root, "Data", "Published metadata unavailable. The educational guide remains accessible.");
+    metadataRow(root, msg("Units"), msg("Feature locations and areas; no shared numerical unit"));
+    metadataRow(root, msg("Provenance and planned integrations"), msg("Current bundle notes"), "./infrastructure/README.md");
+  } else metadataRow(root, "Data", msg("Published metadata unavailable. The educational guide remains accessible."));
 }
 
 bootstrap();
+
+function renderMapFailureText() {
+  document.getElementById("map-fallback-title").textContent = msg("The interactive map is unavailable");
+  document.getElementById("map-fallback-message").textContent = msg("Your browser could not start or load the map. You can still explore layer guides, dataset details and published timestamps. Try a browser with WebGL enabled to use the interactive map.");
+  document.getElementById("home-map-status").textContent = msg("Map unavailable in this browser. The layer guides, dataset details and timeline remain available.");
+}
+
+// Local presentation only: no data fetching, model updates or background animation.
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+let flowCanvas, flowContext, flowRequest = null, flowLastDraw = 0, flowElapsed = 0;
+function flowPaused() { return state.motionPaused ?? reducedMotion.matches; }
+function stopFlowAnimation() {
+  if (flowRequest !== null) cancelAnimationFrame(flowRequest);
+  flowRequest = null;
+  flowLastDraw = 0;
+  if (flowCanvas) {
+    flowContext?.clearRect(0, 0, flowCanvas.width, flowCanvas.height);
+    flowCanvas.hidden = true;
+  }
+}
+function syncFlowAnimation() {
+  stopFlowAnimation();
+  const visible = state.mapReady && state.mode === "map" && !document.hidden && oceanVectorLayerVisible()
+    && activeRenderModeId() !== "arrows" && state.renderedSelectionVersion === state.selectionVersion && state.flowFeatures?.length;
+  if (!visible) return;
+  if (!flowCanvas || !flowCanvas.isConnected) {
+    flowCanvas = document.createElement("canvas");
+    flowCanvas.id = "ocean-flow-animation";
+    flowCanvas.setAttribute("aria-hidden", "true");
+    mapContainerEl.append(flowCanvas);
+    flowContext = flowCanvas.getContext("2d");
+  }
+  if (!flowContext) return;
+  flowCanvas.hidden = false;
+  flowCanvas.dataset.frame = currentFrame()?.time_utc || "";
+  flowCanvas.dataset.condition = state.activeConditionId;
+  drawFlowAnimation(performance.now());
+}
+function drawFlowAnimation(now) {
+  flowRequest = null;
+  if (!state.mapReady || state.mode !== "map" || document.hidden || state.renderedSelectionVersion !== state.selectionVersion) {stopFlowAnimation(); return;}
+  if (!flowLastDraw || now - flowLastDraw >= 32) {
+    if (!flowPaused() && flowLastDraw) flowElapsed += Math.min(now - flowLastDraw, 100);
+    flowLastDraw = now;
+    const width = mapContainerEl.clientWidth, height = mapContainerEl.clientHeight, ratio = Math.min(devicePixelRatio || 1, 2);
+    if (flowCanvas.width !== Math.round(width*ratio) || flowCanvas.height !== Math.round(height*ratio)) {
+      flowCanvas.width = Math.round(width*ratio); flowCanvas.height = Math.round(height*ratio);
+    }
+    const ctx = flowContext;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    ctx.lineCap = "round";
+    let drawn = 0;
+    state.flowFeatures.forEach((feature, index) => {
+      const [start, end] = feature.geometry.coordinates.map(point => state.map.project(point));
+      const length = Math.hypot(end.x-start.x, end.y-start.y);
+      if (!Number.isFinite(length) || length < 0.1) return;
+      const dx = (end.x-start.x)/length, dy = (end.y-start.y)/length;
+      const phase = ((flowElapsed/2200 + index*0.618) % 1);
+      const x = (start.x+end.x)/2 + (phase-0.5)*36*dx;
+      const y = (start.y+end.y)/2 + (phase-0.5)*36*dy;
+      if (x < -40 || y < -40 || x > width+40 || y > height+40) return;
+      ctx.globalAlpha = 0.5 + 0.5*Math.sin(phase*Math.PI);
+      ctx.beginPath();
+      if (state.activeConditionId === "waves") {
+        // A wave crest moves perpendicular to itself, in the published propagation direction.
+        ctx.moveTo(x-dy*12, y+dx*12);
+        ctx.quadraticCurveTo(x+dx*6, y+dy*6, x+dy*12, y-dx*12);
+      } else {
+        ctx.moveTo(x-dx*12, y-dy*12); ctx.lineTo(x+dx*5, y+dy*5);
+      }
+      ctx.strokeStyle = "#102d3e"; ctx.lineWidth = 6; ctx.stroke();
+      ctx.strokeStyle = "#f4fcff"; ctx.lineWidth = 3; ctx.stroke();
+      drawn++;
+    });
+    ctx.globalAlpha = 1;
+    flowCanvas.dataset.drawn = String(drawn);
+    flowCanvas.dataset.phase = String(flowElapsed);
+  }
+  if (!flowPaused()) flowRequest = requestAnimationFrame(drawFlowAnimation);
+}
+document.addEventListener("visibilitychange", syncFlowAnimation);
+reducedMotion.addEventListener("change", () => {state.motionPaused = undefined; renderOceanRenderModes(); syncFlowAnimation();});
+
+function localizeMapControls() {
+  for (const [selector, label] of [[".maplibregl-ctrl-zoom-in", "Zoom in"], [".maplibregl-ctrl-zoom-out", "Zoom out"], [".maplibregl-ctrl-compass", "Reset north"]]) {
+    const button = mapContainerEl.querySelector(selector);
+    if (button) {button.title = msg(label); button.setAttribute("aria-label", msg(label));}
+  }
+}

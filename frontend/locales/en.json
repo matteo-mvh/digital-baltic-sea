@@ -120,7 +120,8 @@
     "blueRed": "Blue to red",
     "greenRed": "Green to red",
     "grayscale": "Grayscale",
-    "yellowBlue": "Yellow to blue"
+    "yellowBlue": "Yellow to blue",
+    "oxygen": "Oxygen · low to high"
   },
   "map": {
     "currentView": "Current view",
@@ -229,5 +230,375 @@
     "popupMitigation": "Mitigation",
     "popupValueCode": "Value code",
     "dataSource": "Data source"
+  },
+  "guides": {
+    "temperature": {
+      "title": "Surface temperature",
+      "subtitle": "How warm or cold is the water near the surface?",
+      "sections": [
+        {
+          "heading": "What does it show?",
+          "body": "The colours show the temperature in the model’s top water layer. Sunlight, wind and the seasons all change it."
+        },
+        {
+          "heading": "How do we know?",
+          "body": "This map uses a computer model, not direct measurements at every point. Temperature can also be measured by satellites, buoys and ships."
+        },
+        {
+          "heading": "Why does it matter?",
+          "body": "Fish and other sea life need suitable temperatures. Warm water can hold less oxygen. Very warm periods can put animals and plants under stress."
+        },
+        {
+          "heading": "How can the impacts be reduced?",
+          "body": "Cutting greenhouse-gas emissions limits long-term warming. Cleaner water and healthy coastal habitats help sea life cope with heat."
+        },
+        {
+          "heading": "What changes with the climate?",
+          "body": "Warming can make hot periods longer. It can also strengthen [stratification](stratification): water forms layers that mix less easily, so less oxygen may reach deeper water."
+        }
+      ]
+    },
+    "currents": {
+      "title": "Currents",
+      "subtitle": "Where does the water move, and how fast?",
+      "sections": [
+        {
+          "heading": "What does it show?",
+          "body": "Currents are moving seawater. Colours show its speed; direction views show where it moves. Wind and differences in water level, salt and temperature help drive it."
+        },
+        {
+          "heading": "How do we know?",
+          "body": "These values come from a computer model. Instruments on buoys, ships and the seabed can measure currents directly."
+        },
+        {
+          "heading": "Why does it matter?",
+          "body": "Currents carry heat, salt, oxygen and small animals. They also carry pollution from one place to another."
+        },
+        {
+          "heading": "How can the impacts be reduced?",
+          "body": "Reducing pollution at its source keeps currents from spreading it. Better wastewater treatment and plans for oil spills help protect coasts."
+        },
+        {
+          "heading": "What changes with the climate?",
+          "body": "Changes in wind, rainfall and water temperature can change how water moves and where heat and pollution collect."
+        }
+      ]
+    },
+    "salinity": {
+      "title": "Salinity",
+      "subtitle": "How salty is the water?",
+      "sections": [
+        {
+          "heading": "What does it show?",
+          "body": "Salinity means the amount of salt in water. The Baltic mixes fresh river water with saltier water from the North Sea. It is generally saltier towards the west and less salty towards the north and east."
+        },
+        {
+          "heading": "How do we know?",
+          "body": "The map shows model estimates. Researchers also use sensors that measure how easily electricity passes through water to work out its salt content."
+        },
+        {
+          "heading": "Why does it matter?",
+          "body": "Different species need different amounts of salt. Saltier water is heavier and can sit beneath fresher water, making it harder for oxygen to reach the bottom."
+        },
+        {
+          "heading": "How can the impacts be reduced?",
+          "body": "We cannot easily control the sea’s salt content. Protecting a range of habitats gives sea life more places to live as conditions change."
+        },
+        {
+          "heading": "What changes with the climate?",
+          "body": "Rainfall and river flow affect how much fresh water enters the Baltic. Changes can alter its salt content and the mixing of water layers."
+        }
+      ]
+    },
+    "oxygen": {
+      "title": "Surface dissolved oxygen",
+      "subtitle": "These existing files show surface oxygen, not oxygen at the seabed.",
+      "sections": [
+        {
+          "heading": "What does it show?",
+          "body": "Dissolved oxygen is oxygen mixed into water that animals can use to breathe. These files use the model’s top layer; its exact depth was not saved. They cannot show whether bottom water is short of oxygen. Bottom values will be used after the next manual data update."
+        },
+        {
+          "heading": "How do we know?",
+          "body": "The map uses a computer model. Sensors lowered from ships can measure oxygen at different depths. Each time shown here represents a daily average."
+        },
+        {
+          "heading": "Why does it matter?",
+          "body": "Fish and many bottom-dwelling animals need oxygen. When there is too little, they may leave the area or die. The colours show oxygen amounts, not a tested safe-or-unsafe classification."
+        },
+        {
+          "heading": "How can the impacts be reduced?",
+          "body": "Less fertiliser and wastewater reaching the sea means less excess algae. When dead algae break down, they use up oxygen. Wetlands and better wastewater treatment can help."
+        },
+        {
+          "heading": "What changes with the climate?",
+          "body": "Warmer water holds less oxygen. [Stratification](stratification), when water stays in layers that mix poorly, can also stop fresh oxygen reaching the bottom."
+        }
+      ]
+    },
+    "waves": {
+      "title": "Waves",
+      "subtitle": "How rough is the sea?",
+      "sections": [
+        {
+          "heading": "What does it show?",
+          "body": "Colours show [significant wave height](waves): roughly the average height of the highest third of waves. Individual waves can be much higher. Wind, water depth and the shape of the coast affect the waves."
+        },
+        {
+          "heading": "How do we know?",
+          "body": "These are wave-model estimates. Buoys and other instruments can also measure waves. This prototype is for exploration, not a navigation or safety forecast."
+        },
+        {
+          "heading": "Why does it matter?",
+          "body": "Waves move sand, wear away coasts and affect ferries, harbours and work at sea. They also disturb plants and animals in shallow water."
+        },
+        {
+          "heading": "How can the impacts be reduced?",
+          "body": "Protecting dunes and coastal wetlands can reduce damage. Keeping buildings away from exposed shores also lowers risk."
+        },
+        {
+          "heading": "What changes with the climate?",
+          "body": "Changes in storms and sea ice can change wave exposure. With less winter ice, some shores are exposed to waves for longer."
+        }
+      ]
+    },
+    "seaLevel": {
+      "title": "Sea level",
+      "subtitle": "How high is the sea surface?",
+      "sections": [
+        {
+          "heading": "What does it show?",
+          "body": "Sea level is the height of the water compared with a reference level. Wind and air pressure can raise or lower it. The exact reference level was not saved in this export."
+        },
+        {
+          "heading": "How do we know?",
+          "body": "This layer is intended for model values when published. Water-level gauges at the coast can measure sea level directly. Missing data are shown as unavailable."
+        },
+        {
+          "heading": "Why does it matter?",
+          "body": "High water can flood low coasts, especially during storms. These prototype values are not local flood warnings."
+        },
+        {
+          "heading": "How can the impacts be reduced?",
+          "body": "Leave space for water, protect coastal wetlands and plan drainage and buildings for future water levels."
+        },
+        {
+          "heading": "What changes with the climate?",
+          "body": "The global sea level is rising. Local change around the Baltic also depends on whether the land is rising, so the risk differs between coasts."
+        }
+      ]
+    },
+    "noise": {
+      "title": "Underwater noise",
+      "subtitle": "Human-made sound can disturb life below the surface.",
+      "sections": [
+        {
+          "heading": "What does it show?",
+          "body": "This layer shows earlier assessments of noise and reported loud events, such as driving piles into the seabed. It is not a live microphone feed."
+        },
+        {
+          "heading": "How do we know?",
+          "body": "The map combines model assessments and activity reports. Underwater microphones can measure sound directly, but that is not what these map colours show."
+        },
+        {
+          "heading": "Why does it matter?",
+          "body": "Many animals use sound to find food, communicate and move around. Extra noise can hide these sounds or disturb feeding and breeding."
+        },
+        {
+          "heading": "How can the impacts be reduced?",
+          "body": "Quieter ships, lower speeds in sensitive areas and quieter construction methods can help. Timing noisy work around breeding seasons also matters."
+        },
+        {
+          "heading": "What changes with the climate?",
+          "body": "Warming does not directly make this human noise. But animals already stressed by heat or oxygen loss may have more difficulty coping with noise too."
+        }
+      ]
+    },
+    "infrastructure": {
+      "title": "Coastal and marine infrastructure",
+      "subtitle": "Where transport, energy and coastal life meet the sea.",
+      "sections": [
+        {
+          "heading": "What does it show?",
+          "body": "The layer shows selected ports, shipping routes, cables, pipelines, wind farms and power plants. It also gives a broad picture of how nearby land is used."
+        },
+        {
+          "heading": "How do we know?",
+          "body": "These are collected reference records. Positions may be approximate and the list is not complete. This layer stays the same when you change the ocean timeline."
+        },
+        {
+          "heading": "Why does it matter?",
+          "body": "These places support transport and energy, but building and operating them can disturb habitats or add pollution."
+        },
+        {
+          "heading": "How can the impacts be reduced?",
+          "body": "Careful siting, cleaner ports and protection of sensitive habitats can reduce damage. Plan projects with marine life in mind from the start."
+        },
+        {
+          "heading": "What changes with the climate?",
+          "body": "Rising water levels and changing coastlines affect buildings and transport. New offshore energy projects also need space and careful planning."
+        }
+      ]
+    },
+    "oxygenBottom": {
+      "title": "Bottom dissolved oxygen",
+      "subtitle": "Oxygen in the deepest available water cell at each place in the model.",
+      "body": "This layer takes the deepest non-missing oxygen value at each location. The depth changes from place to place and is shown when you select a cell. It is a model estimate near the bottom, not a direct measurement at the seabed."
+    }
+  },
+  "messages": {
+    "Available": "Available",
+    "No data": "No data",
+    "Timestamp unavailable": "Timestamp unavailable",
+    "Surface dissolved oxygen": "Surface dissolved oxygen",
+    "Bottom dissolved oxygen": "Bottom dissolved oxygen",
+    "Ocean condition": "Ocean condition",
+    "No published time steps for this layer": "No published time steps for this layer",
+    "Choose another layer to browse available data.": "Choose another layer to browse available data.",
+    ". Nearest available time used.": ". Nearest available time used.",
+    "Archived forecast — not current conditions.": "Archived forecast — not current conditions.",
+    "Modelled analysis / forecast; not a direct observation.": "Modelled analysis / forecast; not a direct observation.",
+    "This layer has no published data.": "This layer has no published data.",
+    "Dataset last successful update: {time}": "Dataset last successful update: {time}",
+    "Loading location value…": "Loading location value…",
+    "Tap the map to sample an interpolated water value.": "Tap the map to sample an interpolated water value.",
+    "Location sampling needs the interactive map.": "Location sampling needs the interactive map.",
+    "Loading selected frame…": "Loading selected frame…",
+    "This frame could not be loaded. Choose another time or layer.": "This frame could not be loaded. Choose another time or layer.",
+    "{count} invalid values excluded; source values have not been clamped.": "{count} invalid values excluded; source values have not been clamped.",
+    "Published data are unavailable for this layer. Its explanatory guide remains available.": "Published data are unavailable for this layer. Its explanatory guide remains available.",
+    "Colour scale · {palette}": "Colour scale · {palette}",
+    "Frame range contains invalid negative values": "Frame range contains invalid negative values",
+    "Frame data range: {range}": "Frame data range: {range}",
+    "Frame data range unavailable": "Frame data range unavailable",
+    "Sources and dataset context": "Sources and dataset context",
+    "Data are updated manually in this prototype. All times are UTC.": "Data are updated manually in this prototype. All times are UTC.",
+    "Data are updated manually in this prototype.": "Data are updated manually in this prototype.",
+    "Close layers": "Close layers",
+    "Layers & info": "Layers & info",
+    "The interactive map is unavailable": "The interactive map is unavailable",
+    "Your browser could not start or load the map. You can still explore layer guides, dataset details and published timestamps. Try a browser with WebGL enabled to use the interactive map.": "Your browser could not start or load the map. You can still explore layer guides, dataset details and published timestamps. Try a browser with WebGL enabled to use the interactive map.",
+    "Map unavailable in this browser. The layer guides, dataset details and timeline remain available.": "Map unavailable in this browser. The layer guides, dataset details and timeline remain available.",
+    "Map unavailable. Layer guides and published timestamps remain available.": "Map unavailable. Layer guides and published timestamps remain available.",
+    "Published dataset details are currently unavailable.": "Published dataset details are currently unavailable.",
+    "{layer} dataset last successful update: {updated}. Selected data time: {selected}.": "{layer} dataset last successful update: {updated}. Selected data time: {selected}.",
+    "No valid water value at this location": "No valid water value at this location",
+    "Value unavailable for this frame": "Value unavailable for this frame",
+    " at {depth} m model depth (selected cell)": " at {depth} m model depth (selected cell)",
+    "One published time step": "One published time step",
+    "between published frames": "between published frames",
+    "(irregular)": "(irregular)",
+    "layer": "layer",
+    "layers": "layers",
+    "Oxygen · low to high": "Oxygen · low to high",
+    "Arrows": "Arrows",
+    "Height + streaks": "Height + streaks",
+    "Streaks only": "Streaks only",
+    "Speed + streaks": "Speed + streaks",
+    "Current field": "Current field",
+    "Wave field": "Wave field",
+    "Choose language": "Choose language",
+    "Choose colour scale": "Choose colour scale",
+    "Layer colour palettes": "Layer colour palettes",
+    "Interactive Baltic Sea map": "Interactive Baltic Sea map",
+    "Map navigation": "Map navigation",
+    "Layer guide": "Layer guide",
+    "Overlay guide": "Overlay guide",
+    "Close overlay guide": "Close overlay guide",
+    "Close": "Close",
+    "Layers and dataset details": "Layers and dataset details",
+    "Map overlays": "Map overlays",
+    "Switch major overlays on the map. Active overlays show their details on the map itself.": "Switch major overlays on the map. Active overlays show their details on the map itself.",
+    "Other overlays": "Other overlays",
+    "Selected data time (UTC)": "Selected data time (UTC)",
+    "Colour scale: fixed across published times. Frame data range is shown separately.": "Colour scale: fixed across published times. Frame data range is shown separately.",
+    "Baltic Sea explorer": "Baltic Sea explorer",
+    "Loading the interactive map…": "Loading the interactive map…",
+    "Layer guides and dataset details remain available while the map loads.": "Layer guides and dataset details remain available while the map loads.",
+    "The static coastline, when available, is a reference outline and does not show the selected data frame.": "The static coastline, when available, is a reference outline and does not show the selected data frame.",
+    "Coastline mask from the published Baltic model grid; static reference only": "Coastline mask from the published Baltic model grid; static reference only",
+    "Map rendering and location sampling are unavailable. You can select ocean layers to browse timestamps and use the information buttons to read guides.": "Map rendering and location sampling are unavailable. You can select ocean layers to browse timestamps and use the information buttons to read guides.",
+    "Copernicus Marine — used model data": "Copernicus Marine — used model data",
+    "HELCOM — used historical assessments": "HELCOM — used historical assessments",
+    "Infrastructure — curated reference bundle": "Infrastructure — curated reference bundle",
+    "AIS vessel feed — planned integration": "AIS vessel feed — planned integration",
+    "EMODnet services — planned integration; current bundle uses selected references": "EMODnet services — planned integration; current bundle uses selected references",
+    "About {layer}": "About {layer}",
+    "Language could not be loaded. Please try again.": "Language could not be loaded. Please try again.",
+    "Source": "Source",
+    "Status": "Status",
+    "Selected data timestamp (UTC)": "Selected data timestamp (UTC)",
+    "No published frames": "No published frames",
+    "Dataset last successful update (retrieval / processing)": "Dataset last successful update (retrieval / processing)",
+    "Update note": "Update note",
+    "This is the dataset export’s recorded retrieval / processing time, not the selected model time or a separate download time for every retained frame.": "This is the dataset export’s recorded retrieval / processing time, not the selected model time or a separate download time for every retained frame.",
+    "Product": "Product",
+    "Dataset": "Dataset",
+    "Vertical level": "Vertical level",
+    "Sea surface": "Sea surface",
+    "Shallowest model level (surface); exact depth in metres not recorded": "Shallowest model level (surface); exact depth in metres not recorded",
+    "Not recorded in published metadata": "Not recorded in published metadata",
+    "Published spatial grid": "Published spatial grid",
+    "Grid coordinates accompany the published query index; exact grid not loaded for this layer.": "Grid coordinates accompany the published query index; exact grid not loaded for this layer.",
+    "{rows} × {cols} cells; approximately {lat}° latitude × {lon}° longitude spacing": "{rows} × {cols} cells; approximately {lat}° latitude × {lon}° longitude spacing",
+    "Source time resolution": "Source time resolution",
+    "Published time spacing": "Published time spacing",
+    " means": " means",
+    " instantaneous values": " instantaneous values",
+    "Hourly": "Hourly",
+    "Daily": "Daily",
+    "3-hourly": "3-hourly",
+    "Units": "Units",
+    "Limitations": "Limitations",
+    "Model output, not direct observations. The map simplifies the grid by zoom level; location values are interpolated. Colour-scale bounds stay fixed across published times. Missing or invalid cells are excluded.": "Model output, not direct observations. The map simplifies the grid by zoom level; location values are interpolated. Colour-scale bounds stay fixed across published times. Missing or invalid cells are excluded.",
+    "Bottom oxygen": "Bottom oxygen",
+    "Deepest non-missing value per model water column; depth varies by location. A cell value and model depth are shown when sampled. Daily means; the palette is not a hypoxia classification.": "Deepest non-missing value per model water column; depth varies by location. A cell value and model depth are shown when sampled. Daily means; the palette is not a hypoxia classification.",
+    "Frame model depth range": "Frame model depth range",
+    "Surface oxygen only": "Surface oxygen only",
+    "These existing files do not represent bottom-water hypoxia. Bottom extraction is configured for the next manually triggered update. The sequential palette shows relative concentration, not hypoxia categories; each timestamp represents a daily mean.": "These existing files do not represent bottom-water hypoxia. Bottom extraction is configured for the next manually triggered update. The sequential palette shows relative concentration, not hypoxia categories; each timestamp represents a daily mean.",
+    "Reference level": "Reference level",
+    "The vertical datum is not recorded in this export. Do not interpret these values as a local flood threshold.": "The vertical datum is not recorded in this export. Do not interpret these values as a local flood threshold.",
+    "Forecast window": "Forecast window",
+    "Historical modelled assessment pressure and reported activity events, 2016–2021": "Historical modelled assessment pressure and reported activity events, 2016–2021",
+    "Data timestamp": "Data timestamp",
+    "Assessment period 2016–2021; continuous noise uses representative model year 2018. Independent of the ocean timeline.": "Assessment period 2016–2021; continuous noise uses representative model year 2018. Independent of the ocean timeline.",
+    "Dataset update time": "Dataset update time",
+    "Not recorded in the supplied assessment metadata": "Not recorded in the supplied assessment metadata",
+    "Vertical / spatial resolution": "Vertical / spatial resolution",
+    "Not specified in the supplied layer metadata; not a depth-resolved microphone measurement.": "Not specified in the supplied layer metadata; not a depth-resolved microphone measurement.",
+    "Reported event locations / areas": "Reported event locations / areas",
+    "Pressure and impact indices are not sound levels in dB and must not be added together. Event coverage depends on national reporting.": "Pressure and impact indices are not sound levels in dB and must not be added together. Event coverage depends on national reporting.",
+    "Historical / static curated prototype references; approximate features, not a complete operational inventory.": "Historical / static curated prototype references; approximate features, not a complete operational inventory.",
+    "Dataset update": "Dataset update",
+    " (date only; no time recorded)": " (date only; no time recorded)",
+    "Not recorded": "Not recorded",
+    "Timestamp / resolution / vertical level": "Timestamp / resolution / vertical level",
+    "Static features, independent of the ocean timeline. Uniform spatial resolution and vertical level are not supplied.": "Static features, independent of the ocean timeline. Uniform spatial resolution and vertical level are not supplied.",
+    "Feature locations and areas; no shared numerical unit": "Feature locations and areas; no shared numerical unit",
+    "Provenance and planned integrations": "Provenance and planned integrations",
+    "Current bundle notes": "Current bundle notes",
+    "Data": "Data",
+    "Published metadata unavailable. The educational guide remains accessible.": "Published metadata unavailable. The educational guide remains accessible.",
+    "Not recorded in the published metadata": "Not recorded in the published metadata",
+    "Speed + particles": "Speed + particles",
+    "Particles only": "Particles only",
+    "Play animation": "Play animation",
+    "Pause animation": "Pause animation",
+    "Motion shows direction at the selected time; animation speed is illustrative. It does not advance the timeline.": "Motion shows direction at the selected time; animation speed is illustrative. It does not advance the timeline.",
+    "Modelled analysis and forecast": "Modelled analysis and forecast",
+    "15-minute": "15-minute",
+    "This infrastructure category could not be loaded. Its source details remain available.": "This infrastructure category could not be loaded. Its source details remain available.",
+    "This noise category could not be loaded. Its historical guide remains available.": "This noise category could not be loaded. Its historical guide remains available.",
+    "The infrastructure overlay could not be loaded. You can still read its guide.": "The infrastructure overlay could not be loaded. You can still read its guide.",
+    "Published ocean data could not be loaded. The overview and layer guides are still available.": "Published ocean data could not be loaded. The overview and layer guides are still available.",
+    "A noise layer could not be loaded. Its historical guide is still available.": "A noise layer could not be loaded. Its historical guide is still available.",
+    "{layer} is not configured in the current manifest.": "{layer} is not configured in the current manifest.",
+    "Zoom in": "Zoom in",
+    "Zoom out": "Zoom out",
+    "Reset north": "Reset north",
+    "No published data for this layer": "No published data for this layer",
+    "Digital Baltic Sea — Explore the Baltic": "Digital Baltic Sea — Explore the Baltic",
+    "Deepest available model level at each location (depth varies)": "Deepest available model level at each location (depth varies)",
+    "Direction only — no colour field": "Direction only — no colour field"
   }
 }

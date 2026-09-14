@@ -47,3 +47,18 @@ test('manual update boundary remains in place', () => {
   const browser = readFileSync(new URL('../frontend/app.js',import.meta.url),'utf8');
   assert.doesNotMatch(browser,/api\.github\.com|workflow_dispatch|update_copernicus|setInterval\s*\(/);
 });
+
+test('all enabled languages cover the complete interface and retain message parameters', () => {
+  const readLocale = code => JSON.parse(readFileSync(new URL(`../frontend/locales/${code}.json`,import.meta.url),'utf8'));
+  const flatten = (value, prefix = '') => Object.entries(value).flatMap(([key, item]) =>
+    typeof item === 'object' ? flatten(item, `${prefix}${key}.`) : [[`${prefix}${key}`, item]]);
+  const english = Object.fromEntries(flatten(readLocale('en')));
+  for (const locale of ['de','da']) {
+    const translated = Object.fromEntries(flatten(readLocale(locale)));
+    assert.deepEqual(Object.keys(translated).sort(), Object.keys(english).sort());
+    for (const [key, value] of Object.entries(translated)) {
+      assert.ok(typeof value === 'string' && value.trim(), `${locale}: ${key}`);
+      assert.deepEqual(value.match(/\{\w+\}/g)?.sort() || [], english[key].match(/\{\w+\}/g)?.sort() || [], `${locale}: ${key}`);
+    }
+  }
+});

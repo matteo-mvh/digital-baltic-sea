@@ -1,8 +1,8 @@
 // Presentation rules for existing static data. No updater or remote service calls.
-export function formatTimestamp(value) {
+export function formatTimestamp(value, locale = 'en-GB') {
   const date = value ? new Date(value) : null;
   if (!date || !Number.isFinite(date.getTime())) return 'Timestamp unavailable';
-  return new Intl.DateTimeFormat('en-GB', {
+  return new Intl.DateTimeFormat(locale, {
     year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'UTC'
   }).format(date) + ' UTC';
 }

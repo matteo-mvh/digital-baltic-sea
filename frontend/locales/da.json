@@ -1,1 +1,604 @@
-{}
+{
+  "common": {
+    "comingSoon": "Kommer snart",
+    "live": "Tilgængelig"
+  },
+  "nav": {
+    "platformTag": "Offentlig prototype",
+    "platformName": "Digital Baltic Sea",
+    "exploreMap": "Udforsk kortet",
+    "backToOverview": "Tilbage til oversigten",
+    "languageCode": "DA"
+  },
+  "hero": {
+    "kicker": "Digital Baltic Sea",
+    "title": "Udforsk, hvad der sker over, på og under vandet.",
+    "subtitle": "Udforsk Østersøens forandringer gennem videnskabelige modeller, tidligere vurderinger og miljødata.",
+    "body": "Denne offentlige prototype forbinder havforskning, letforståelige forklaringer og et interaktivt kort. Det gør Østersøen lettere at forstå som et levende hav.",
+    "cta": "Udforsk kortet",
+    "pillTemperature": "Temperatur",
+    "pillInfrastructure": "Infrastruktur",
+    "pillNoise": "Støj"
+  },
+  "preview": {
+    "kicker": "Kortvisning",
+    "title": "Hele Østersøen",
+    "body": "Udforsk offentliggjorte modeldata for Østersøen og historiske miljøoplysninger.",
+    "cta": "Udforsk kortet"
+  },
+  "sections": {
+    "whatKicker": "Hvad ser du her?",
+    "whatTitle": "Kortlagene bygger på forskellige former for viden.",
+    "layersKicker": "Hvad kan du udforske?",
+    "layersTitle": "En platform for alle, der vil lære Østersøen at kende.",
+    "layersBody": "Kortet viser tilgængelige havdata og historiske baggrundslag. Planlagte tilføjelser er mærket „Kommer snart“.",
+    "accessibilityKicker": "Tilgængelighed",
+    "accessibilityTitle": "Vælg en farveskala for temperatur, der er let at aflæse.",
+    "accessibilityBody": "Kun farverne ændres, mens data forbliver de samme. Det gør sammenligning lettere, også ved forskelle i farvesyn.",
+    "whyKicker": "Hvorfor Østersøen?",
+    "whyTitle": "Et næsten lukket, forbundet og sårbart hav.",
+    "sourcesKicker": "Hvor kommer oplysningerne fra?",
+    "sourcesTitle": "De videnskabelige kilder er lette at finde."
+  },
+  "categories": {
+    "observed": {
+      "title": "Målt",
+      "body": "Registreret med instrumenter, målestationer eller undersøgelser."
+    },
+    "modelled": {
+      "title": "Modelleret",
+      "body": "Videnskabelige modeller beregner havets tilstand på det valgte tidspunkt."
+    },
+    "satellite": {
+      "title": "Satellit",
+      "body": "Miljøoplysninger målt fra rummet."
+    },
+    "historical": {
+      "title": "Historisk",
+      "body": "Tidligere målinger viser, hvordan havet ændrer sig."
+    }
+  },
+  "why": {
+    "enclosed": {
+      "title": "Næsten lukket",
+      "body": "Kun lidt vand udskiftes. Derfor kan ændringer vare ved i årevis."
+    },
+    "gradient": {
+      "title": "Store forskelle",
+      "body": "Saltindhold, temperatur og levesteder varierer meget i Østersøen."
+    },
+    "pressure": {
+      "title": "Menneskelig påvirkning",
+      "body": "Skibsfart, næringsstoffer, forurening og fiskeri præger havet."
+    },
+    "change": {
+      "title": "Klimaforandringer",
+      "body": "Opvarmning, iltmangel og ændringer i havets liv er allerede synlige."
+    }
+  },
+  "roadmap": {
+    "ocean": "Havets tilstand",
+    "life": "Livet i havet",
+    "impact": "Menneskelig påvirkning",
+    "climate": "Klima og forandring"
+  },
+  "layers": {
+    "temperature": "Overfladetemperatur",
+    "infrastructure": "Infrastruktur ved kysten og på havet",
+    "underwaterNoise": "Undervandsstøj",
+    "currents": "Havstrømme",
+    "salinity": "Saltindhold",
+    "oxygen": "Opløst ilt",
+    "waves": "Bølger",
+    "seaLevel": "Vandstand",
+    "biodiversity": "Biodiversitet",
+    "eelgrass": "Ålegræs",
+    "fish": "Fisk",
+    "mammals": "Havpattedyr",
+    "plankton": "Plankton",
+    "ships": "Skibspositioner i realtid",
+    "shippingNoise": "Skibsstøj",
+    "nutrients": "Forurening med næringsstoffer",
+    "toxins": "Giftstoffer og forurening",
+    "microplastics": "Mikroplast",
+    "fishingPressure": "Fiskeripres",
+    "historicalChange": "Historiske forandringer",
+    "heatwaves": "Hedebølger i havet",
+    "hypoxia": "Iltmangel",
+    "futureScenarios": "Fremtidsscenarier"
+  },
+  "sources": {
+    "copernicus": "Copernicus Marine",
+    "helcom": "HELCOM",
+    "emodnet": "EMODnet",
+    "ais": "AIS-skibsdata",
+    "future": "Flere datakilder, når nye kortlag tilføjes"
+  },
+  "accessibility": {
+    "scaleButton": "Farveskala",
+    "temperatureColours": "Kortlagets farver",
+    "blueRed": "Blå til rød",
+    "greenRed": "Grøn til rød",
+    "grayscale": "Gråtoner",
+    "yellowBlue": "Gul til blå",
+    "oxygen": "Ilt · lav til høj"
+  },
+  "map": {
+    "currentView": "Aktuel visning",
+    "source": "Kilde",
+    "timeline": "Prognoseperiode",
+    "layers": "Kortlag",
+    "layersCaption": "Tilgængelige lag kan udforskes nu. Planlagte lag er mærket „Kommer snart“.",
+    "noiseCategories": "Støjkategorier",
+    "noiseCaption": "HELCOM-vurderinger og indberettede korte støjhændelser vises som baggrund. Det er ikke aktuelle lydmålinger.",
+    "infrastructureCategories": "Infrastrukturkategorier",
+    "infrastructureCaption": "Havne, energianlæg, ruter og arealanvendelse forbliver uændrede, når du ændrer tidspunktet for havdata.",
+    "hideLabels": "Skjul stednavne",
+    "showLabels": "Vis stednavne",
+    "closestToNow": "Nærmeste tilgængelige tidspunkt til nu",
+    "hoursAhead": "{count} timer fremme",
+    "hoursBehind": "{count} timer før nu",
+    "temperatureUnavailable": "Overfladetemperatur: ingen vandcelle",
+    "selectedCoordinates": "{lat} - {lon}",
+    "modelledNote": "Modelleret – ikke målt direkte",
+    "noOverlayTitle": "Kortvisning",
+    "noOverlaySubtitle": "Vælg et lag for at udforske Østersøen"
+  },
+  "status": {
+    "loadingMetadata": "Indlæser offentliggjorte dataoplysninger…",
+    "loadingGrid": "Indlæser offentliggjort datagitter…",
+    "loadingMap": "Indlæser kortet…",
+    "fallbackMap": "Baggrundskortet kunne ikke indlæses. Det offentliggjorte kystomrids bruges, hvis det er tilgængeligt.",
+    "loadingInfrastructure": "Indlæser infrastruktur…"
+  },
+  "transparency": {
+    "summaryOnline": "Copernicus Marine + EOX Cloudless + OSM-kortlag",
+    "summaryOnlineSimple": "Copernicus Marine + EOX Cloudless + OSM-kortlag",
+    "summaryOffline": "Copernicus Marine + lokalt kystomrids",
+    "temperatureDetail": "Modelleret havoverfladetemperatur",
+    "noiseSummary": "HELCOM / ICES – modellerede og indberettede data om undervandsstøj",
+    "noiseDetail": "Vurderet støjbelastning og indberettede korte støjhændelser",
+    "noisePeriod": "Vurderingsperiode: {value}",
+    "noiseCaution": "Vedvarende støj og korte støjhændelser vises hver for sig og lægges ikke sammen til ét tal.",
+    "noiseReporting": "Listen over hændelser afhænger af, hvor fuldstændige landenes indberetninger er.",
+    "infrastructureSummary": "Samlet infrastrukturprototype for Østersøen",
+    "infrastructureDetail": "Åbne eksempeldata om havne, energianlæg, ruter og arealanvendelse",
+    "updated": "Seneste opdatering: {value}",
+    "forecastWindow": "Prognoseperiode: {start} til {end}",
+    "infrastructureSource": "Infrastrukturlag: {value}",
+    "infrastructureLicense": "Licensoplysning for infrastruktur: {value}"
+  },
+  "infrastructure": {
+    "legendTitle": "Signaturforklaring",
+    "ports": "Havne",
+    "powerPlants": "Kraftværker",
+    "windFarms": "Havvindmølleparker",
+    "cables": "Søkabler",
+    "pipelines": "Rørledninger",
+    "shipping": "Skibsruter",
+    "landUse": "Generel arealanvendelse",
+    "stylePoint": "Punkter",
+    "styleLine": "Tynde linjer",
+    "styleDashed": "Stiplede linjer",
+    "stylePolygon": "Områder",
+    "styleCorridor": "Trafikkorridorer",
+    "styleMutedFill": "Dæmpede landområder",
+    "dataSource": "Datakilde",
+    "country": "Land",
+    "type": "Type",
+    "importance": "Rolle",
+    "energySource": "Energikilde",
+    "capacity": "Kapacitet",
+    "status": "Status",
+    "turbines": "Vindmøller",
+    "connection": "Forbindelse",
+    "role": "Rolle",
+    "traffic": "Trafik",
+    "context": "Baggrund",
+    "prototypeSource": "Samlet prototype med åbne data",
+    "prototypeLicense": "Forskellige åbne licenser; se dokumentationen.",
+    "staticContext": "Statisk baggrundslag"
+  },
+  "noise": {
+    "continuousNoise": "Vedvarende støj",
+    "impulsiveEvents": "Støjhændelser",
+    "impulsivePressure": "Belastning fra korte støjhændelser",
+    "ecologicalEffect": "Støjpåvirkning af dyr, der bevæger sig",
+    "assessmentPeriod": "HELCOM-vurderinger – 2016–2021",
+    "legendTitle": "Støjforklaring",
+    "legendContinuous": "HELCOM-belastning fra vedvarende støj",
+    "legendImpulsivePressure": "HELCOM-belastning fra korte støjhændelser",
+    "legendImpact": "Mulig påvirkning af dyr, der bevæger sig",
+    "legendEvents": "Indberettede korte støjhændelser",
+    "legendNoDb": "Vises ikke i dB",
+    "legendPressureIndex": "Belastningsindeks",
+    "legendImpactIndex": "Påvirkningsindeks",
+    "legendReportedEvent": "Indberettet hændelse",
+    "eventPileDriving": "Pæleramning",
+    "eventSeismic": "Seismiske målinger / luftkanoner",
+    "eventExplosion": "Eksplosioner",
+    "eventSonar": "Sonar / skræmmelyde",
+    "eventOther": "Andre korte støjhændelser",
+    "eventUnknown": "Ukendt hændelse",
+    "popupReportedEvent": "Indberettet kort støjhændelse",
+    "popupUnknownType": "Ukendt hændelsestype",
+    "popupEvent": "Hændelse",
+    "popupCountry": "Land",
+    "popupYear": "År",
+    "popupStart": "Start",
+    "popupEnd": "Slut",
+    "popupMitigation": "Afværgetiltag",
+    "popupValueCode": "Værdikode",
+    "dataSource": "Datakilde"
+  },
+  "guides": {
+    "temperature": {
+      "title": "Overfladetemperatur",
+      "subtitle": "Hvor varmt eller koldt er vandet nær overfladen?",
+      "sections": [
+        {
+          "heading": "Hvad viser laget?",
+          "body": "Farverne viser temperaturen i modellens øverste vandlag. Sol, vind og årstider ændrer den."
+        },
+        {
+          "heading": "Hvordan ved vi det?",
+          "body": "Kortet bruger en computermodel, ikke direkte målinger overalt. Satellitter, bøjer og skibe kan også måle temperaturen."
+        },
+        {
+          "heading": "Hvorfor er det vigtigt?",
+          "body": "Fisk og andet liv i havet har brug for passende temperaturer. Varmt vand kan indeholde mindre ilt. Meget varme perioder kan belaste dyr og planter."
+        },
+        {
+          "heading": "Hvordan kan påvirkningerne mindskes?",
+          "body": "Færre drivhusgasser begrænser opvarmningen på lang sigt. Renere vand og sunde levesteder ved kysten hjælper havets liv med at klare varmen."
+        },
+        {
+          "heading": "Hvad ændrer sig med klimaet?",
+          "body": "Opvarmning kan forlænge varme perioder. Den kan også forstærke [lagdeling](stratification): vandet danner lag, som blandes dårligere. Så kan mindre ilt nå ned i dybere vand."
+        }
+      ]
+    },
+    "currents": {
+      "title": "Havstrømme",
+      "subtitle": "Hvor bevæger vandet sig hen, og hvor hurtigt?",
+      "sections": [
+        {
+          "heading": "Hvad viser laget?",
+          "body": "Havstrømme er havvand i bevægelse. Farver viser hastigheden; retningsvisninger viser, hvor det bevæger sig hen. Vind og forskelle i vandstand, salt og temperatur driver strømmen."
+        },
+        {
+          "heading": "Hvordan ved vi det?",
+          "body": "Værdierne kommer fra en computermodel. Instrumenter på bøjer, skibe og havbunden kan måle strømme direkte."
+        },
+        {
+          "heading": "Hvorfor er det vigtigt?",
+          "body": "Strømme flytter varme, salt, ilt og små dyr. De kan også føre forurening fra ét sted til et andet."
+        },
+        {
+          "heading": "Hvordan kan påvirkningerne mindskes?",
+          "body": "Mindre forurening ved kilden begrænser spredning med strømmen. Bedre spildevandsrensning og beredskab mod olieudslip hjælper med at beskytte kysterne."
+        },
+        {
+          "heading": "Hvad ændrer sig med klimaet?",
+          "body": "Ændringer i vind, regn og vandtemperatur kan ændre strømmen og de steder, hvor varme og forurening samler sig."
+        }
+      ]
+    },
+    "salinity": {
+      "title": "Saltindhold",
+      "subtitle": "Hvor salt er vandet?",
+      "sections": [
+        {
+          "heading": "Hvad viser laget?",
+          "body": "Saltindhold beskriver mængden af salt i vandet. Østersøen blander ferskt flodvand med saltere vand fra Nordsøen. Vandet er generelt saltere mod vest og mindre salt mod nord og øst."
+        },
+        {
+          "heading": "Hvordan ved vi det?",
+          "body": "Kortet viser modelberegninger. Forskere bruger også sensorer, der måler, hvor godt vand leder strøm, til at bestemme saltindholdet."
+        },
+        {
+          "heading": "Hvorfor er det vigtigt?",
+          "body": "Forskellige arter har brug for forskelligt saltindhold. Saltere vand er tungere og kan ligge under ferskere vand, så ilt har sværere ved at nå bunden."
+        },
+        {
+          "heading": "Hvordan kan påvirkningerne mindskes?",
+          "body": "Vi kan ikke let styre havets saltindhold. Beskyttelse af forskellige levesteder giver havets liv flere steder at leve, når forholdene ændrer sig."
+        },
+        {
+          "heading": "Hvad ændrer sig med klimaet?",
+          "body": "Regn og floder påvirker mængden af ferskvand i Østersøen. Ændringer kan påvirke saltindholdet og blandingen af vandlag."
+        }
+      ]
+    },
+    "oxygen": {
+      "title": "Opløst ilt ved overfladen",
+      "subtitle": "Disse eksisterende filer viser ilt ved overfladen, ikke ved havbunden.",
+      "sections": [
+        {
+          "heading": "Hvad viser laget?",
+          "body": "Opløst ilt er ilt i vandet, som dyr kan bruge til at ånde. Disse filer viser modellens øverste lag; den præcise dybde blev ikke gemt. De viser ikke, om bundvandet mangler ilt. Bundværdier bruges efter næste manuelle dataopdatering."
+        },
+        {
+          "heading": "Hvordan ved vi det?",
+          "body": "Kortet bruger en computermodel. Sensorer, der sænkes fra skibe, kan måle ilt ved forskellige dybder. Hvert vist tidspunkt er her et døgnmiddel."
+        },
+        {
+          "heading": "Hvorfor er det vigtigt?",
+          "body": "Fisk og mange bunddyr har brug for ilt. Hvis der er for lidt, kan de forlade området eller dø. Farverne viser iltmængder, ikke en afprøvet inddeling i sikkert eller farligt."
+        },
+        {
+          "heading": "Hvordan kan påvirkningerne mindskes?",
+          "body": "Mindre gødning og spildevand i havet giver færre overskydende alger. Når døde alger nedbrydes, bruges der ilt. Vådområder og bedre spildevandsrensning kan hjælpe."
+        },
+        {
+          "heading": "Hvad ændrer sig med klimaet?",
+          "body": "Varmere vand indeholder mindre ilt. [Lagdeling](stratification) betyder, at vandet ligger i lag, som blandes dårligt. Det kan også hindre frisk ilt i at nå bunden."
+        }
+      ]
+    },
+    "waves": {
+      "title": "Bølger",
+      "subtitle": "Hvor uroligt er havet?",
+      "sections": [
+        {
+          "heading": "Hvad viser laget?",
+          "body": "Farver viser [signifikant bølgehøjde](waves): omtrent gennemsnittet af den højeste tredjedel af bølgerne. Enkelte bølger kan være meget højere. Vind, vanddybde og kystens form påvirker bølgerne."
+        },
+        {
+          "heading": "Hvordan ved vi det?",
+          "body": "Det er beregninger fra en bølgemodel. Bøjer og andre instrumenter kan også måle bølger. Prototypen er til udforskning, ikke til navigation eller sikkerhedsvarsling."
+        },
+        {
+          "heading": "Hvorfor er det vigtigt?",
+          "body": "Bølger flytter sand, slider på kyster og påvirker færger, havne og arbejde til søs. De kan også forstyrre planter og dyr på lavt vand."
+        },
+        {
+          "heading": "Hvordan kan påvirkningerne mindskes?",
+          "body": "Beskyttelse af klitter og vådområder ved kysten kan mindske skader. Byggeri væk fra udsatte kyster sænker også risikoen."
+        },
+        {
+          "heading": "Hvad ændrer sig med klimaet?",
+          "body": "Ændringer i storme og havis kan ændre bølgepåvirkningen. Med mindre vinteris er nogle kyster udsat for bølger i længere tid."
+        }
+      ]
+    },
+    "seaLevel": {
+      "title": "Vandstand",
+      "subtitle": "Hvor højt står vandet?",
+      "sections": [
+        {
+          "heading": "Hvad viser laget?",
+          "body": "Vandstand er vandets højde i forhold til et referenceniveau. Vind og lufttryk kan hæve eller sænke den. Det præcise referenceniveau blev ikke gemt i denne eksport."
+        },
+        {
+          "heading": "Hvordan ved vi det?",
+          "body": "Dette lag er beregnet til offentliggjorte modelværdier. Vandstandsmålere ved kysten kan måle direkte. Manglende data vises som utilgængelige."
+        },
+        {
+          "heading": "Hvorfor er det vigtigt?",
+          "body": "Høj vandstand kan oversvømme lave kyster, især under storme. Værdierne i prototypen er ikke lokale oversvømmelsesvarsler."
+        },
+        {
+          "heading": "Hvordan kan påvirkningerne mindskes?",
+          "body": "Giv plads til vandet, beskyt vådområder ved kysten, og planlæg afvanding og bygninger til fremtidens vandstand."
+        },
+        {
+          "heading": "Hvad ændrer sig med klimaet?",
+          "body": "Havniveauet stiger globalt. Lokale ændringer ved Østersøen afhænger også af, om landet hæver sig. Derfor er risikoen forskellig fra kyst til kyst."
+        }
+      ]
+    },
+    "noise": {
+      "title": "Undervandsstøj",
+      "subtitle": "Menneskeskabt lyd kan forstyrre livet under overfladen.",
+      "sections": [
+        {
+          "heading": "Hvad viser laget?",
+          "body": "Laget viser tidligere vurderinger af støj og indberettede kraftige hændelser, for eksempel nedramning af pæle i havbunden. Det er ikke en direkte mikrofonoptagelse."
+        },
+        {
+          "heading": "Hvordan ved vi det?",
+          "body": "Kortet kombinerer modelvurderinger og indberetninger om aktiviteter. Undervandsmikrofoner kan måle lyd direkte, men det er ikke det, kortets farver viser."
+        },
+        {
+          "heading": "Hvorfor er det vigtigt?",
+          "body": "Mange dyr bruger lyd til at finde føde, kommunikere og orientere sig. Ekstra støj kan skjule disse lyde eller forstyrre fødesøgning og formering."
+        },
+        {
+          "heading": "Hvordan kan påvirkningerne mindskes?",
+          "body": "Mere støjsvage skibe, lavere fart i følsomme områder og mere stille byggemetoder kan hjælpe. Støjende arbejde bør også tage hensyn til dyrenes yngletider."
+        },
+        {
+          "heading": "Hvad ændrer sig med klimaet?",
+          "body": "Opvarmning skaber ikke direkte denne menneskestøj. Men dyr, som allerede er belastet af varme eller iltmangel, kan have sværere ved også at klare støj."
+        }
+      ]
+    },
+    "infrastructure": {
+      "title": "Infrastruktur ved kysten og på havet",
+      "subtitle": "Hvor transport, energi og livet ved kysten møder havet.",
+      "sections": [
+        {
+          "heading": "Hvad viser laget?",
+          "body": "Laget viser udvalgte havne, skibsruter, kabler, rørledninger, vindmølleparker og kraftværker. Det giver også et overblik over brugen af nærliggende land."
+        },
+        {
+          "heading": "Hvordan ved vi det?",
+          "body": "Det er samlede referenceoplysninger. Placeringer kan være omtrentlige, og listen er ikke fuldstændig. Laget ændrer sig ikke, når du ændrer havdataenes tidslinje."
+        },
+        {
+          "heading": "Hvorfor er det vigtigt?",
+          "body": "Disse steder understøtter transport og energi, men anlæg og drift kan forstyrre levesteder eller tilføre forurening."
+        },
+        {
+          "heading": "Hvordan kan påvirkningerne mindskes?",
+          "body": "Omhyggeligt valg af placering, renere havne og beskyttelse af følsomme levesteder kan mindske skader. Tag hensyn til havets liv fra starten af et projekt."
+        },
+        {
+          "heading": "Hvad ændrer sig med klimaet?",
+          "body": "Stigende vandstand og ændrede kyster påvirker bygninger og transport. Nye energiprojekter på havet kræver også plads og omhyggelig planlægning."
+        }
+      ]
+    },
+    "oxygenBottom": {
+      "title": "Opløst ilt ved bunden",
+      "subtitle": "Ilt i den dybeste tilgængelige vandcelle hvert sted i modellen.",
+      "body": "Laget bruger den dybeste tilgængelige iltværdi på hvert sted. Dybden varierer og vises, når du vælger en celle. Det er en modelberegning nær bunden, ikke en direkte måling på havbunden."
+    }
+  },
+  "messages": {
+    "Available": "Tilgængelig",
+    "No data": "Ingen data",
+    "Timestamp unavailable": "Tidspunkt ikke tilgængeligt",
+    "Surface dissolved oxygen": "Opløst ilt ved overfladen",
+    "Bottom dissolved oxygen": "Opløst ilt ved bunden",
+    "Ocean condition": "Havets tilstand",
+    "No published time steps for this layer": "Ingen offentliggjorte tidspunkter for dette lag",
+    "Choose another layer to browse available data.": "Vælg et andet lag for at se tilgængelige data.",
+    ". Nearest available time used.": ". Det nærmeste tilgængelige tidspunkt bruges.",
+    "Archived forecast — not current conditions.": "Arkiveret prognose – ikke aktuelle forhold.",
+    "Modelled analysis / forecast; not a direct observation.": "Modelleret analyse / prognose; ikke en direkte måling.",
+    "This layer has no published data.": "Dette lag har ingen offentliggjorte data.",
+    "Dataset last successful update: {time}": "Seneste vellykkede dataopdatering: {time}",
+    "Loading location value…": "Indlæser værdi for stedet…",
+    "Tap the map to sample an interpolated water value.": "Tryk på kortet for at se en værdi beregnet ud fra nærliggende vandceller.",
+    "Location sampling needs the interactive map.": "Værdier for et sted kræver det interaktive kort.",
+    "Loading selected frame…": "Indlæser det valgte tidspunkt…",
+    "This frame could not be loaded. Choose another time or layer.": "Dette tidspunkt kunne ikke indlæses. Vælg et andet tidspunkt eller lag.",
+    "{count} invalid values excluded; source values have not been clamped.": "{count} ugyldige værdier udeladt; kildeværdierne er ikke ændret til grænseværdier.",
+    "Published data are unavailable for this layer. Its explanatory guide remains available.": "Offentliggjorte data er ikke tilgængelige for dette lag. Forklaringen er stadig tilgængelig.",
+    "Colour scale · {palette}": "Farveskala · {palette}",
+    "Frame range contains invalid negative values": "Værdiintervallet indeholder ugyldige negative værdier",
+    "Frame data range: {range}": "Datainterval for dette tidspunkt: {range}",
+    "Frame data range unavailable": "Datainterval for dette tidspunkt er ikke tilgængeligt",
+    "Sources and dataset context": "Kilder og oplysninger om datasættet",
+    "Data are updated manually in this prototype. All times are UTC.": "Data opdateres manuelt i denne prototype. Alle tider er i UTC.",
+    "Data are updated manually in this prototype.": "Data opdateres manuelt i denne prototype.",
+    "Close layers": "Luk lag",
+    "Layers & info": "Lag og info",
+    "The interactive map is unavailable": "Det interaktive kort er ikke tilgængeligt",
+    "Your browser could not start or load the map. You can still explore layer guides, dataset details and published timestamps. Try a browser with WebGL enabled to use the interactive map.": "Din browser kunne ikke starte eller indlæse kortet. Forklaringer, dataoplysninger og offentliggjorte tidspunkter er stadig tilgængelige. Brug en browser med WebGL aktiveret for at se det interaktive kort.",
+    "Map unavailable in this browser. The layer guides, dataset details and timeline remain available.": "Kortet er ikke tilgængeligt i denne browser. Forklaringer, dataoplysninger og tidslinjen er stadig tilgængelige.",
+    "Map unavailable. Layer guides and published timestamps remain available.": "Kortet er ikke tilgængeligt. Forklaringer og offentliggjorte tidspunkter er stadig tilgængelige.",
+    "Published dataset details are currently unavailable.": "Oplysninger om det offentliggjorte datasæt er ikke tilgængelige lige nu.",
+    "{layer} dataset last successful update: {updated}. Selected data time: {selected}.": "{layer}: seneste vellykkede dataopdatering: {updated}. Valgt datatidspunkt: {selected}.",
+    "No valid water value at this location": "Ingen gyldig vandværdi på dette sted",
+    "Value unavailable for this frame": "Værdi ikke tilgængelig for dette tidspunkt",
+    " at {depth} m model depth (selected cell)": " ved {depth} m modeldybde (valgt celle)",
+    "One published time step": "Ét offentliggjort tidspunkt",
+    "between published frames": "mellem offentliggjorte tidspunkter",
+    "(irregular)": "(uregelmæssigt)",
+    "layer": "lag",
+    "layers": "lag",
+    "Oxygen · low to high": "Ilt · lav til høj",
+    "Arrows": "Pile",
+    "Height + streaks": "Højde + linjer",
+    "Streaks only": "Kun linjer",
+    "Speed + streaks": "Hastighed + linjer",
+    "Current field": "Strømfelt",
+    "Wave field": "Bølgefelt",
+    "Choose language": "Vælg sprog",
+    "Choose colour scale": "Vælg farveskala",
+    "Layer colour palettes": "Farvepaletter for kortlaget",
+    "Interactive Baltic Sea map": "Interaktivt kort over Østersøen",
+    "Map navigation": "Kortnavigation",
+    "Layer guide": "Forklaring til kortlaget",
+    "Overlay guide": "Kortlaget forklaret",
+    "Close overlay guide": "Luk forklaringen",
+    "Close": "Luk",
+    "Layers and dataset details": "Kortlag og dataoplysninger",
+    "Map overlays": "Kortlag",
+    "Switch major overlays on the map. Active overlays show their details on the map itself.": "Vælg kortlag. Aktive lag viser flere betjeningsmuligheder.",
+    "Other overlays": "Andre lag",
+    "Selected data time (UTC)": "Valgt datatidspunkt (UTC)",
+    "Colour scale: fixed across published times. Frame data range is shown separately.": "Farveskala: ens for alle offentliggjorte tidspunkter. Dataintervallet for det valgte tidspunkt vises separat.",
+    "Baltic Sea explorer": "Udforsk Østersøen",
+    "Loading the interactive map…": "Indlæser det interaktive kort…",
+    "Layer guides and dataset details remain available while the map loads.": "Forklaringer og dataoplysninger er tilgængelige, mens kortet indlæses.",
+    "The static coastline, when available, is a reference outline and does not show the selected data frame.": "Det statiske kystomrids er til orientering og viser ikke data for det valgte tidspunkt.",
+    "Coastline mask from the published Baltic model grid; static reference only": "Kystomrids fra den offentliggjorte Østersømodel; kun til orientering",
+    "Map rendering and location sampling are unavailable. You can select ocean layers to browse timestamps and use the information buttons to read guides.": "Kort og stedværdier er ikke tilgængelige. Vælg havlag for at se tidspunkter, og brug infoknapperne til at læse forklaringer.",
+    "Copernicus Marine — used model data": "Copernicus Marine – anvendte modeldata",
+    "HELCOM — used historical assessments": "HELCOM – anvendte historiske vurderinger",
+    "Infrastructure — curated reference bundle": "Infrastruktur – samlede referencedata",
+    "AIS vessel feed — planned integration": "AIS-skibspositioner – planlagt",
+    "EMODnet services — planned integration; current bundle uses selected references": "EMODnet-tjenester – planlagt; de nuværende data bruger udvalgte referencer",
+    "About {layer}": "Om {layer}",
+    "Language could not be loaded. Please try again.": "Sproget kunne ikke indlæses. Prøv igen.",
+    "Source": "Kilde",
+    "Status": "Status",
+    "Selected data timestamp (UTC)": "Valgt datatidspunkt (UTC)",
+    "No published frames": "Ingen offentliggjorte tidspunkter",
+    "Dataset last successful update (retrieval / processing)": "Seneste vellykkede dataopdatering (hentning / behandling)",
+    "Update note": "Oplysning om opdatering",
+    "This is the dataset export’s recorded retrieval / processing time, not the selected model time or a separate download time for every retained frame.": "Dette er den registrerede tid for hentning eller behandling af dataeksporten. Det er hverken det valgte modeltidspunkt eller en særskilt hentetid for hvert bevaret tidspunkt.",
+    "Product": "Produkt",
+    "Dataset": "Datasæt",
+    "Vertical level": "Dybde / højdeniveau",
+    "Sea surface": "Havoverflade",
+    "Shallowest model level (surface); exact depth in metres not recorded": "Øverste modellag (overflade); præcis dybde i meter er ikke registreret",
+    "Not recorded in published metadata": "Ikke registreret i de offentliggjorte dataoplysninger",
+    "Published spatial grid": "Offentliggjort geografisk gitter",
+    "Grid coordinates accompany the published query index; exact grid not loaded for this layer.": "Gitterkoordinaterne findes i det offentliggjorte forespørgselsindeks; det præcise gitter er ikke indlæst for dette lag.",
+    "{rows} × {cols} cells; approximately {lat}° latitude × {lon}° longitude spacing": "{rows} × {cols} celler; afstand cirka {lat}° bredde × {lon}° længde",
+    "Source time resolution": "Kildens tidsopløsning",
+    "Published time spacing": "Afstand mellem offentliggjorte tidspunkter",
+    " means": " gennemsnit",
+    " instantaneous values": " øjebliksværdier",
+    "Hourly": "Hver time",
+    "Daily": "Dagligt",
+    "3-hourly": "Hver 3. time",
+    "Units": "Enheder",
+    "Limitations": "Begrænsninger",
+    "Model output, not direct observations. The map simplifies the grid by zoom level; location values are interpolated. Colour-scale bounds stay fixed across published times. Missing or invalid cells are excluded.": "Modelværdier, ikke direkte målinger. Kortet forenkler gitteret efter zoomniveau; stedværdier beregnes ud fra naboceller. Farveskalaen er ens for alle offentliggjorte tidspunkter. Manglende og ugyldige værdier udelades.",
+    "Bottom oxygen": "Ilt ved bunden",
+    "Deepest non-missing value per model water column; depth varies by location. A cell value and model depth are shown when sampled. Daily means; the palette is not a hypoxia classification.": "Den dybeste tilgængelige værdi i hver vandsøjle i modellen; dybden varierer fra sted til sted. Ved valg vises celleværdi og modeldybde. Døgnmiddelværdier; farverne er ikke en klassifikation af iltmangel.",
+    "Frame model depth range": "Modeldybder for dette tidspunkt",
+    "Surface oxygen only": "Kun ilt ved overfladen",
+    "These existing files do not represent bottom-water hypoxia. Bottom extraction is configured for the next manually triggered update. The sequential palette shows relative concentration, not hypoxia categories; each timestamp represents a daily mean.": "Disse eksisterende filer viser ikke iltmangel ved bunden. Udtræk af bundværdier er klar til næste manuelt startede opdatering. Farverne viser iltindhold, ikke kategorier af iltmangel. Hvert tidspunkt er et døgnmiddel.",
+    "Reference level": "Referenceniveau",
+    "The vertical datum is not recorded in this export. Do not interpret these values as a local flood threshold.": "Det præcise højdeniveau er ikke registreret i denne eksport. Værdierne er ikke en lokal grænse for oversvømmelse.",
+    "Forecast window": "Prognoseperiode",
+    "Historical modelled assessment pressure and reported activity events, 2016–2021": "Historisk modelleret belastningsvurdering og indberettede hændelser, 2016–2021",
+    "Data timestamp": "Datatidspunkt",
+    "Assessment period 2016–2021; continuous noise uses representative model year 2018. Independent of the ocean timeline.": "Vurderingsperiode 2016–2021; vedvarende støj bruger det repræsentative modelår 2018. Uafhængigt af havdataenes tidslinje.",
+    "Dataset update time": "Datasættets opdateringstid",
+    "Not recorded in the supplied assessment metadata": "Ikke registreret i de medfølgende vurderingsoplysninger",
+    "Vertical / spatial resolution": "Lodret / geografisk opløsning",
+    "Not specified in the supplied layer metadata; not a depth-resolved microphone measurement.": "Ikke angivet i de medfølgende dataoplysninger; ikke en mikrofonmåling ved forskellige dybder.",
+    "Reported event locations / areas": "Indberettede hændelsessteder / områder",
+    "Pressure and impact indices are not sound levels in dB and must not be added together. Event coverage depends on national reporting.": "Belastnings- og påvirkningsindeks er ikke lydniveauer i dB og må ikke lægges sammen. Dækningen af hændelser afhænger af landenes indberetninger.",
+    "Historical / static curated prototype references; approximate features, not a complete operational inventory.": "Historiske / statiske referencedata i prototypen; omtrentlige objekter, ikke et fuldstændigt driftsregister.",
+    "Dataset update": "Dataopdatering",
+    " (date only; no time recorded)": " (kun dato; intet klokkeslæt registreret)",
+    "Not recorded": "Ikke registreret",
+    "Timestamp / resolution / vertical level": "Tidspunkt / opløsning / højdeniveau",
+    "Static features, independent of the ocean timeline. Uniform spatial resolution and vertical level are not supplied.": "Statiske objekter, uafhængige af havdataenes tidslinje. Ensartet geografisk opløsning og højdeniveau er ikke angivet.",
+    "Feature locations and areas; no shared numerical unit": "Objekters placering og områder; ingen fælles måleenhed",
+    "Provenance and planned integrations": "Oprindelse og planlagte tilføjelser",
+    "Current bundle notes": "Oplysninger om den nuværende datapakke",
+    "Data": "Data",
+    "Published metadata unavailable. The educational guide remains accessible.": "Offentliggjorte dataoplysninger mangler. Forklaringen er stadig tilgængelig.",
+    "Not recorded in the published metadata": "Ikke registreret i de offentliggjorte dataoplysninger",
+    "Speed + particles": "Hastighed + bevægelse",
+    "Particles only": "Kun bevægelse",
+    "Play animation": "Start animation",
+    "Pause animation": "Sæt animation på pause",
+    "Motion shows direction at the selected time; animation speed is illustrative. It does not advance the timeline.": "Bevægelsen viser retningen på det valgte tidspunkt; animationens hastighed er kun til illustration. Tidslinjen ændres ikke.",
+    "Modelled analysis and forecast": "Modelleret analyse og prognose",
+    "15-minute": "Hvert 15. minut",
+    "This infrastructure category could not be loaded. Its source details remain available.": "Denne infrastrukturkategori kunne ikke indlæses. Kildeoplysningerne er stadig tilgængelige.",
+    "This noise category could not be loaded. Its historical guide remains available.": "Denne støjkategori kunne ikke indlæses. Forklaringen er stadig tilgængelig.",
+    "The infrastructure overlay could not be loaded. You can still read its guide.": "Infrastrukturlaget kunne ikke indlæses. Forklaringen kan stadig læses.",
+    "Published ocean data could not be loaded. The overview and layer guides are still available.": "De offentliggjorte havdata kunne ikke indlæses. Oversigten og forklaringerne er stadig tilgængelige.",
+    "A noise layer could not be loaded. Its historical guide is still available.": "Et støjlag kunne ikke indlæses. Forklaringen er stadig tilgængelig.",
+    "{layer} is not configured in the current manifest.": "{layer} er ikke angivet i den nuværende dataoversigt.",
+    "Zoom in": "Zoom ind",
+    "Zoom out": "Zoom ud",
+    "Reset north": "Ret mod nord",
+    "No published data for this layer": "Ingen offentliggjorte data for dette lag",
+    "Digital Baltic Sea — Explore the Baltic": "Digital Baltic Sea — Udforsk Østersøen",
+    "Deepest available model level at each location (depth varies)": "Dybest tilgængelige modellag på hvert sted (dybden varierer)",
+    "Direction only — no colour field": "Kun retning – intet farvefelt"
+  }
+}

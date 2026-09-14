@@ -9,7 +9,7 @@ Reviewed against the `digital-baltic-sea` repository and its published August 20
 - Timeline events and metadata do not depend on the map. Requests capture layer, time and selection version. Old responses cannot replace a later selection; old geometry is hidden while new worker data load. Location persists across time and layer changes; layers use their nearest published timestamp.
 - Scales use rounded dataset bounds without generic padding. Only nonnegative magnitudes/concentrations reject negative values; signed components, temperature and sea level remain signed. Invalid primary cells are excluded and reported, not clamped. The frame range and fixed colour scale are labelled separately. Oxygen defaults to a sequential low-to-high palette.
 - Mobile layers use a collapsible sheet; the guide replaces the layer list inside the sheet. Timeline and sheet are never stacked on top of each other. Landscape uses a scrollable side panel. Back to overview remains outside the drawer. Hidden content is inert or removed from display; controls have accessible names, keyboard focus and larger tap targets.
-- Source/product links, model/historical status, available vertical metadata, actual published time spacing, units and limitations are accessible in the sidebar and guides. Social metadata describes manually updated model and historical data.
+- Source/product links, model/historical status, available vertical metadata, actual published time spacing, units and limitations are accessible in the separate sidebar source section. The educational guides do not contain a source-data block. Social metadata describes manually updated model and historical data.
 
 ## Oxygen depth
 
@@ -37,3 +37,13 @@ Browser tests use desktop Chrome with resized viewports, not physical phones or 
 Bottom extraction was tested offline; no Copernicus download, data-update workflow or production bottom-data generation was run. The currently available files are still surface oxygen. Exact bottom depths will become available only after the owner manually updates the dataset.
 
 **Automatic data updates remain disabled.** The data workflow still has only `workflow_dispatch` enabled. Website visits do not invoke workflows. No recurring jobs, new external services or billable infrastructure were added.
+
+## Follow-up: languages, overview entry and direction animation
+
+English, German and Danish are available from the top-right language menu. Inline SVG flags show the European flag for English, Germany for German and Denmark for Danish, without external image requests. Other planned languages remain disabled. Translations include the homepage, controls, UTC dates, status messages, scientific context and all eight layer guides. Guides use short explanations and a small, allowlisted Wikipedia glossary; the Danish wave-height link uses the English article, identified in its tooltip. Source/product references remain in the separate source section.
+
+Clicking the exposed overview map or its fallback now enters map mode. This does not expose hidden map controls to keyboard users or interfere with Back to overview.
+
+The previous particle/streak modes were static dashed lines whose geographic lengths were tiny at low zoom. Direction markers now use a regular screen grid, 34–48 px arrows with 12 px heads, and contrasting outlines. Currents have moving trails; waves have moving crests in the published propagation direction. Motion illustrates direction at the selected frame, not physical travel speed or advancing forecast time. It uses only loaded data. Animation pauses in the overview, hidden browser tabs, failure/loading states and on request; reduced-motion preferences are honoured. No data refresh is associated with animation.
+
+Additional browser checks cover three languages at 320, 375, 430, 768 and 1366 px; translated guides, flags, glossary links and navigation; real changing canvas pixels for currents and waves; arrow sizes at zoom 4, 6, 9, 12 and 16; pause and reduced motion; and clearing stale animation while a new frame loads. Cached published current/wave frames also rendered in Chrome. Physical-device/Safari testing and live external basemap availability remain outside these local checks.
