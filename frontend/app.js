@@ -1,3 +1,5 @@
+import { formatTimestamp, readableUnit, nonnegativeQuantity, displayRangeForMetadata, cleanFrame, nearestFrameIndexForTimestamp, forecastArchived, intervalLabel } from "./ocean-data.mjs";
+
 const OCEAN_MANIFEST_URL = new URL("./data/ocean/manifest.json", window.location.href).toString();
 const MAPLIBRE_JS_URL = "https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js";
 const INFRASTRUCTURE_MANIFEST_URL = new URL("./infrastructure/manifest.json", window.location.href).toString();
@@ -383,7 +385,7 @@ const OCEAN_RENDER_MODE_OPTIONS = {
 const OVERLAY_INFO_CONTENT = {
   temperature: {
     title: "Surface temperature",
-    subtitle: "The Baltic’s skin temperature shapes seasons, mixing, species stress and coastal life.",
+    subtitle: "The uppermost model layer’s temperature shapes seasons, mixing, species stress and coastal life.",
     sections: [
       {
         heading: "What is it?",
@@ -398,7 +400,7 @@ const OVERLAY_INFO_CONTENT = {
         body: "Temperature affects oxygen levels, algae growth, fish habitat, stratification and how comfortable or stressful the sea is for marine life. Warmer surface waters can also strengthen heat stress in shallow coastal areas."
       },
       {
-        heading: "How can we improve bad impacts of it?",
+        heading: "How can the impacts be reduced?",
         body: "We cannot locally 'turn down' sea temperature, but we can reduce the damage it causes by cutting nutrient pollution, restoring habitats such as eelgrass, protecting refuges for marine life and lowering global greenhouse-gas emissions."
       },
       {
@@ -424,7 +426,7 @@ const OVERLAY_INFO_CONTENT = {
         body: "Currents control how quickly oxygen, nutrients, heat and contaminants are redistributed. They also matter for larval transport, shipping conditions, search and rescue, spill response and how coastal ecosystems are connected."
       },
       {
-        heading: "How can we improve bad impacts of it?",
+        heading: "How can the impacts be reduced?",
         body: "We cannot directly engineer Baltic circulation at large scale, but we can reduce risks carried by the water itself by cutting pollution releases, improving wastewater treatment, preparing for spill events and protecting coastal habitats that buffer local impacts."
       },
       {
@@ -450,7 +452,7 @@ const OVERLAY_INFO_CONTENT = {
         body: "Salinity influences density, layering, circulation and oxygen exchange. It also sets biological limits: some marine species need saltier water, while freshwater species tolerate much lower salinity."
       },
       {
-        heading: "How can we improve bad impacts of it?",
+        heading: "How can the impacts be reduced?",
         body: "Salinity itself is mostly controlled by climate, runoff and exchanges with the North Sea, so direct management is limited. What we can do is manage ecosystems and coastal planning around the stress that salinity shifts create."
       },
       {
@@ -460,12 +462,12 @@ const OVERLAY_INFO_CONTENT = {
     ]
   },
   oxygen: {
-    title: "Oxygen",
-    subtitle: "Oxygen is a direct health signal for the Baltic because low oxygen means ecological stress or collapse.",
+    title: "Surface dissolved oxygen",
+    subtitle: "This surface layer does not represent bottom-water hypoxia.",
     sections: [
       {
         heading: "What is it?",
-        body: "This layer shows dissolved oxygen in seawater. Marine animals and many ecological processes depend on it, and when oxygen becomes too low, bottom habitats can degrade or become unlivable."
+        body: "This layer shows dissolved oxygen at the shallowest model level, selected by the prototype pipeline. Its exact depth in metres was not retained in the published files. It does not show bottom-water oxygen or diagnose hypoxia at the seabed."
       },
       {
         heading: "How do we measure it?",
@@ -476,7 +478,7 @@ const OVERLAY_INFO_CONTENT = {
         body: "Low-oxygen and hypoxic areas are among the Baltic’s best-known environmental problems. Oxygen stress harms benthic life, changes food webs, can release more nutrients from sediments and reduces the resilience of the whole sea."
       },
       {
-        heading: "How can we improve bad impacts of it?",
+        heading: "How can the impacts be reduced?",
         body: "The biggest lever is reducing nutrient pollution from agriculture, wastewater and runoff. Protecting wetlands, restoring coastal habitats and improving land-based nutrient management all help reduce the conditions that fuel oxygen depletion."
       },
       {
@@ -502,7 +504,7 @@ const OVERLAY_INFO_CONTENT = {
         body: "Waves affect coastal erosion, harbour operations, ferry safety, offshore work and habitat disturbance in shallow waters. They also influence sediment transport and how exposed coastlines absorb storm energy."
       },
       {
-        heading: "How can we improve bad impacts of it?",
+        heading: "How can the impacts be reduced?",
         body: "We cannot stop storms, but we can reduce wave damage by protecting dunes and wetlands, avoiding risky coastal construction, improving harbour planning and maintaining natural shoreline buffers instead of hardening every edge."
       },
       {
@@ -528,7 +530,7 @@ const OVERLAY_INFO_CONTENT = {
         body: "Sea level matters for flooding, storm surge exposure, port operations, drainage systems, coastal ecosystems and long-lived infrastructure. Even modest changes can matter when they combine with storms and waves."
       },
       {
-        heading: "How can we improve bad impacts of it?",
+        heading: "How can the impacts be reduced?",
         body: "The best responses are adaptation and smart planning: avoid building in the most exposed zones, redesign drainage and flood protection, restore coastal buffers and plan infrastructure for higher future water levels."
       },
       {
@@ -554,7 +556,7 @@ const OVERLAY_INFO_CONTENT = {
         body: "Many marine animals rely on sound to navigate, communicate, find food and avoid danger. Too much human-made noise can mask those signals, create stress and disturb migration, feeding or breeding behaviour."
       },
       {
-        heading: "How can we improve bad impacts of it?",
+        heading: "How can the impacts be reduced?",
         body: "We can reduce noise by slowing ships in sensitive areas, changing routes, improving propeller and hull design, using quieter construction methods and planning noisy activities away from key habitats or seasons."
       },
       {
@@ -580,7 +582,7 @@ const OVERLAY_INFO_CONTENT = {
         body: "Infrastructure shapes shipping, energy supply, risk exposure, coastal development and how easily pollution or disturbance can spread through busy marine areas. It is essential context for understanding where environmental pressure comes from."
       },
       {
-        heading: "How can we improve bad impacts of it?",
+        heading: "How can the impacts be reduced?",
         body: "Better planning matters: place new infrastructure carefully, reduce conflicts with habitats, improve port and shipping efficiency, harden vulnerable assets against storms and design projects around ecological constraints rather than after them."
       },
       {
@@ -600,6 +602,14 @@ const state = {
   oceanFrameData: {},
   metadata: null,
   map: null,
+  mapReady: false,
+  mapFailed: false,
+  drawerOpen: false,
+  selectionVersion: 0,
+  frameStatus: "idle",
+  frameQuality: null,
+  paletteOverrides: {},
+  pendingData: new Map(),
   maplibregl: null,
   popup: null,
   activeFrameIndex: 0,
@@ -646,6 +656,10 @@ const state = {
 };
 
 const TEMPERATURE_PALETTES = {
+  oxygen: {
+    labelKey: "accessibility.oxygen", fallbackLabel: "Oxygen · low to high",
+    stops: [{stop: 0, color: "#440154"}, {stop: 0.25, color: "#3b528b"}, {stop: 0.5, color: "#21918c"}, {stop: 0.75, color: "#5ec962"}, {stop: 1, color: "#fde725"}]
+  },
   blueRed: {
     labelKey: "accessibility.blueRed",
     fallbackLabel: "Blue to red",
@@ -735,7 +749,7 @@ function renderLanguageMenu() {
     label.textContent = language.label;
     const meta = document.createElement("span");
     meta.className = "language-meta";
-    meta.textContent = language.enabled ? t("common.live", "Live") : t("common.comingSoon", "Coming soon");
+    meta.textContent = language.enabled ? t("common.live", "Available") : t("common.comingSoon", "Coming soon");
     button.append(label, meta);
 
     button.addEventListener("click", async () => {
@@ -824,14 +838,15 @@ function bindPaletteMenu() {
 function setMode(mode) {
   state.mode = mode;
   bodyEl.dataset.mode = mode;
+  state.drawerOpen = false;
   if (mode !== "map") {
     clickPanelEl.hidden = true;
     state.overlayInfoId = null;
-    renderOverlayInfoPanel();
   }
-  window.setTimeout(() => {
-    state.map?.resize();
-  }, 240);
+  renderOverlayInfoPanel();
+  syncPanelAccess();
+  (mode === "map" ? document.getElementById("exit-map") : heroEnterMapEl).focus();
+  state.map?.resize();
 }
 
 function setStatus(message, tone = "neutral") {
@@ -844,21 +859,7 @@ function clearStatus() {
   statusPanelEl.hidden = true;
 }
 
-function formatTimestamp(value, timeZone = "UTC") {
-  if (!value) {
-    return "Timestamp unavailable";
-  }
 
-  const date = new Date(value);
-  return `${new Intl.DateTimeFormat("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone
-  }).format(date)} ${timeZone === "UTC" ? "UTC" : ""}`.trim();
-}
 
 function formatCoordinate(value, positiveLabel, negativeLabel) {
   const label = value >= 0 ? positiveLabel : negativeLabel;
@@ -903,8 +904,8 @@ function lerp(start, end, ratio) {
   return start + (end - start) * ratio;
 }
 
-function oceanPaletteName() {
-  return state.palette;
+function oceanPaletteName(conditionId = state.activeConditionId) {
+  return state.paletteOverrides[conditionId] || (conditionId === "oxygen" ? "oxygen" : state.palette);
 }
 
 function renderModeOptions(conditionId = state.activeConditionId) {
@@ -1028,13 +1029,7 @@ function rgbaString(color, alpha = 1) {
   return `rgba(${color.r}, ${color.g}, ${color.b}, ${opacity.toFixed(3)})`;
 }
 
-function displayRangeForMetadata(metadata) {
-  const range = metadata?.value_range_celsius ?? metadata?.value_range ?? null;
-  return {
-    min: Number.isFinite(Number(range?.display_min)) ? Number(range.display_min) : 0,
-    max: Number.isFinite(Number(range?.display_max)) ? Number(range.display_max) : 1
-  };
-}
+
 
 function valueToFillColor(value, metadata, conditionId = state.activeConditionId) {
   const range = displayRangeForMetadata(metadata);
@@ -1216,6 +1211,10 @@ function updateOceanLayerStyles() {
     return;
   }
 
+  const ready = state.renderedSelectionVersion === state.selectionVersion;
+  for (const id of ["ocean-scalar-fill", "ocean-shoreline", "ocean-vector-shaft", "ocean-vector-head"]) {
+    state.map.setLayoutProperty(id, "visibility", ready && oceanLayerVisible() ? "visible" : "none");
+  }
   const mode = activeRenderModeId();
   const scalarOpacity = oceanScalarLayerVisible() ? 0.78 : 0;
   const shorelineOpacity = oceanLayerVisible() ? 0.72 : 0;
@@ -1492,7 +1491,7 @@ function buildOceanRenderCollections(queryIndex, frameData, metadata, condition,
         if (!vector) {
           continue;
         }
-        const magnitude = condition.id === "currents" ? Math.hypot(vector.eastward, vector.northward) : Math.max(numericGridValue(frameGrid, rowIndex, columnIndex) ?? 0, 0);
+        const magnitude = condition.id === "currents" ? Math.hypot(vector.eastward, vector.northward) : numericGridValue(frameGrid, rowIndex, columnIndex);
         if (!Number.isFinite(magnitude) || magnitude <= 0.0001) {
           continue;
         }
@@ -1561,7 +1560,7 @@ function buildOceanRenderCollections(queryIndex, frameData, metadata, condition,
     vector: { type: "FeatureCollection", features: vectorFeatures }
   };
   state.oceanVisuals.renderCache.set(cacheKey, collections);
-  if (state.oceanVisuals.renderCache.size > 24) {
+  if (state.oceanVisuals.renderCache.size > 6) {
     const oldestKey = state.oceanVisuals.renderCache.keys().next().value;
     if (oldestKey) {
       state.oceanVisuals.renderCache.delete(oldestKey);
@@ -1577,46 +1576,39 @@ function setGeoJsonSourceData(sourceId, payload) {
   }
 }
 
-async function refreshOceanVisuals() {
-  if (!state.map) {
-    return;
-  }
-
+async function refreshOceanVisuals(selection = selectionSnapshot()) {
+  const token = ++state.oceanVisuals.requestToken;
+  if (!state.mapReady || !state.map) return;
   ensureOceanSources();
   updateOceanLayerStyles();
-  if (!oceanLayerVisible()) {
-    setGeoJsonSourceData("ocean-scalar-source", emptyFeatureCollection());
-    setGeoJsonSourceData("ocean-shoreline-source", emptyFeatureCollection());
-    setGeoJsonSourceData("ocean-vector-source", emptyFeatureCollection());
-    return;
+  if (!oceanLayerVisible()) { clearOceanVisuals(); return; }
+  try {
+    const queryIndex = await loadActiveQueryIndex(selection);
+    if (!selectionIsCurrent(selection) || token !== state.oceanVisuals.requestToken) return;
+    const frameData = await loadActiveFrameData(queryIndex, selection);
+    if (!selectionIsCurrent(selection) || token !== state.oceanVisuals.requestToken || !frameData) return;
+    const collections = buildOceanRenderCollections(queryIndex, frameData, selection.metadata, selection.condition, selection.frameIndex, state.map.getZoom());
+    if (!selectionIsCurrent(selection) || token !== state.oceanVisuals.requestToken) return;
+    setGeoJsonSourceData("ocean-scalar-source", collections.scalar);
+    setGeoJsonSourceData("ocean-shoreline-source", collections.shoreline);
+    setGeoJsonSourceData("ocean-vector-source", collections.vector);
+    // GeoJSON is processed in a worker; old geometry stays hidden until the new sources finish.
+    if (!await waitForOceanSources(state.map, selection, token)) return;
+    state.renderedSelectionVersion = selection.version;
+    state.frameStatus = "ready";
+    state.frameQuality = frameData.quality;
+    mapContainerEl.dataset.frame = selection.frame.time_utc;
+    mapContainerEl.dataset.condition = selection.conditionId;
+    updateOceanLayerStyles();
+    updateChrome();
+    updateTransparencyPanel();
+  } catch (error) {
+    if (!selectionIsCurrent(selection) || token !== state.oceanVisuals.requestToken) return;
+    console.error(error);
+    clearOceanVisuals();
+    state.frameStatus = "error";
+    updateChrome();
   }
-
-  const token = ++state.oceanVisuals.requestToken;
-  const queryIndex = await loadActiveQueryIndex();
-  if (token !== state.oceanVisuals.requestToken || !queryIndex) {
-    return;
-  }
-  const frameData = await loadActiveFrameData(queryIndex);
-  if (token !== state.oceanVisuals.requestToken || !frameData) {
-    return;
-  }
-
-  const metadata = activeConditionMetadata();
-  const condition = activeConditionDefinition();
-  if (!metadata || !condition) {
-    return;
-  }
-
-  const frameIndex = Math.min(state.activeFrameIndex, Math.max((queryIndex.times_utc || []).length - 1, 0));
-  const collections = buildOceanRenderCollections(queryIndex, frameData, metadata, condition, frameIndex, state.map.getZoom());
-  if (token !== state.oceanVisuals.requestToken) {
-    return;
-  }
-
-  setGeoJsonSourceData("ocean-scalar-source", collections.scalar);
-  setGeoJsonSourceData("ocean-shoreline-source", collections.shoreline);
-  setGeoJsonSourceData("ocean-vector-source", collections.vector);
-  updateOceanLayerStyles();
 }
 
 function nearestIndex(values, target) {
@@ -1636,87 +1628,53 @@ function nearestIndex(values, target) {
   return bestIndex;
 }
 
-async function loadActiveQueryIndex() {
-  const conditionId = state.activeConditionId;
-  const metadata = activeConditionMetadata();
-  if (!conditionId || !metadata?.query_index_url) {
-    return null;
-  }
-  if (state.oceanQueryIndices[conditionId]) {
-    return state.oceanQueryIndices[conditionId];
-  }
-
-  const response = await fetch(new URL(metadata.query_index_url, window.location.href).toString(), {
-    cache: "no-store"
-  });
-  if (!response.ok) {
-    throw new Error("Ocean query index could not be loaded.");
-  }
-  const payload = await response.json();
+async function loadActiveQueryIndex(selection = selectionSnapshot()) {
+  const {conditionId, metadata} = selection;
+  if (!conditionId || !metadata?.query_index_url) return null;
+  if (state.oceanQueryIndices[conditionId]) return state.oceanQueryIndices[conditionId];
+  const payload = await readStaticJson(metadata.query_index_url);
+  if (!Array.isArray(payload.latitudes) || !payload.latitudes.length || !Array.isArray(payload.longitudes) || !payload.longitudes.length) throw new Error("Empty ocean grid");
   state.oceanQueryIndices[conditionId] = payload;
   return payload;
 }
 
-function activeFrameEntry(queryIndex) {
-  const frameIndex = Math.min(state.activeFrameIndex, Math.max((queryIndex?.times_utc || []).length - 1, 0));
-  return queryIndex?.frames?.[frameIndex] ?? null;
+function activeFrameEntry(queryIndex, selection = selectionSnapshot()) {
+  return queryIndex?.frames?.find(frame => frame.key === selection.frame?.key || frame.time_utc === selection.frame?.time_utc) ?? null;
 }
 
-async function loadActiveFrameData(queryIndex = null) {
-  const resolvedQueryIndex = queryIndex || (await loadActiveQueryIndex());
-  const conditionId = state.activeConditionId;
-  const metadata = activeConditionMetadata();
-  if (!conditionId || !metadata || !resolvedQueryIndex) {
-    return null;
+async function loadActiveFrameData(queryIndex = null, selection = selectionSnapshot()) {
+  const {conditionId, metadata, condition, frame} = selection;
+  const index = queryIndex || await loadActiveQueryIndex(selection);
+  if (!conditionId || !metadata || !index || !frame) return null;
+  const frameEntry = activeFrameEntry(index, selection);
+  const gridKey = metadata.query_value_key || condition?.value_key || "values_celsius";
+  const cache = state.oceanFrameData[conditionId] ||= {};
+  if (cache[frame.key]) return cache[frame.key];
+  let payload;
+  if (frameEntry?.data_url) {
+    payload = await readStaticJson(frameEntry.data_url);
+  } else {
+    const indexAtTime = index.times_utc?.indexOf(frame.time_utc) ?? -1;
+    payload = {key: frame.key, time_utc: frame.time_utc, [gridKey]: index[gridKey]?.[indexAtTime], components: Object.fromEntries(Object.entries(index.components || {}).map(([key, values]) => [key, values[indexAtTime]]))};
   }
-
-  const frameEntry = activeFrameEntry(resolvedQueryIndex);
-  if (!frameEntry?.key) {
-    const gridKey = metadata.query_value_key || activeConditionDefinition()?.value_key || "values_celsius";
-    if (Array.isArray(resolvedQueryIndex?.[gridKey])) {
-      return {
-        key: resolvedQueryIndex.frame_keys?.[state.activeFrameIndex] ?? null,
-        time_utc: resolvedQueryIndex.times_utc?.[state.activeFrameIndex] ?? null,
-        [gridKey]: resolvedQueryIndex?.[gridKey]?.[state.activeFrameIndex] ?? null,
-        components: Object.fromEntries(
-          Object.entries(resolvedQueryIndex?.components || {}).map(([componentName, frames]) => [
-            componentName,
-            frames?.[state.activeFrameIndex] ?? null
-          ])
-        )
-      };
-    }
-    return null;
-  }
-
-  if (!state.oceanFrameData[conditionId]) {
-    state.oceanFrameData[conditionId] = {};
-  }
-  if (state.oceanFrameData[conditionId][frameEntry.key]) {
-    return state.oceanFrameData[conditionId][frameEntry.key];
-  }
-
-  const response = await fetch(new URL(frameEntry.data_url, window.location.href).toString(), {
-    cache: "no-store"
-  });
-  if (!response.ok) {
-    throw new Error("Ocean frame data could not be loaded.");
-  }
-  const payload = await response.json();
-  state.oceanFrameData[conditionId][frameEntry.key] = payload;
-  return payload;
+  if (payload.time_utc !== frame.time_utc || (payload.key && payload.key !== frame.key)) throw new Error("Frame timestamp does not match the selection");
+  const cleaned = cleanFrame(payload, gridKey, condition);
+  if (cleaned.quality.invalidCount) console.warn("Excluded invalid primary values", conditionId, frame.key, cleaned.quality.invalidCount);
+  cache[frame.key] = cleaned;
+  // Bound memory without changing or regenerating any data.
+  while (Object.keys(cache).length > 4) delete cache[Object.keys(cache)[0]];
+  return cleaned;
 }
 
-async function fetchOceanSample(latitude, longitude) {
-  const metadata = activeConditionMetadata();
-  const condition = activeConditionDefinition();
-  const queryIndex = await loadActiveQueryIndex();
-  const frameData = await loadActiveFrameData(queryIndex);
+async function fetchOceanSample(latitude, longitude, selection = selectionSnapshot()) {
+  const {metadata, condition} = selection;
+  const queryIndex = await loadActiveQueryIndex(selection);
+  const frameData = await loadActiveFrameData(queryIndex, selection);
   if (!metadata || !condition || !queryIndex || !frameData) {
     return {
-      condition_id: state.activeConditionId,
-      frame_index: state.activeFrameIndex,
-      time_utc: currentFrame()?.time_utc ?? null,
+      condition_id: selection.conditionId,
+      frame_index: selection.frameIndex,
+      time_utc: selection.frame?.time_utc ?? null,
       cell_latitude: null,
       cell_longitude: null,
       primary_value: null,
@@ -1734,20 +1692,20 @@ async function fetchOceanSample(latitude, longitude) {
     longitude > bbox.maximum_longitude
   ) {
     return {
-      condition_id: state.activeConditionId,
-      frame_index: state.activeFrameIndex,
-      time_utc: currentFrame()?.time_utc ?? null,
+      condition_id: selection.conditionId,
+      frame_index: selection.frameIndex,
+      time_utc: selection.frame?.time_utc ?? null,
       cell_latitude: null,
       cell_longitude: null,
       primary_value: null,
-      primary_unit: condition.units || "",
+      primary_unit: readableUnit(condition.units),
       note: "Outside Baltic processing bounds"
     };
   }
 
   const latitudes = queryIndex.latitudes || [];
   const longitudes = queryIndex.longitudes || [];
-  const frameIndex = Math.min(state.activeFrameIndex, Math.max((queryIndex.times_utc || []).length - 1, 0));
+  const frameIndex = queryIndex.times_utc.indexOf(selection.frame.time_utc);
   const gridKey = metadata.query_value_key || condition.value_key || "values_celsius";
   const frameGrid = frameData?.[gridKey] ?? queryIndex?.[gridKey]?.[frameIndex] ?? null;
   const geometryCache = queryIndexGeometryCache(queryIndex);
@@ -1756,17 +1714,18 @@ async function fetchOceanSample(latitude, longitude) {
   const rowIndex = clamp(findIntervalIndex(latEdges, latitude), 0, Math.max(latitudes.length - 1, 0));
   const columnIndex = clamp(findIntervalIndex(lonEdges, longitude), 0, Math.max(longitudes.length - 1, 0));
   const cellValue = frameGrid ? numericGridValue(frameGrid, rowIndex, columnIndex) : null;
-  const primaryValue =
+  const primaryValue = condition.depth_mode === "bottom" ? cellValue :
     frameGrid && cellValue !== null ? interpolateStructuredValue(latitude, longitude, latitudes, longitudes, frameGrid, latEdges, lonEdges) : null;
 
   const payload = {
-    condition_id: state.activeConditionId,
+    condition_id: selection.conditionId,
     frame_index: frameIndex,
-    time_utc: queryIndex.times_utc?.[frameIndex] || currentFrame()?.time_utc || null,
+    time_utc: queryIndex.times_utc?.[frameIndex] || selection.frame?.time_utc || null,
     cell_latitude: cellValue === null ? null : latitudes[rowIndex] ?? null,
     cell_longitude: cellValue === null ? null : longitudes[columnIndex] ?? null,
     primary_value: primaryValue,
-    primary_unit: condition.units || "",
+    bottom_depth_m: condition.depth_mode === "bottom" ? numericGridValue(frameData.components?.bottom_depth_m, rowIndex, columnIndex) : null,
+    primary_unit: readableUnit(condition.units),
     note: primaryValue === null ? "No water cell at this location" : null
   };
   payload[condition.value_key || "value"] = primaryValue;
@@ -1871,7 +1830,7 @@ function oceanConditionPlaceholderDefinition(conditionId) {
 }
 
 function isCompactControlLayout() {
-  return window.matchMedia("(max-width: 760px)").matches;
+  return window.matchMedia("(max-width: 980px)").matches;
 }
 
 function activeControlCards() {
@@ -1893,13 +1852,7 @@ function controlCardSummaryElement(cardId) {
   return null;
 }
 
-function controlCardCollapsed(cardId, defaultExpandedCardId = null) {
-  if (isCompactControlLayout()) {
-    if (!state.controlCards.mobileExpandedId && defaultExpandedCardId) {
-      return cardId !== defaultExpandedCardId;
-    }
-    return state.controlCards.mobileExpandedId !== cardId;
-  }
+function controlCardCollapsed(cardId) {
   return Boolean(state.controlCards.collapsed[cardId]);
 }
 
@@ -1929,7 +1882,7 @@ function renderActiveOverlayControls() {
     const collapsed = controlCardCollapsed(cardId, defaultExpandedCardId);
     root.hidden = false;
     root.classList.toggle("is-collapsed", collapsed);
-    activeOverlayControlsEl.appendChild(root);
+    if (root.parentElement !== activeOverlayControlsEl) activeOverlayControlsEl.appendChild(root);
 
     const summaryEl = controlCardSummaryElement(cardId);
     if (summaryEl) {
@@ -1981,6 +1934,7 @@ function toggleControlCard(cardId) {
 }
 
 function updateBottomLeftVisibility() {
+  syncPanelAccess();
   if (!mapBottomLeftEl) {
     return;
   }
@@ -2009,9 +1963,11 @@ function renderOverlayInfoPanel() {
     return;
   }
 
-  overlayInfoTitleEl.textContent = entry.title;
-  overlayInfoSubtitleEl.textContent = entry.subtitle;
-  overlayInfoBodyEl.innerHTML = entry.sections
+  const bottomOxygen = state.overlayInfoId === "oxygen" && state.oceanConditions.oxygen?.condition?.depth_mode === "bottom";
+  overlayInfoTitleEl.textContent = bottomOxygen ? "Bottom dissolved oxygen" : entry.title;
+  overlayInfoSubtitleEl.textContent = bottomOxygen ? "Oxygen at the deepest available model level in each water column." : entry.subtitle;
+  const sections = entry.sections.map((section, index) => bottomOxygen && index === 0 ? {...section, body: "This layer uses the deepest non-missing oxygen value at each location. Model depth varies with local bathymetry; the selected cell’s depth is shown when sampled. It provides bottom-water context, not a validated hypoxia classification or an in-situ seabed measurement."} : section);
+  overlayInfoBodyEl.innerHTML = sections
     .map(
       (section) => `
         <section class="overlay-info-section">
@@ -2021,6 +1977,10 @@ function renderOverlayInfoPanel() {
       `
     )
     .join("");
+  const metadataSection = document.createElement("section");
+  metadataSection.className = "overlay-info-section";
+  appendLayerMetadata(metadataSection, state.overlayInfoId);
+  overlayInfoBodyEl.prepend(metadataSection);
   overlayInfoPanelEl.hidden = false;
   overlayInfoPanelEl.classList.add("is-open");
 
@@ -2033,7 +1993,10 @@ function renderOverlayInfoPanel() {
 
 function toggleOverlayInfoPanel(overlayId) {
   state.overlayInfoId = state.overlayInfoId === overlayId ? null : overlayId;
+  if (isCompactControlLayout()) state.drawerOpen = true;
   renderOverlayInfoPanel();
+  syncPanelAccess();
+  if (state.overlayInfoId) overlayInfoCloseEl.focus();
 }
 
 function activeHeadlineState() {
@@ -2104,7 +2067,7 @@ function renderInfrastructureCategoryButtons() {
     button.addEventListener("click", () => {
       toggleInfrastructureCategory(categoryId).catch((error) => {
         console.error(error);
-        setStatus(error.message || "Infrastructure category could not be toggled.", "error");
+        setStatus("This infrastructure category could not be loaded. Its source details remain available.", "error");
       });
     });
     infrastructureCategoryListEl.appendChild(button);
@@ -2198,7 +2161,7 @@ function renderNoiseCategoryButtons() {
     button.addEventListener("click", () => {
       toggleNoiseCategory(categoryId).catch((error) => {
         console.error(error);
-        setStatus(error.message || "Noise category could not be toggled.", "error");
+        setStatus("This noise category could not be loaded. Its historical guide remains available.", "error");
       });
     });
     noiseCategoryListEl.appendChild(button);
@@ -2770,7 +2733,7 @@ function hexToRgb(hex) {
 }
 
 function getPaletteDefinition() {
-  return TEMPERATURE_PALETTES[state.palette] ?? TEMPERATURE_PALETTES.blueRed;
+  return TEMPERATURE_PALETTES[oceanPaletteName()] || TEMPERATURE_PALETTES.blueRed;
 }
 
 function buildPaletteGradient(palette = getPaletteDefinition()) {
@@ -2816,7 +2779,7 @@ function updateLegendAppearance() {
 function updatePaletteButtons() {
   const oceanConditionActive = Boolean(state.activeConditionId);
   for (const button of paletteOptionEls) {
-    button.classList.toggle("is-selected", button.dataset.palette === state.palette);
+    button.classList.toggle("is-selected", button.dataset.palette === oceanPaletteName());
     button.disabled = !oceanConditionActive;
   }
   paletteButtonEl.disabled = !oceanConditionActive;
@@ -2829,182 +2792,56 @@ function updatePaletteButtons() {
 }
 
 function updateChrome() {
+  const condition = activeConditionDefinition(), metadata = activeConditionMetadata(), frame = currentFrame();
   const headline = activeHeadlineState();
   mapHeadlineTitleEl.textContent = headline.title;
   mapHeadlineTimeEl.textContent = headline.subtitle;
-
-  const condition = activeConditionDefinition();
-  if (oceanConditionCardLabelEl) {
-    oceanConditionCardLabelEl.textContent = condition?.label || "Ocean condition";
+  oceanConditionCardLabelEl.textContent = condition?.label || "Ocean condition";
+  oceanConditionCardSummaryEl.textContent = oceanConditionCardSummary();
+  timePrimaryEl.textContent = frame ? formatTimestamp(frame.time_utc) : "No published time steps for this layer";
+  timeSliderEl.setAttribute("aria-valuetext", timePrimaryEl.textContent);
+  timeSecondaryEl.textContent = frame ? `${intervalLabel(metadata)}${state.requestedTimeUtc && frame.time_utc !== state.requestedTimeUtc ? ". Nearest available time used." : ""}` : "Choose another layer to browse available data.";
+  const notice = document.getElementById("forecast-notice");
+  notice.textContent = forecastArchived(metadata) ? "Archived forecast — not current conditions." : (frame ? "Modelled analysis / forecast; not a direct observation." : "This layer has no published data.");
+  document.getElementById("dataset-update").textContent = `Dataset last successful update: ${formatTimestamp(metadata?.provenance?.retrieved_at_utc)}`;
+  const currentValue = state.selectedLocation?.sampleText;
+  oceanConditionCurrentValueEl.textContent = currentValue || (state.selectedLocation && state.mapReady && frame ? "Loading location value…" : `${condition?.value_label || condition?.label || ""} · ${readableUnit(condition?.units)}`);
+  oceanConditionCurrentNoteEl.textContent = state.selectedLocation ? `${formatCoordinate(state.selectedLocation.latitude, "N", "S")} · ${formatCoordinate(state.selectedLocation.longitude, "E", "W")}` : (state.mapReady ? "Tap the map to sample an interpolated water value." : "Location sampling needs the interactive map.");
+  const loadStatus = document.getElementById("frame-load-status");
+  loadStatus.textContent = state.frameStatus === "loading" ? "Loading selected frame…" : state.frameStatus === "error" ? "This frame could not be loaded. Choose another time or layer." : state.frameQuality?.invalidCount ? `${state.frameQuality.invalidCount} invalid values excluded; source values have not been clamped.` : "";
+  oceanConditionLegendEl.hidden = !frame;
+  oceanConditionPlaceholderEl.hidden = Boolean(frame);
+  oceanConditionPlaceholderEl.textContent = frame ? "" : "Published data are unavailable for this layer. Its explanatory guide remains available.";
+  if (frame) {
+    const range = displayRangeForMetadata(metadata, condition);
+    const min = state.frameQuality ? state.frameQuality.min : frame.min_celsius ?? frame.min_value ?? frame.min;
+    const max = state.frameQuality ? state.frameQuality.max : frame.max_celsius ?? frame.max_value ?? frame.max;
+    const invalidRange = nonnegativeQuantity(condition) && min < 0;
+    oceanConditionLegendTitleEl.textContent = `Colour scale · ${t(getPaletteDefinition().labelKey, getPaletteDefinition().fallbackLabel)}`;
+    oceanConditionLegendRangeEl.textContent = invalidRange ? "Frame range contains invalid negative values" : (Number.isFinite(min) && Number.isFinite(max) ? `Frame data range: ${min.toFixed(2)}–${max.toFixed(2)} ${readableUnit(condition.units)}` : "Frame data range unavailable");
+    oceanConditionLegendMinEl.textContent = String(range.min);
+    oceanConditionLegendMaxEl.textContent = String(range.max);
+    oceanConditionLegendUnitEl.textContent = readableUnit(condition.units);
   }
-  if (oceanConditionCardSummaryEl) {
-    oceanConditionCardSummaryEl.textContent = oceanConditionCardSummary();
-  }
-
-  const metadata = activeConditionMetadata();
-  const frame = currentFrame();
-  if (!condition) {
-    if (timePrimaryEl) {
-      timePrimaryEl.textContent = t("map.noOverlaySubtitle", "Select an overlay to explore the Baltic Sea");
-    }
-    if (timeSecondaryEl) {
-      timeSecondaryEl.textContent = "";
-    }
-    if (oceanConditionCurrentValueEl) {
-      oceanConditionCurrentValueEl.textContent = "--";
-    }
-    if (oceanConditionCurrentNoteEl) {
-      oceanConditionCurrentNoteEl.textContent = "Switch on an ocean condition to see contextual controls here.";
-    }
-    if (oceanConditionLegendEl) {
-      oceanConditionLegendEl.hidden = true;
-    }
-    if (oceanConditionRenderModeListEl) {
-      oceanConditionRenderModeListEl.hidden = true;
-      oceanConditionRenderModeListEl.innerHTML = "";
-    }
-    if (oceanConditionPlaceholderEl) {
-      oceanConditionPlaceholderEl.hidden = true;
-      oceanConditionPlaceholderEl.innerHTML = "";
-    }
-    updateOverlayDependentPanels();
-    return;
-  }
-
-  if (!metadata || !frame) {
-    const placeholder = oceanConditionPlaceholderDefinition(condition.id);
-    if (timePrimaryEl) {
-      timePrimaryEl.textContent = "Processed frames not available yet";
-    }
-    if (timeSecondaryEl) {
-      timeSecondaryEl.textContent = `${condition.time_resolution_label || "Native"} data will slot into the shared timeline here.`;
-    }
-    if (oceanConditionCurrentValueEl) {
-      oceanConditionCurrentValueEl.textContent = `${condition.label} · ${condition.units || ""}`.trim();
-    }
-    if (oceanConditionCurrentNoteEl) {
-      oceanConditionCurrentNoteEl.textContent = "This control card is ready now and will switch to live data automatically once processed frames exist.";
-    }
-    if (oceanConditionLegendEl) {
-      oceanConditionLegendEl.hidden = true;
-    }
-    renderOceanRenderModes();
-    if (oceanConditionPlaceholderEl) {
-      oceanConditionPlaceholderEl.hidden = false;
-      oceanConditionPlaceholderEl.innerHTML = `
-        <p class="context-placeholder-title">${placeholder.title}</p>
-        <p class="context-placeholder-copy">${placeholder.copy}</p>
-        <p class="context-placeholder-meta">Units: ${condition.units || "n/a"} · Resolution: ${condition.time_resolution_label || "native"} · Source: ${condition.source_label || "Pending source metadata"}</p>
-      `;
-    }
-    updateOverlayDependentPanels();
-    return;
-  }
-
-  const frameTime = formatTimestamp(frame.time_utc, metadata.region.time_zone);
-  const frameMin = frame.min_celsius ?? frame.min_value ?? frame.min ?? null;
-  const frameMax = frame.max_celsius ?? frame.max_value ?? frame.max ?? null;
-  const valueRange = metadata.value_range_celsius ?? metadata.value_range ?? null;
-  timePrimaryEl.textContent = frameTime;
-
-  const leadHours = Math.round((new Date(frame.time_utc) - new Date()) / 36e5);
-  if (leadHours > 0) {
-    timeSecondaryEl.textContent = t("map.hoursAhead", "{count} hours ahead", { count: leadHours });
-  } else if (leadHours < 0) {
-    timeSecondaryEl.textContent = t("map.hoursBehind", "{count} hours behind now", { count: Math.abs(leadHours) });
-  } else {
-    timeSecondaryEl.textContent = t("map.closestToNow", "Closest available to now");
-  }
-
-  if (oceanConditionCurrentValueEl) {
-    oceanConditionCurrentValueEl.textContent = state.selectedLocation?.sampleText || `${condition.label} · ${condition.units || ""}`.trim();
-  }
-  if (oceanConditionCurrentNoteEl) {
-    oceanConditionCurrentNoteEl.textContent = state.selectedLocation
-      ? t("map.selectedCoordinates", "{lat} - {lon}", {
-          lat: formatCoordinate(state.selectedLocation.latitude, "N", "S"),
-          lon: formatCoordinate(state.selectedLocation.longitude, "E", "W")
-        })
-      : "Tap the map to sample a local water value.";
-  }
-
-  oceanConditionLegendTitleEl.textContent =
-    `${condition.label} · ${t(getPaletteDefinition().labelKey, getPaletteDefinition().fallbackLabel)}`;
-  oceanConditionLegendRangeEl.textContent =
-    typeof frameMin === "number" && typeof frameMax === "number" ? `${frameMin.toFixed(1)} to ${frameMax.toFixed(1)}` : "";
-  oceanConditionLegendMinEl.textContent = typeof valueRange?.display_min === "number" ? valueRange.display_min.toFixed(1) : "";
-  oceanConditionLegendMaxEl.textContent = typeof valueRange?.display_max === "number" ? valueRange.display_max.toFixed(1) : "";
-  oceanConditionLegendUnitEl.textContent = condition.units || "";
-  oceanConditionLegendEl.hidden = false;
-
-  if (oceanConditionPlaceholderEl) {
-    oceanConditionPlaceholderEl.hidden = true;
-    oceanConditionPlaceholderEl.innerHTML = "";
-  }
-
   renderOceanRenderModes();
-
-  if (state.activeConditionId !== "temperature" && state.activeConditionId !== "salinity" && state.activeConditionId !== "oxygen" && state.activeConditionId !== "seaLevel" && state.activeConditionId !== "currents" && state.activeConditionId !== "waves") {
-    oceanConditionLegendEl.hidden = true;
-  }
-
-  if (condition.id === "temperature" || condition.id === "salinity" || condition.id === "oxygen" || condition.id === "seaLevel" || condition.id === "currents" || condition.id === "waves") {
-    oceanConditionLegendRangeEl.textContent =
-      typeof frameMin === "number" && typeof frameMax === "number" ? `${frameMin.toFixed(1)} to ${frameMax.toFixed(1)}` : "";
-  }
-
-  updateOverlayDependentPanels();
+  renderActiveOverlayControls();
   updateLegendAppearance();
+  updateDataSummary();
 }
 
 function updateTransparencyPanel() {
-  const metadata = activeConditionMetadata();
-  const condition = activeConditionDefinition();
-  if (state.noise.active) {
-    sourceSummaryEl.textContent = t("transparency.noiseSummary", "HELCOM / ICES - modelled and reported underwater-noise data");
-    sourceDetailEl.textContent = t("transparency.noiseDetail", "Assessment pressure layers and reported impulsive-noise events");
-    const rows = [
-      t("transparency.noisePeriod", "Assessment period: {value}", { value: "2016-2021" }),
-      t("transparency.noiseCaution", "Continuous and impulsive metrics are shown separately and are not combined into one number."),
-      t("transparency.noiseReporting", "Reported events depend on national reporting completeness.")
-    ];
-    transparencyDetailEl.innerHTML = rows.map((row) => `<p>${row}</p>`).join("");
-    return;
+  sourceSummaryEl.textContent = "Sources and dataset context";
+  sourceDetailEl.textContent = "Data are updated manually in this prototype. All times are UTC.";
+  transparencyDetailEl.replaceChildren();
+  for (const id of [state.activeConditionId, state.noise.active && "noise", state.infrastructure.active && "infrastructure"].filter(Boolean)) {
+    const details = document.createElement("details");
+    const summary = document.createElement("summary");
+    summary.textContent = state.oceanConditions[id]?.condition?.label || overlayInfoEntry(id)?.title || id;
+    details.append(summary);
+    if (id === state.activeConditionId) details.open = true;
+    appendLayerMetadata(details, id);
+    transparencyDetailEl.append(details);
   }
-
-  if (state.infrastructure.active) {
-    sourceSummaryEl.textContent = t("transparency.infrastructureSummary", "Curated Baltic infrastructure prototype");
-    sourceDetailEl.textContent = t("transparency.infrastructureDetail", "Open-data prototype bundle combining ports, energy, routes and land-use context");
-    const rows = [
-      t("transparency.infrastructureSource", "Infrastructure overlay: {value}", {
-        value: state.infrastructure.manifest?.overlay?.source_summary || t("infrastructure.prototypeSource", "Curated open-data prototype")
-      }),
-      t("transparency.infrastructureLicense", "Infrastructure licence note: {value}", {
-        value: state.infrastructure.manifest?.overlay?.license_note || t("infrastructure.prototypeLicense", "Mixed open licences; see documentation.")
-      })
-    ];
-    transparencyDetailEl.innerHTML = rows.map((row) => `<p>${row}</p>`).join("");
-    return;
-  }
-
-  sourceSummaryEl.textContent = state.satelliteWorking
-    ? t("transparency.summaryOnlineSimple", "Copernicus Marine + EOX Cloudless + OSM overlay")
-    : t("transparency.summaryOffline", "Copernicus Marine + local fallback coastline");
-
-  sourceDetailEl.textContent = condition?.source_label || t("transparency.temperatureDetail", "Modelled sea-surface temperature");
-  const rows = [
-    t("transparency.updated", "Last update: {value}", {
-      value: formatTimestamp(metadata?.provenance?.retrieved_at_utc, "UTC")
-    }),
-    t("transparency.forecastWindow", "Forecast window: {start} to {end}", {
-      start: formatTimestamp(metadata?.provenance?.requested_start_utc, "UTC"),
-      end: formatTimestamp(metadata?.provenance?.requested_end_utc, "UTC")
-    }),
-    `Product: ${condition?.product_id || "--"}`,
-    `Dataset: ${condition?.dataset_id || "--"}`
-  ];
-
-  transparencyDetailEl.innerHTML = rows.map((row) => `<p>${row}</p>`).join("");
 }
 
 function updateFallbackAppearance() {
@@ -3020,7 +2857,7 @@ function updateFallbackAppearance() {
 }
 
 function applyNightMode(frame) {
-  if (!state.map) {
+  if (!state.mapReady || !frame) {
     return;
   }
 
@@ -3124,19 +2961,27 @@ function setSelectedLocationMarker() {
 }
 
 function updateOverlayFrame() {
-  const frame = currentFrame();
-  if (!frame) {
-    return;
-  }
-  applyNightMode(frame);
-  refreshOceanVisuals().catch((error) => {
-    console.error(error);
-  });
+  state.selectionVersion++;
+  state.selectedLocationRequestToken++;
+  state.oceanVisuals.requestToken++;
+  state.frameQuality = null;
+  state.frameStatus = state.mapReady && currentFrame() ? "loading" : "idle";
+  if (state.selectedLocation) state.selectedLocation.sampleText = null;
+  clickPanelEl.hidden = true;
+  clearOceanVisuals();
+  syncTimelineUi();
   updateChrome();
-  setOceanVisibility();
-  updateSelectedLocationValues().catch((error) => {
-    console.error(error);
-  });
+  updateTransparencyPanel();
+  const selection = selectionSnapshot();
+  if (state.overlayInfoId) renderOverlayInfoPanel();
+  // Metadata browsing and the timeline remain useful without WebGL.
+  loadActiveQueryIndex(selection).then(() => {
+    if (selectionIsCurrent(selection)) updateTransparencyPanel();
+  }).catch(error => console.error(error));
+  if (!state.mapReady) return;
+  applyNightMode(selection.frame);
+  refreshOceanVisuals(selection);
+  updateSelectedLocationValues(selection);
 }
 
 function setOceanVisibility() {
@@ -3153,6 +2998,7 @@ function setLayerButton(button, label, active) {
     return;
   }
   button.classList.toggle("is-selected", active);
+  button.setAttribute("aria-pressed", String(active));
   button.innerHTML = `
     <span class="layer-main">
       <span class="layer-tick">${active ? "✓" : ""}</span>
@@ -3162,7 +3008,7 @@ function setLayerButton(button, label, active) {
 }
 
 function updateStatusForVisibleLayers() {
-  clearStatus();
+  if (state.mapFailed) setStatus("Map unavailable. Layer guides and published timestamps remain available.", "warning");
 }
 
 function updateOceanConditionButtons() {
@@ -3172,8 +3018,17 @@ function updateOceanConditionButtons() {
       continue;
     }
     const entry = state.oceanConditions[conditionId];
-    const label = entry?.condition?.label || button.textContent || conditionId;
+    const label = entry?.condition?.label || overlayInfoEntry(conditionId)?.title || conditionId;
     setLayerButton(button, label, state.activeConditionId === conditionId);
+    const badge = document.createElement("span");
+    badge.className = "availability-badge";
+    badge.textContent = entry?.available ? "Available" : "No data";
+    button.append(badge);
+    const roadmap = document.querySelector(`.roadmap-list [data-i18n="layers.${conditionId}"]`);
+    if (roadmap) {
+      roadmap.dataset.availability = entry?.available ? "Available" : "No data";
+      roadmap.classList.toggle("is-live", Boolean(entry?.available));
+    }
     button.disabled = false;
     button.classList.toggle("is-disabled", false);
   }
@@ -3191,7 +3046,7 @@ function renderOceanRenderModes() {
     return;
   }
 
-  oceanConditionRenderModeListEl.hidden = false;
+  oceanConditionRenderModeListEl.hidden = !state.mapReady;
   oceanConditionRenderModeListEl.innerHTML = modes
     .map(
       (mode) => `
@@ -3220,25 +3075,10 @@ function updateLayerToggleUi() {
   updateNoiseUi();
   updateInfrastructureUi();
   updateStatusForVisibleLayers();
+  updateChrome();
 }
 
-function nearestFrameIndexForTimestamp(metadata, timestamp) {
-  if (!metadata?.frames?.length || !timestamp) {
-    return metadata?.initial_frame_index ?? 0;
-  }
 
-  const targetTime = new Date(timestamp).getTime();
-  let bestIndex = 0;
-  let bestDistance = Number.POSITIVE_INFINITY;
-  metadata.frames.forEach((frame, index) => {
-    const distance = Math.abs(new Date(frame.time_utc).getTime() - targetTime);
-    if (distance < bestDistance) {
-      bestDistance = distance;
-      bestIndex = index;
-    }
-  });
-  return bestIndex;
-}
 
 function setActiveOceanCondition(conditionId) {
   const entry = state.oceanConditions[conditionId];
@@ -3250,7 +3090,7 @@ function setActiveOceanCondition(conditionId) {
   if (state.activeConditionId === conditionId) {
     state.requestedTimeUtc = currentFrame()?.time_utc ?? state.requestedTimeUtc;
     state.activeConditionId = null;
-    state.selectedLocation = null;
+    updateOverlayFrame();
     clickPanelEl.hidden = true;
     updatePaletteButtons();
     updateLayerToggleUi();
@@ -3267,7 +3107,7 @@ function setActiveOceanCondition(conditionId) {
   if (entry.metadata) {
     state.metadata = entry.metadata;
     state.activeFrameIndex = nearestFrameIndexForTimestamp(entry.metadata, state.requestedTimeUtc || previousFrame?.time_utc);
-    state.requestedTimeUtc = entry.metadata.frames?.[state.activeFrameIndex]?.time_utc ?? state.requestedTimeUtc;
+
   }
   syncTimelineUi();
   updatePaletteButtons();
@@ -3276,12 +3116,7 @@ function setActiveOceanCondition(conditionId) {
   setOceanVisibility();
   updateChrome();
   updateTransparencyPanel();
-  if (entry.metadata) {
-    updateOverlayFrame();
-  } else {
-    clickPanelEl.hidden = true;
-    updateBottomLeftVisibility();
-  }
+  updateOverlayFrame();
 }
 
 function toggleTemperatureLayer() {
@@ -3297,16 +3132,11 @@ function toggleLabelsLayer() {
 }
 
 function setPalette(paletteName) {
-  if (!TEMPERATURE_PALETTES[paletteName] || state.palette === paletteName) {
-    return;
-  }
-  state.palette = paletteName;
+  if (!TEMPERATURE_PALETTES[paletteName]) return;
+  state.paletteOverrides[state.activeConditionId] = paletteName;
   updatePaletteButtons();
-  updateLegendAppearance();
   closePaletteMenu();
-  if (state.map?.isStyleLoaded()) {
-    updateOverlayFrame();
-  }
+  updateOverlayFrame();
 }
 
 async function setSelectedLocation(latitude, longitude) {
@@ -3319,38 +3149,28 @@ async function setSelectedLocation(latitude, longitude) {
   await updateSelectedLocationValues();
 }
 
-async function updateSelectedLocationValues() {
-  const metadata = activeConditionMetadata();
-  const condition = activeConditionDefinition();
-  if (!state.selectedLocation || !metadata || !oceanLayerVisible() || !condition) {
-    if (state.selectedLocation) {
-      state.selectedLocation.sampleText = null;
-    }
-    clickPanelEl.hidden = true;
-    renderActiveOverlayControls();
-    return;
-  }
-
+async function updateSelectedLocationValues(selection = selectionSnapshot()) {
   const requestToken = ++state.selectedLocationRequestToken;
-  const { latitude, longitude } = state.selectedLocation;
-  const sample = await fetchOceanSample(latitude, longitude);
-  if (requestToken !== state.selectedLocationRequestToken) {
-    return;
+  const location = state.selectedLocation;
+  if (!location || !selection.metadata || !oceanLayerVisible() || !state.mapReady) {clickPanelEl.hidden = true; return;}
+  location.sampleText = null;
+  clickPanelEl.hidden = true;
+  updateChrome();
+  try {
+    const sample = await fetchOceanSample(location.latitude, location.longitude, selection);
+    if (requestToken !== state.selectedLocationRequestToken || location !== state.selectedLocation || !selectionIsCurrent(selection)) return;
+    const value = sample.primary_value;
+    location.sampleText = typeof value === "number" ? `${value.toFixed(2)} ${readableUnit(sample.primary_unit)}${Number.isFinite(sample.bottom_depth_m) ? ` at ${sample.bottom_depth_m.toFixed(1)} m model depth (selected cell)` : ""}` : "No valid water value at this location";
+    clickedPrimaryValueEl.textContent = location.sampleText;
+    clickedLayerNameEl.textContent = selection.condition.label;
+    clickedTimeEl.textContent = formatTimestamp(sample.time_utc);
+    clickedCoordinatesEl.textContent = `${formatCoordinate(location.latitude, "N", "S")} · ${formatCoordinate(location.longitude, "E", "W")}`;
+    clickPanelEl.hidden = state.mode !== "map";
+  } catch (error) {
+    if (!selectionIsCurrent(selection) || requestToken !== state.selectedLocationRequestToken) return;
+    console.error(error);
+    location.sampleText = "Value unavailable for this frame";
   }
-
-  const primaryValue = typeof sample.primary_value === "number" ? sample.primary_value : null;
-  const unit = sample.primary_unit || condition.units || "";
-  state.selectedLocation.sampleText = primaryValue === null ? null : `${primaryValue.toFixed(1)} ${unit}`;
-
-  clickedPrimaryValueEl.textContent = primaryValue === null ? `${condition.label}: no water cell` : `${primaryValue.toFixed(1)} ${unit}`;
-  clickedLayerNameEl.textContent = condition.label;
-
-  clickedTimeEl.textContent = formatTimestamp(sample.time_utc ?? currentFrame().time_utc, metadata.region.time_zone);
-  clickedCoordinatesEl.textContent = t("map.selectedCoordinates", "{lat} - {lon}", {
-    lat: formatCoordinate(latitude, "N", "S"),
-    lon: formatCoordinate(longitude, "E", "W")
-  });
-  clickPanelEl.hidden = primaryValue === null;
   renderActiveOverlayControls();
   updateChrome();
 }
@@ -3378,12 +3198,6 @@ async function handleMapClick(event) {
   }
 
   const { lat, lng } = event.lngLat;
-  const sample = await fetchOceanSample(lat, lng);
-  if (typeof sample.primary_value !== "number") {
-    clickPanelEl.hidden = true;
-    return;
-  }
-
   await setSelectedLocation(lat, lng);
 }
 
@@ -3403,22 +3217,6 @@ function registerInteractions(maplibregl) {
   }
 
   state.map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
-  const handleTimeSelection = (event) => {
-    event.stopPropagation();
-    state.activeFrameIndex = Number(timeSliderEl.value);
-    state.requestedTimeUtc = currentFrame()?.time_utc ?? state.requestedTimeUtc;
-    updateOverlayFrame();
-  };
-
-  timeSliderEl.addEventListener("input", handleTimeSelection);
-  timeSliderEl.addEventListener("change", handleTimeSelection);
-  oceanConditionPanelEl?.addEventListener("click", (event) => {
-    event.stopPropagation();
-  });
-  oceanConditionPanelEl?.addEventListener("pointerdown", (event) => {
-    event.stopPropagation();
-  });
-
   state.map.on("click", (event) => {
     handleMapClick(event).catch((error) => {
       console.error(error);
@@ -3439,38 +3237,56 @@ function registerInteractions(maplibregl) {
 }
 
 function initializeMapUi() {
+  if (state.mapReady || state.mapFailed) return;
+  state.mapReady = true;
+  document.getElementById("map-fallback").hidden = true;
+  bodyEl.dataset.mapState = "ready";
   addOceanLayers();
   ensureSelectedLocationLayer();
   registerInteractions(state.maplibregl);
+  state.map.getCanvas().addEventListener("webglcontextlost", event => {event.preventDefault(); failMap(new Error("WebGL context lost"));}, {once:true});
+  syncPanelAccess();
   updateOverlayFrame();
-  renderOverlayInfoPanel();
-  updateTransparencyPanel();
   updateLayerToggleUi();
   updateViewToggle();
   updateFallbackAppearance();
   setSelectedLocationMarker();
-  updateOverlayDependentPanels();
-  clearStatus();
 }
 
 async function loadMapLibre() {
-  if (window.maplibregl) {
-    return window.maplibregl;
-  }
-
+  if (window.maplibregl) return window.maplibregl;
   await new Promise((resolve, reject) => {
     const script = document.createElement("script");
+    const timeout = window.setTimeout(() => {script.remove(); reject(new Error("MapLibre load timed out"));}, 12000);
     script.src = MAPLIBRE_JS_URL;
     script.async = true;
-    script.onload = resolve;
-    script.onerror = () => reject(new Error("MapLibre GL JS could not be loaded."));
+    script.onload = () => {window.clearTimeout(timeout); resolve();};
+    script.onerror = () => {window.clearTimeout(timeout); reject(new Error("MapLibre could not be loaded"));};
     document.head.appendChild(script);
   });
-
+  if (!window.maplibregl?.Map) throw new Error("MapLibre renderer unavailable");
   return window.maplibregl;
 }
 
 function bindUi() {
+  timeSliderEl.addEventListener("input", () => {
+    state.activeFrameIndex = Number(timeSliderEl.value);
+    state.requestedTimeUtc = currentFrame()?.time_utc ?? null;
+    updateOverlayFrame();
+  });
+  document.getElementById("layers-drawer-toggle").addEventListener("click", () => {
+    state.drawerOpen = !state.drawerOpen;
+    state.overlayInfoId = null;
+    renderOverlayInfoPanel();
+    syncPanelAccess();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+    if (!paletteMenuEl.hidden) {closePaletteMenu(); paletteButtonEl.focus();}
+    else if (!languageMenuEl.hidden) {closeLanguageMenu(); languageButtonEl.focus();}
+    else if (state.overlayInfoId) closeOverlayGuide();
+    else if (state.drawerOpen) {state.drawerOpen = false; syncPanelAccess(); document.getElementById("layers-drawer-toggle").focus();}
+  });
   heroEnterMapEl.addEventListener("click", () => setMode("map"));
   topEnterMapEl.addEventListener("click", () => setMode("map"));
   previewEnterMapEl.addEventListener("click", () => setMode("map"));
@@ -3485,7 +3301,7 @@ function bindUi() {
   infrastructureToggleEl?.addEventListener("click", () => {
     toggleInfrastructureOverlay().catch((error) => {
       console.error(error);
-      setStatus(error.message || "Infrastructure overlay could not be toggled.", "error");
+      setStatus("The infrastructure overlay could not be loaded. You can still read its guide.", "error");
     });
   });
   viewToggleEl.addEventListener("click", toggleLabelsLayer);
@@ -3511,10 +3327,10 @@ function bindUi() {
     });
   });
   overlayInfoCloseEl?.addEventListener("click", () => {
-    state.overlayInfoId = null;
-    renderOverlayInfoPanel();
+    closeOverlayGuide();
   });
   window.addEventListener("resize", () => {
+    syncPanelAccess();
     renderActiveOverlayControls();
     renderOverlayInfoPanel();
   });
@@ -3522,6 +3338,8 @@ function bindUi() {
 
 function syncTimelineUi() {
   const metadata = activeConditionMetadata();
+  timeSliderEl.disabled = !metadata?.frames?.length;
+  timeSliderEl.setAttribute("aria-valuetext", formatTimestamp(currentFrame()?.time_utc));
   if (!metadata?.frames?.length) {
     timeSliderEl.min = "0";
     timeSliderEl.max = "0";
@@ -3536,100 +3354,241 @@ function syncTimelineUi() {
 }
 
 async function bootstrap() {
+  bindUi(); bindLanguageMenu(); bindPaletteMenu(); syncPanelAccess();
+  try {await loadTranslations("en"); applyTranslations();} catch (error) {console.error(error);}
   try {
-    if (window.location.protocol === "file:") {
-      throw new Error(
-        "This page should not be opened directly from the file system. Run `python scripts/build_site.py`, start `python frontend/serve_frontend.py`, then open http://127.0.0.1:8000/."
-      );
-    }
-
-    bindUi();
-    bindLanguageMenu();
-    bindPaletteMenu();
-    await loadTranslations("en");
-    applyTranslations();
-
-    setStatus(t("status.loadingMetadata", "Loading processed metadata..."));
-    const manifestResponse = await fetch(OCEAN_MANIFEST_URL, { cache: "no-store" });
-    if (!manifestResponse.ok) {
-      throw new Error(
-        "Processed ocean assets were not found yet. Run `python scripts/build_site.py`, then restart the frontend server."
-      );
-    }
-    state.oceanManifest = await manifestResponse.json();
-    state.oceanConditions = Object.fromEntries(
-      (state.oceanManifest.conditions || []).map((condition) => [condition.id, condition])
-    );
+    state.oceanManifest = await readStaticJson(OCEAN_MANIFEST_URL);
+    state.oceanConditions = Object.fromEntries((state.oceanManifest.conditions || []).map(entry => {
+      const definition = entry.metadata?.condition || entry.condition;
+      const condition = {...definition, units: readableUnit(definition?.units)};
+      if (entry.id === "oxygen" && String(condition.depth_mode).startsWith("surface")) condition.label = "Surface dissolved oxygen";
+      return [entry.id, {...entry, condition}];
+    }));
     state.activeConditionId = state.oceanManifest.default_condition_id || "temperature";
     state.metadata = activeConditionMetadata();
-    if (!state.metadata) {
-      setStatus(
-        t(
-          "status.noOceanDataYet",
-          "No processed ocean-condition assets are published yet. The site shell is live and will switch to live data automatically after the updater runs."
-        ),
-        "warning"
-      );
-    }
-
-    state.activeFrameIndex = state.metadata?.initial_frame_index ?? 0;
+    state.activeFrameIndex = nearestFrameIndexForTimestamp(state.metadata, null);
     state.requestedTimeUtc = currentFrame()?.time_utc ?? null;
-    syncTimelineUi();
-    updateChrome();
-
-    setStatus(t("status.loadingMap", "Loading map renderer..."));
-    state.maplibregl = await loadMapLibre();
-    const initialRegion = state.metadata?.region || state.oceanManifest.region;
-    state.map = new state.maplibregl.Map({
-      container: mapContainerEl,
-      style: mapStyle(),
-      center: initialRegion.initial_view.center,
-      zoom: initialRegion.initial_view.zoom,
-      pitch: 42,
-      bearing: 18,
-      maxPitch: 76,
-      minZoom: 2.4,
-      maxZoom: 18.5,
-      attributionControl: true,
-      dragRotate: true,
-      pitchWithRotate: true
-    });
-
-    const fallbackTimer = window.setTimeout(() => {
-      state.satelliteWorking = false;
-      if (state.map && state.map.isStyleLoaded()) {
-        initializeMapUi();
-        updateFallbackAppearance();
-      }
-    }, 5000);
-
-    state.map.on("load", () => {
-      initializeMapUi();
-    });
-
-    state.map.on("sourcedata", (event) => {
-      if (event.sourceId === "eox-satellite" && event.isSourceLoaded) {
-        state.satelliteWorking = true;
-        window.clearTimeout(fallbackTimer);
-        updateFallbackAppearance();
-      }
-    });
-
-    state.map.on("error", (event) => {
-      const message = String(event?.error?.message || "");
-      const url = String(event?.error?.url || "");
-      if (url.includes("tiles.maps.eox.at") || message.includes("tiles.maps.eox.at")) {
-        state.satelliteWorking = false;
-        if (state.map && state.map.isStyleLoaded()) {
-          initializeMapUi();
-          updateFallbackAppearance();
-        }
-      }
-    });
   } catch (error) {
     console.error(error);
-    setStatus(error.message || "The app could not be initialized.", "error");
+    setStatus("Published ocean data could not be loaded. The overview and layer guides are still available.", "warning");
   }
+  updateLayerToggleUi(); updatePaletteButtons(); updateOverlayFrame();
+  ensureInfrastructureManifest().then(() => updateTransparencyPanel()).catch(error => console.error(error));
+  try {
+    state.maplibregl = await loadMapLibre();
+    const region = state.metadata?.region || state.oceanManifest?.region;
+    state.map = new state.maplibregl.Map({
+      container: mapContainerEl, style: mapStyle(),
+      center: region?.initial_view?.center || [20, 59.5], zoom: region?.initial_view?.zoom || 4.5,
+      pitch: 42, bearing: 18, maxPitch: 76, minZoom: 2.4, maxZoom: 18.5,
+      attributionControl: true, dragRotate: true, pitchWithRotate: true
+    });
+    state.map.on("load", () => {try {initializeMapUi();} catch (error) {failMap(error);}});
+    // A single bounded initialization check; never a retry loop.
+    window.setTimeout(() => {
+      if (state.mapFailed || state.mapReady) return;
+      try {
+        if (state.map?.isStyleLoaded()) initializeMapUi();
+        else failMap(new Error("Map style initialization timed out"));
+      } catch (error) {failMap(error);}
+    }, 12000);
+    state.map.on("sourcedata", event => {
+      if (!state.mapFailed && event.sourceId === "eox-satellite" && event.isSourceLoaded) {state.satelliteWorking = true; updateFallbackAppearance();}
+    });
+    state.map.on("error", event => {
+      console.error("Map resource error", event.error);
+      if (state.mapFailed) return;
+      const message = String(event.error?.message || "");
+      if (/webgl|context lost/i.test(message)) failMap(event.error);
+      else if (/helcom/i.test(message + event.error?.url)) setStatus("A noise layer could not be loaded. Its historical guide is still available.", "warning");
+      else {state.satelliteWorking = false; updateFallbackAppearance();}
+    });
+  } catch (error) {failMap(error);}
+}
+
+function selectionSnapshot() {
+  return {conditionId: state.activeConditionId, condition: activeConditionDefinition(), metadata: activeConditionMetadata(), frame: currentFrame(), frameIndex: state.activeFrameIndex, version: state.selectionVersion};
+}
+
+function selectionIsCurrent(selection) {
+  return selection.version === state.selectionVersion && selection.conditionId === state.activeConditionId && selection.frameIndex === state.activeFrameIndex;
+}
+
+async function readStaticJson(relativeUrl) {
+  const url = new URL(relativeUrl, window.location.href).toString();
+  if (state.pendingData.has(url)) return state.pendingData.get(url);
+  const pending = (async () => {
+    const response = await fetch(url, {signal: AbortSignal.timeout(15000)});
+    if (!response.ok) throw new Error(`Static file unavailable (${response.status}): ${url}`);
+    return response.json();
+  })();
+  state.pendingData.set(url, pending);
+  try {return await pending;} finally {state.pendingData.delete(url);}
+}
+
+function clearOceanVisuals() {
+  state.renderWaitCancel?.();
+  state.renderedSelectionVersion = null;
+  delete mapContainerEl.dataset.frame;
+  delete mapContainerEl.dataset.condition;
+  if (!state.mapReady) return;
+  updateOceanLayerStyles();
+  for (const id of ["ocean-scalar-source", "ocean-shoreline-source", "ocean-vector-source"]) setGeoJsonSourceData(id, emptyFeatureCollection());
+}
+
+function waitForOceanSources(map, selection, token) {
+  state.renderWaitCancel?.();
+  return new Promise((resolve, reject) => {
+    const finish = (ready, error) => {
+      window.clearTimeout(timeout);
+      map.off("sourcedata", check);
+      if (state.renderWaitCancel === cancel) state.renderWaitCancel = null;
+      if (error) reject(error); else resolve(ready);
+    };
+    const cancel = () => finish(false);
+    const check = () => {
+      if (!selectionIsCurrent(selection) || token !== state.oceanVisuals.requestToken || !state.mapReady) return finish(false);
+      if (["ocean-scalar-source", "ocean-shoreline-source", "ocean-vector-source"].every(id => map.isSourceLoaded(id))) finish(true);
+    };
+    const timeout = window.setTimeout(() => finish(false, new Error("Ocean source rendering timed out")), 15000);
+    state.renderWaitCancel = cancel;
+    map.on("sourcedata", check);
+    check();
+  });
+}
+
+function syncPanelAccess() {
+  const mapMode = state.mode === "map", compact = isCompactControlLayout();
+  const drawer = compact && state.drawerOpen;
+  bodyEl.dataset.drawer = drawer ? "open" : "closed";
+  bodyEl.dataset.guide = state.overlayInfoId ? "open" : "closed";
+  document.getElementById("home-column").inert = mapMode;
+  document.getElementById("map-toolbar").hidden = !mapMode;
+  const sidebar = document.getElementById("map-left-sidebar");
+  sidebar.inert = !mapMode || (compact && (!drawer || Boolean(state.overlayInfoId)));
+  document.getElementById("map-sidebar-shell").inert = !mapMode || (compact && !drawer);
+  mapBottomLeftEl.inert = !mapMode || drawer;
+  mapContainerEl.inert = !mapMode || !state.mapReady;
+  const toggle = document.getElementById("layers-drawer-toggle");
+  toggle.setAttribute("aria-expanded", String(drawer));
+  toggle.textContent = drawer ? "Close layers" : "Layers & info";
+  viewToggleEl.disabled = !state.mapReady;
+  noiseToggleEl.disabled = !state.mapReady;
+  infrastructureToggleEl.disabled = !state.mapReady;
+  document.getElementById("map-control-note").hidden = state.mapReady;
+}
+
+function closeOverlayGuide() {
+  const id = state.overlayInfoId;
+  state.overlayInfoId = null;
+  renderOverlayInfoPanel();
+  syncPanelAccess();
+  overlayInfoButtonEls.find(button => button.dataset.overlayInfoButton === id)?.focus();
+}
+
+function failMap(error) {
+  console.error("Interactive map unavailable", error);
+  if (state.mapFailed) return;
+  state.mapFailed = true;
+  state.renderWaitCancel?.();
+  state.mapReady = false;
+  state.selectionVersion++;
+  state.oceanVisuals.requestToken++;
+  state.selectedLocationRequestToken++;
+  state.frameStatus = "idle";
+  const failedMap = state.map;
+  state.map = null;
+  try {failedMap?.remove();} catch (cleanupError) {console.error(cleanupError);}
+  bodyEl.dataset.mapState = "unavailable";
+  document.getElementById("map-fallback").hidden = false;
+  document.getElementById("map-fallback-title").textContent = "The interactive map is unavailable";
+  document.getElementById("map-fallback-message").textContent = "Your browser could not start or load the map. You can still explore layer guides, dataset details and published timestamps. Try a browser with WebGL enabled to use the interactive map.";
+  document.getElementById("home-map-status").textContent = "Map unavailable in this browser. The layer guides, dataset details and timeline remain available.";
+  const preview = document.getElementById("fallback-coastline");
+  const url = activeConditionMetadata()?.fallback?.land_mask_url;
+  if (url) {preview.src = url; preview.hidden = false; preview.onerror = () => {preview.hidden = true;};}
+  syncPanelAccess();
+  updateChrome();
+  updateStatusForVisibleLayers();
+}
+
+function updateDataSummary() {
+  const metadata = activeConditionMetadata();
+  document.getElementById("home-data-update").textContent = metadata
+    ? `${activeConditionDefinition()?.label} dataset last successful update: ${formatTimestamp(metadata.provenance?.retrieved_at_utc)}. Selected data time: ${formatTimestamp(currentFrame()?.time_utc)}.`
+    : "Published dataset details are currently unavailable.";
+  document.getElementById("home-forecast-status").textContent = forecastArchived(metadata) ? "Archived forecast — not current conditions." : "";
+}
+
+function metadataRow(root, label, value, href) {
+  const row = document.createElement("p");
+  const name = document.createElement("strong");
+  name.textContent = `${label}: `;
+  row.append(name);
+  if (href) {
+    const link = document.createElement("a");
+    link.textContent = value;
+    const url = new URL(href, window.location.href);
+    if (["https:", "http:"].includes(url.protocol)) link.href = url.href;
+    row.append(link);
+  } else row.append(document.createTextNode(value || "Not recorded in the published metadata"));
+  root.append(row);
+}
+
+function appendLayerMetadata(root, id) {
+  const entry = state.oceanConditions[id], metadata = entry?.metadata, condition = entry?.condition;
+  if (condition) {
+    const provenance = metadata?.provenance || {};
+    const product = provenance.product_id || condition.product_id;
+    const frame = id === state.activeConditionId ? currentFrame() : metadata?.frames?.[nearestFrameIndexForTimestamp(metadata, state.requestedTimeUtc)];
+    metadataRow(root, "Source", provenance.source || "Copernicus Marine", product ? `https://data.marine.copernicus.eu/product/${encodeURIComponent(product)}/description` : "https://marine.copernicus.eu/");
+    metadataRow(root, "Status", provenance.type || condition.dataset_type);
+    metadataRow(root, "Selected data timestamp (UTC)", frame ? formatTimestamp(frame.time_utc) : "No published frames");
+    metadataRow(root, "Dataset last successful update (retrieval / processing)", formatTimestamp(provenance.retrieved_at_utc));
+    if (metadata) metadataRow(root, "Update note", "This is the dataset export’s recorded retrieval / processing time, not the selected model time or a separate download time for every retained frame.");
+    metadataRow(root, "Product", product);
+    metadataRow(root, "Dataset", provenance.dataset_id || condition.dataset_id);
+    const surface = String(condition.depth_mode).startsWith("surface");
+    metadataRow(root, "Vertical level", metadata?.depth_label || (surface ? (id === "waves" || id === "seaLevel" ? "Sea surface" : "Shallowest model level (surface); exact depth in metres not recorded") : "Not recorded in published metadata"));
+    const q = state.oceanQueryIndices[id];
+    metadataRow(root, "Published spatial grid", q ? `${q.latitudes.length} × ${q.longitudes.length} cells; approximately ${Math.abs(q.latitudes[1]-q.latitudes[0]).toFixed(5)}° latitude × ${Math.abs(q.longitudes[1]-q.longitudes[0]).toFixed(5)}° longitude spacing` : "Grid coordinates accompany the published query index; exact grid not loaded for this layer.");
+    metadataRow(root, "Source time resolution", condition.time_resolution_label + (id === "oxygen" ? " means" : " instantaneous values"));
+    if (metadata) metadataRow(root, "Published time spacing", intervalLabel(metadata));
+    metadataRow(root, "Units", readableUnit(condition.units));
+    metadataRow(root, "Limitations", "Model output, not direct observations. The map simplifies the grid by zoom level; location values are interpolated. Colour-scale bounds stay fixed across published times. Missing or invalid cells are excluded.");
+    if (id === "oxygen") {
+      if (condition.depth_mode === "bottom") {
+        metadataRow(root, "Bottom oxygen", "Deepest non-missing value per model water column; depth varies by location. A cell value and model depth are shown when sampled. Daily means; the palette is not a hypoxia classification.");
+        if (frame?.bottom_depth_range_m) metadataRow(root, "Frame model depth range", `${frame.bottom_depth_range_m.min}–${frame.bottom_depth_range_m.max} m`);
+      } else metadataRow(root, "Surface oxygen only", "These existing files do not represent bottom-water hypoxia. Bottom extraction is configured for the next manually triggered update. The sequential palette shows relative concentration, not hypoxia categories; each timestamp represents a daily mean.");
+    }
+    if (id === "seaLevel") metadataRow(root, "Reference level", "The vertical datum is not recorded in this export. Do not interpret these values as a local flood threshold.");
+    if (forecastArchived(metadata)) metadataRow(root, "Forecast window", "Archived forecast — not current conditions.");
+    return;
+  }
+  if (id === "noise") {
+    metadataRow(root, "Status", "Historical modelled assessment pressure and reported activity events, 2016–2021");
+    metadataRow(root, "Data timestamp", "Assessment period 2016–2021; continuous noise uses representative model year 2018. Independent of the ocean timeline.");
+    metadataRow(root, "Dataset update time", "Not recorded in the supplied assessment metadata");
+    metadataRow(root, "Vertical / spatial resolution", "Not specified in the supplied layer metadata; not a depth-resolved microphone measurement.");
+    for (const category of NOISE_CATEGORY_ORDER.filter(key => !state.noise.active || state.noise.categories[key])) {
+      const layer = NOISE_LAYER_DEFINITIONS[category];
+      const url = layer.pointsUrl ? layer.pointsUrl.split("/query")[0] : layer.tiles[0].split("/export")[0] + "/" + ({continuousNoise:201, impulsivePressure:202, ecologicalEffect:223})[category];
+      metadataRow(root, layer.fallbackLabel, `${layer.source} · ${layer.units || "Reported event locations / areas"}`, url);
+    }
+    metadataRow(root, "Limitations", "Pressure and impact indices are not sound levels in dB and must not be added together. Event coverage depends on national reporting.");
+  } else if (id === "infrastructure") {
+    const manifest = state.infrastructure.manifest;
+    metadataRow(root, "Status", "Historical / static curated prototype references; approximate features, not a complete operational inventory.");
+    metadataRow(root, "Dataset update", manifest?.overlay?.updated_at ? `${manifest.overlay.updated_at} (date only; no time recorded)` : "Not recorded");
+    metadataRow(root, "Timestamp / resolution / vertical level", "Static features, independent of the ocean timeline. Uniform spatial resolution and vertical level are not supplied.");
+    for (const layer of manifest?.categories || []) {
+      if (state.infrastructure.active && !state.infrastructure.categories[layer.id]) continue;
+      metadataRow(root, layer.name, `${layer.source_name} · ${layer.license}`, layer.source_url);
+    }
+    metadataRow(root, "Units", "Feature locations and areas; no shared numerical unit");
+    metadataRow(root, "Provenance and planned integrations", "Current bundle notes", "./infrastructure/README.md");
+  } else metadataRow(root, "Data", "Published metadata unavailable. The educational guide remains accessible.");
 }
 
 bootstrap();

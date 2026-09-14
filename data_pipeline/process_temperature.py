@@ -91,19 +91,20 @@ def _to_celsius(data: xr.DataArray) -> tuple[np.ndarray, str, bool]:
     return raw, units or "unknown", False
 
 
-def _nice_display_range(values: np.ndarray) -> tuple[float, float]:
+def _nice_display_range(values: np.ndarray, nonnegative: bool = False) -> tuple[float, float]:
     valid = values[np.isfinite(values)]
     if valid.size == 0:
         raise ValueError("No valid ocean temperature values found in the processed Baltic subset.")
 
     raw_min = float(valid.min())
     raw_max = float(valid.max())
-    spread = max(raw_max - raw_min, 0.5)
-    padding = max(spread * 0.08, 0.25)
-    minimum = math.floor((raw_min - padding) * 2) / 2
-    maximum = math.ceil((raw_max + padding) * 2) / 2
+    if nonnegative and raw_min < 0:
+        raise ValueError("Negative source values are invalid for this magnitude or concentration.")
+    step = 10 ** math.floor(math.log10(max(raw_max - raw_min, abs(raw_max) * 0.01, 0.01))) / 5
+    minimum = math.floor(raw_min / step) * step
+    maximum = math.ceil(raw_max / step) * step
     if minimum == maximum:
-        maximum += 0.5
+        maximum += step
     return minimum, maximum
 
 

@@ -2,7 +2,7 @@
 
 > **Project type:** Personal Project  
 > **Field:** Marine data science · ocean visualisation · web development · science communication  
-> **Data:** Copernicus Marine · AIS  
+> **Data:** Copernicus Marine · HELCOM · curated infrastructure references
 > **Status:** Active development
 
 ## Overview
@@ -16,7 +16,7 @@ The initial focus is on **Copenhagen and the Øresund**, with the longer-term go
 ## Live Website
 
 **Digital Baltic Sea:**  
-[https://matteo-mvh.github.io/Digital-Baltic/](https://matteo-mvh.github.io/digital-baltic-sea/)
+[Digital Baltic Sea](https://matteo-mvh.github.io/digital-baltic-sea/)
 
 ## Motivation
 
@@ -67,7 +67,7 @@ docs/data_sources.md
 
 ### AIS
 
-AIS vessel information is used to provide context on maritime traffic in and around Copenhagen and the Øresund.
+AIS integration is planned. The current map uses HELCOM historical noise assessments and a curated infrastructure bundle; these are independent of the ocean timeline.
 
 Vessel information can also be used as input for experimental shipping-noise visualisations.
 
@@ -124,27 +124,23 @@ Generated static website used for deployment.
 
 ### `.github/workflows/`
 
-GitHub Actions workflows used for automated data updates and website deployment.
+GitHub Actions workflows used for manually triggered data updates and website deployment.
 
-## Automated Data Pipeline
+## Manual Data Updates
 
-The project is designed to automatically update marine data rather than relying entirely on manually generated files.
+Data are updated manually in this prototype. `.github/workflows/update-ocean-data.yml` only runs through `workflow_dispatch`; its schedule remains commented out. Website visits never trigger it, and the frontend has no update endpoint, background refresh job or paid service.
 
-The workflow can:
+The ordinary deployment workflow builds static website files and reuses already-published processed assets. It does not contact Copernicus or generate new ocean data. Archive age is presented as scientific context, not an application error. All displayed timestamps use UTC; selected model time is separate from the recorded dataset retrieval / processing time.
 
-1. retrieve updated environmental data
-2. process the required variables
-3. generate web-ready data products
-4. rebuild the website
-5. deploy the updated version through GitHub Pages
+The next owner-triggered update will extract **bottom dissolved oxygen** from the existing daily Copernicus oxygen product: the deepest non-missing model value at each location, with its model depth retained. This requires the full vertical column for each daily frame, so that manual run transfers more oxygen data than the previous surface-only selection. Existing disk/RAM configuration and the daily time window remain unchanged. No new product or service is used.
 
-This makes the website capable of developing into a continuously updated marine-data platform.
+Existing published oxygen files contain only surface values and remain labelled **Surface dissolved oxygen** until bottom data are manually published. Surface frames cannot be carried into a bottom series. If a manual update fails, retained files keep their original vertical selection and retrieval time. A colour scale is not a hypoxia classification.
 
 ## Hosting
 
 The website is deployed using **GitHub Pages**.
 
-GitHub Actions are used for site building and automated data-refresh workflows.
+GitHub Actions build and deploy the site. Ocean data refresh is strictly manual.
 
 Relevant workflows include:
 
@@ -176,7 +172,7 @@ Digital Baltic Sea combines several technical and scientific areas:
 - marine data science
 - Copernicus Marine data
 - geospatial environmental data
-- automated data pipelines
+- manually operated data processing
 - web development
 - interactive mapping
 - GitHub Actions
@@ -190,3 +186,11 @@ Digital Baltic Sea combines several technical and scientific areas:
 **Active personal project.**
 
 The platform is under ongoing development, so individual layers and features may change as new datasets and functionality are added.
+
+## Local verification
+
+Run `node --test tests/ocean-data.test.mjs` and `python -m unittest discover -s tests -p "test_*.py"` (NumPy, pandas and Pillow required for offline pipeline tests). No ocean downloads occur in these tests.
+
+`tests/browser.cjs` uses Playwright and an installed Chrome browser. Supply the existing MapLibre 5.6.2 JS/CSS files in `.review/`, or point `REVIEW_ASSETS` to a folder containing them. With Playwright on the Node module path, run `node tests/browser.cjs`. The test server serves synthetic fixtures and blocks external requests. Screenshots are written to `.review/screenshots/`. No test runs an update workflow.
+
+See [the verification notes](docs/reliability-review.md) for the checks and limitations.

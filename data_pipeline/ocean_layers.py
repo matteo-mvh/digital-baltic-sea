@@ -68,7 +68,7 @@ _OCEAN_CONDITIONS = {
     },
     "oxygen": {
         "id": "oxygen",
-        "label": "Oxygen",
+        "label": "Bottom dissolved oxygen",
         "product_id": "BALTICSEA_ANALYSISFORECAST_BGC_003_007",
         "dataset_id": "cmems_mod_bal_bgc_anfc_P1D-m",
         "dataset_type": "Modelled analysis and forecast",
@@ -78,10 +78,10 @@ _OCEAN_CONDITIONS = {
         "source_label": "Copernicus Marine model analysis/forecast",
         "render_type": "raster",
         "value_key": "value_mmol_m3",
-        "value_label": "Dissolved oxygen",
+        "value_label": "Bottom dissolved oxygen",
         "palette_mode": "fixed",
-        "legend_note": "",
-        "depth_mode": "surface-ready-for-depth",
+        "legend_note": "Deepest valid model level at each location; not a hypoxia classification",
+        "depth_mode": "bottom",
         "time_resolution_label": "Daily",
     },
     "waves": {

@@ -155,7 +155,7 @@ OCEAN_DATASETS = {
     },
     "oxygen": {
         "id": "oxygen",
-        "label": "Oxygen",
+        "label": "Bottom dissolved oxygen",
         "product_id": "BALTICSEA_ANALYSISFORECAST_BGC_003_007",
         "dataset_id": "cmems_mod_bal_bgc_anfc_P1D-m",
         "dataset_type": "Modelled analysis and forecast",
@@ -167,13 +167,9 @@ OCEAN_DATASETS = {
         "value_key": "value_mmol_m3",
         "query_value_key": "values_primary",
         "palettes": ["default"],
-        "default_palette": "greenRed",
-        "depth": "surface",
-        "vertical_subset": {
-            "minimum_depth": 0.0,
-            "maximum_depth": 0.0,
-            "coordinates_selection_method": "nearest",
-        },
+        "default_palette": "oxygen",
+        "depth": "bottom",  # Full vertical column; reduced locally at each wet grid cell.
+        "depth_label": "Deepest available model level at each location (depth varies)",
         "plausible_range": [0.0, 600.0],
         "bounds": [
             BBOX["minimum_longitude"],
@@ -335,6 +331,7 @@ YELLOW_BLUE_COLOR_STOPS = [
 ]
 
 PALETTE_COLOR_STOPS = {
+    "oxygen": [(0.0, (68, 1, 84)), (0.25, (59, 82, 139)), (0.5, (33, 145, 140)), (0.75, (94, 201, 98)), (1.0, (253, 231, 37))],
     "blueRed": COLOR_STOPS,
     "greenRed": GREEN_RED_COLOR_STOPS,
     "grayscale": GRAYSCALE_COLOR_STOPS,

@@ -1,19 +1,19 @@
 {
   "common": {
     "comingSoon": "Coming soon",
-    "live": "Live"
+    "live": "Available"
   },
   "nav": {
     "platformTag": "Public prototype",
-    "platformName": "The Baltic Sea - Live",
-    "exploreMap": "Explore the live map",
+    "platformName": "Digital Baltic Sea",
+    "exploreMap": "Explore the map",
     "backToOverview": "Back to overview",
     "languageCode": "EN"
   },
   "hero": {
-    "kicker": "The Baltic Sea - Live",
+    "kicker": "Digital Baltic Sea",
     "title": "Explore what is happening above, on and beneath the surface.",
-    "subtitle": "Explore the changing Baltic Sea through live observations, scientific models and environmental data.",
+    "subtitle": "Explore the changing Baltic Sea through scientific models, historical assessments and environmental data.",
     "body": "This public prototype combines marine science, environmental context and an interactive map so more people can understand the sea as a living system rather than a technical dataset.",
     "cta": "Explore the map",
     "pillTemperature": "Temperature",
@@ -21,17 +21,17 @@
     "pillNoise": "Noise"
   },
   "preview": {
-    "kicker": "Live preview",
+    "kicker": "Map preview",
     "title": "Whole Baltic Sea",
-    "body": "Switch between live Baltic-wide temperature, currents, salinity, oxygen, waves and sea-level views.",
-    "cta": "Explore the live map"
+    "body": "Explore published Baltic-wide ocean model data and historical environmental context.",
+    "cta": "Explore the map"
   },
   "sections": {
     "whatKicker": "What are you looking at?",
     "whatTitle": "Different layers come from different kinds of knowledge.",
     "layersKicker": "What can you explore?",
     "layersTitle": "A public-facing platform for the whole Baltic Sea.",
-    "layersBody": "The live map now includes multiple Baltic-wide ocean-condition overlays, while the remaining roadmap layers stay visible as the next expansion path.",
+    "layersBody": "The map includes available ocean-condition datasets and historical reference layers. Planned integrations are labelled Coming soon.",
     "accessibilityKicker": "Accessibility",
     "accessibilityTitle": "Choose a temperature colour scale that is easier to read.",
     "accessibilityBody": "The map keeps the same data while the colour palette changes. This makes it easier to compare the sea in different viewing conditions, including colour-vision differences.",
@@ -47,7 +47,7 @@
     },
     "modelled": {
       "title": "Modelled",
-      "body": "Scientific models estimating current ocean conditions."
+      "body": "Scientific models estimating ocean conditions at the selected model time."
     },
     "satellite": {
       "title": "Satellite",
@@ -88,7 +88,7 @@
     "underwaterNoise": "Underwater Noise",
     "currents": "Currents",
     "salinity": "Salinity",
-    "oxygen": "Oxygen",
+    "oxygen": "Dissolved oxygen",
     "waves": "Waves",
     "seaLevel": "Sea level",
     "biodiversity": "Biodiversity",
@@ -116,7 +116,7 @@
   },
   "accessibility": {
     "scaleButton": "Colorscale",
-    "temperatureColours": "Temperature colours",
+    "temperatureColours": "Layer colours",
     "blueRed": "Blue to red",
     "greenRed": "Green to red",
     "grayscale": "Grayscale",
@@ -127,7 +127,7 @@
     "source": "Source",
     "timeline": "Forecast window",
     "layers": "Layers",
-    "layersCaption": "Live layers work now. Roadmap layers are visible but disabled.",
+    "layersCaption": "Available layers can be explored now. Planned layers are labelled Coming soon.",
     "noiseCategories": "Noise categories",
     "noiseCaption": "HELCOM assessment layers and reported impulsive events are shown as environmental context, not live sound measurements.",
     "infrastructureCategories": "Infrastructure categories",
@@ -147,7 +147,7 @@
     "loadingMetadata": "Loading processed metadata...",
     "loadingGrid": "Loading processed grid...",
     "loadingMap": "Loading map renderer...",
-    "fallbackMap": "The live basemap did not load, so the viewer fell back to the local coastline layer.",
+    "fallbackMap": "The basemap could not be loaded. The map uses the published coastline mask where available.",
     "loadingInfrastructure": "Loading infrastructure overlay..."
   },
   "transparency": {

@@ -3,26 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Baltic Sea - Live</title>
+    <title>Digital Baltic Sea — Explore the Baltic</title>
+    <meta name="description" content="Explore Baltic Sea model data, historical noise assessments and marine infrastructure. A public prototype with manually updated datasets and clear scientific context." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Digital Baltic Sea — Explore the Baltic" />
+    <meta property="og:description" content="Explore manually updated Baltic Sea model data and historical environmental context. Dataset times and sources remain visible." />
+    <meta property="og:url" content="https://matteo-mvh.github.io/digital-baltic-sea/" />
+    <meta property="og:site_name" content="Digital Baltic Sea" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Digital Baltic Sea — Explore the Baltic" />
+    <meta name="twitter:description" content="A public prototype for exploring manually updated Baltic Sea model data and historical environmental context." />
+    <link rel="canonical" href="https://matteo-mvh.github.io/digital-baltic-sea/" />
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body data-mode="home">
+  <body data-mode="home" data-map-state="loading" data-drawer="closed">
     <div id="app-shell">
       <header id="global-bar">
         <div class="brand-lockup">
           <p class="global-eyebrow" data-i18n="nav.platformTag">Public prototype</p>
-          <p class="global-title" data-i18n="nav.platformName">The Baltic Sea - Live</p>
+          <p class="global-title" data-i18n="nav.platformName">Digital Baltic Sea</p>
         </div>
 
         <div class="global-actions">
           <button id="enter-map-top" class="ghost-button" type="button" data-i18n="nav.exploreMap">
-            Explore the live map
+            Explore the map
           </button>
 
           <div class="palette-picker">
             <button
               id="palette-button"
+              aria-label="Choose colour scale"
+              aria-controls="palette-menu"
               class="language-button"
               type="button"
               aria-haspopup="true"
@@ -31,8 +43,9 @@
               <span id="palette-current" data-i18n="accessibility.scaleButton">Colorscale</span>
             </button>
             <div id="palette-menu" class="language-menu" hidden>
-              <p class="picker-label" data-i18n="accessibility.temperatureColours">Temperature colours</p>
-              <div class="palette-switcher topbar-palette-switcher" role="group" aria-label="Temperature colour palettes">
+              <p class="picker-label" data-i18n="accessibility.temperatureColours">Layer colours</p>
+              <div class="palette-switcher topbar-palette-switcher" role="group" aria-label="Layer colour palettes">
+                <button class="palette-option" type="button" data-palette="oxygen"><span class="palette-option-text">Oxygen · low to high</span><span class="palette-preview" data-palette-preview="oxygen" aria-hidden="true"></span></button>
                 <button class="palette-option is-selected" type="button" data-palette="blueRed">
                   <span class="palette-option-text" data-i18n="accessibility.blueRed">Blue to red</span>
                   <span class="palette-preview" data-palette-preview="blueRed" aria-hidden="true"></span>
@@ -56,6 +69,8 @@
           <div class="language-picker">
             <button
               id="language-button"
+              aria-label="Choose language"
+              aria-controls="language-menu"
               class="language-button"
               type="button"
               aria-haspopup="true"
@@ -72,10 +87,10 @@
       <main id="platform-layout">
         <section id="home-column">
           <section class="content-panel hero-copy">
-            <p class="section-kicker" data-i18n="hero.kicker">The Baltic Sea - Live</p>
+            <p class="section-kicker" data-i18n="hero.kicker">Digital Baltic Sea</p>
             <h1 data-i18n="hero.title">Explore what is happening above, on and beneath the surface.</h1>
             <p class="lead" data-i18n="hero.subtitle">
-              Explore the changing Baltic Sea through live observations, scientific models and
+              Explore the changing Baltic Sea through scientific models and
               environmental data.
             </p>
             <p class="supporting-copy" data-i18n="hero.body">
@@ -84,6 +99,12 @@
               dataset.
             </p>
 
+            <div class="data-freshness">
+              <p>Data are updated manually in this prototype. All times are UTC.</p>
+              <p id="home-data-update">Loading published dataset details…</p>
+              <p id="home-forecast-status"></p>
+              <p id="home-map-status" role="status"></p>
+            </div>
             <div class="hero-actions">
               <button id="hero-enter-map" class="primary-button" type="button" data-i18n="hero.cta">
                 Explore the map
@@ -106,7 +127,7 @@
               </article>
               <article class="story-card">
                 <h3 data-i18n="categories.modelled.title">Modelled</h3>
-                <p data-i18n="categories.modelled.body">Scientific models estimating current ocean conditions.</p>
+                <p data-i18n="categories.modelled.body">Scientific models estimating ocean conditions at the selected model time.</p>
               </article>
               <article class="story-card">
                 <h3 data-i18n="categories.satellite.title">Satellite</h3>
@@ -123,7 +144,7 @@
             <p class="section-kicker" data-i18n="sections.layersKicker">What can you explore?</p>
             <h2 data-i18n="sections.layersTitle">A public-facing platform for the whole Baltic Sea.</h2>
             <p class="supporting-copy" data-i18n="sections.layersBody">
-              The live map now includes multiple Baltic-wide ocean-condition overlays, while the
+              The map includes multiple Baltic-wide ocean-condition overlays, while the
               remaining roadmap layers stay visible as the next expansion path.
             </p>
             <div class="roadmap-grid">
@@ -200,32 +221,45 @@
             <p class="section-kicker" data-i18n="sections.sourcesKicker">Where does the information come from?</p>
             <h2 data-i18n="sections.sourcesTitle">Scientific sources remain visible, but secondary to exploration.</h2>
             <div class="source-tags">
-              <span data-i18n="sources.copernicus">Copernicus Marine</span>
-              <span data-i18n="sources.helcom">HELCOM</span>
-              <span data-i18n="sources.emodnet">EMODnet</span>
-              <span data-i18n="sources.ais">AIS vessel data</span>
-              <span data-i18n="sources.future">Additional Baltic data sources as layers are added</span>
+              <a href="https://marine.copernicus.eu/">Copernicus Marine — used model data</a>
+              <a href="https://maps.helcom.fi/website/mapservice/">HELCOM — used historical assessments</a>
+              <a href="./infrastructure/README.md">Infrastructure — curated reference bundle</a>
+              <span>AIS vessel feed — planned integration</span>
+              <a href="https://emodnet.ec.europa.eu/">EMODnet services — planned integration; current bundle uses selected references</a>
             </div>
           </section>
         </section>
 
         <section id="experience-shell">
           <div id="map-stage">
-            <div id="map"></div>
+            <div id="map" aria-label="Interactive Baltic Sea map"></div>
+            <section id="map-fallback" class="panel" role="status" aria-labelledby="map-fallback-title">
+              <img id="fallback-coastline" alt="Coastline mask from the published Baltic model grid; static reference only" hidden />
+              <div class="map-fallback-copy">
+                <p class="section-kicker">Baltic Sea explorer</p>
+                <h2 id="map-fallback-title">Loading the interactive map…</h2>
+                <p id="map-fallback-message">Layer guides and dataset details remain available while the map loads.</p>
+                <p class="fallback-caption">The static coastline, when available, is a reference outline and does not show the selected data frame.</p>
+              </div>
+            </section>
+            <nav id="map-toolbar" aria-label="Map navigation" hidden>
+              <button id="exit-map" class="map-back-button" type="button" data-i18n="nav.backToOverview">Back to overview</button>
+              <button id="layers-drawer-toggle" class="ghost-button" type="button" aria-controls="map-sidebar-shell" aria-expanded="false">Layers &amp; info</button>
+            </nav>
 
             <div class="map-preview-card">
-              <p class="section-kicker" data-i18n="preview.kicker">Live preview</p>
+              <p class="section-kicker" data-i18n="preview.kicker">Map preview</p>
               <h2 data-i18n="preview.title">Whole Baltic Sea</h2>
               <p data-i18n="preview.body">
-                Switch between live Baltic-wide temperature, currents, salinity, oxygen, waves and sea-level views.
+                Switch between published Baltic-wide temperature, currents, salinity, oxygen, waves and sea-level views.
               </p>
               <button id="preview-enter-map" class="primary-button" type="button" data-i18n="preview.cta">
-                Explore the live map
+                Explore the map
               </button>
             </div>
 
             <div id="map-sidebar-shell">
-              <section id="overlay-info-panel" class="panel" hidden>
+              <section id="overlay-info-panel" class="panel" aria-label="Layer guide" hidden>
                 <div class="overlay-info-header">
                   <div>
                     <p class="panel-label">Overlay guide</p>
@@ -239,15 +273,13 @@
                 <div id="overlay-info-body" class="overlay-info-body"></div>
               </section>
 
-              <aside id="map-left-sidebar" class="panel">
-                <button id="exit-map" class="map-back-button" type="button" data-i18n="nav.backToOverview">
-                  Back to overview
-                </button>
+              <aside id="map-left-sidebar" class="panel" aria-label="Layers and dataset details" inert>
+
 
                 <section class="map-sidebar-section map-headline-panel">
                   <p class="panel-label" data-i18n="map.currentView">Current view</p>
                   <p id="map-headline-title">Surface temperature</p>
-                  <p id="map-headline-time">19 Aug 2026 · 12:00</p>
+                  <p id="map-headline-time">Timestamp unavailable</p>
                 </section>
 
                 <section id="layer-panel" class="map-sidebar-section">
@@ -261,6 +293,7 @@
                     <button id="view-toggle" class="ghost-button compact" type="button">Hide labels</button>
                   </div>
 
+                  <p id="map-control-note">Map rendering and location sampling are unavailable. You can select ocean layers to browse timestamps and use the information buttons to read guides.</p>
                   <div class="layer-group">
                     <p class="layer-group-title" data-i18n="roadmap.ocean">Ocean conditions</p>
                     <div class="layer-row-shell">
@@ -321,7 +354,7 @@
                 <p class="metric" id="clicked-primary-value">--</p>
                 <p id="clicked-layer-name">Surface temperature</p>
                 <p id="clicked-coordinates">55.0000 N · 12.0000 E</p>
-                <p id="clicked-time">19 Aug 2026 · 12:00</p>
+                <p id="clicked-time">Timestamp unavailable</p>
               </section>
 
               <div id="active-overlay-controls" class="active-overlay-controls">
@@ -337,20 +370,25 @@
                     <p class="metric" id="ocean-condition-current-value">--</p>
                     <p class="metric-subtle" id="ocean-condition-current-note">Tap the map to sample a local water value.</p>
                     <div class="timeline-main">
-                      <p class="context-card-body-title">Time</p>
-                      <p id="time-primary">Loading time steps...</p>
+                      <label class="context-card-body-title" for="time-slider">Selected data time (UTC)</label>
+                      <output id="time-primary" for="time-slider">Loading time steps...</output>
                       <p id="time-secondary">Using dataset-native forecast steps</p>
-                      <input id="time-slider" type="range" min="0" max="0" step="1" value="0" />
+                      <input id="time-slider" type="range" min="0" max="0" step="1" value="0" aria-describedby="time-primary time-secondary" disabled />
+                      <p id="forecast-notice"></p>
+                      <p id="dataset-update"></p>
+                      <p class="manual-note">Data are updated manually in this prototype.</p>
+                      <p id="frame-load-status" role="status"></p>
                     </div>
                     <div class="timeline-legend" id="ocean-condition-legend">
                       <div class="legend-topline">
                         <p class="legend-inline-label" id="ocean-condition-legend-title">Surface temperature</p>
                         <p id="ocean-condition-legend-range"></p>
                       </div>
-                      <div class="timeline-legend-bar" id="ocean-condition-legend-bar"></div>
+                      <div class="timeline-legend-bar" id="ocean-condition-legend-bar" aria-hidden="true"></div>
+                      <p class="scale-note">Colour scale: fixed across published times. Frame data range is shown separately.</p>
                       <div class="legend-scale">
                         <span id="ocean-condition-legend-min"></span>
-                        <span id="ocean-condition-legend-unit">degC</span>
+                        <span id="ocean-condition-legend-unit">°C</span>
                         <span id="ocean-condition-legend-max"></span>
                       </div>
                     </div>

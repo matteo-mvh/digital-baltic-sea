@@ -39,6 +39,7 @@ from data_pipeline.config import (
     TEMPORARY_WORK_ROOT,
     TEMPERATURE_TILE_LEVELS,
 )
+from data_pipeline.oxygen import bottom_values, compatible_vertical_selection
 from data_pipeline.ocean_layers import OCEAN_CONDITION_ORDER, ocean_condition_definitions
 from data_pipeline.process_temperature import (
     _build_land_mask,
@@ -287,6 +288,8 @@ def _dataset_access_info(
         available_times = pd.to_datetime(remote["time"].values, utc=True)
         subset_options: dict[str, Any] = {}
         depth_coordinate_name = _find_depth_coordinate_name(remote)
+        if config.get("depth") == "bottom" and (not depth_coordinate_name or remote[depth_coordinate_name].size < 2):
+            raise ValueError("Bottom oxygen requires a dataset with the full vertical column.")
         if config.get("depth") == "surface" and depth_coordinate_name:
             depth_values = np.asarray(remote[depth_coordinate_name].values, dtype=np.float64)
             finite_depths = depth_values[np.isfinite(depth_values)]
@@ -402,6 +405,23 @@ def _extract_values(dataset: xr.Dataset, config: dict[str, Any]) -> tuple[np.nda
             "mean_period_seconds": period_values,
         }
         return height_values, components, str(height_data.attrs.get("units", config["units"])) or config["units"], False, timestamp_iso
+
+    if config.get("depth") == "bottom":
+        data = dataset[str(config["primary_variable"])]
+        depth_name = _find_depth_coordinate_name(dataset)
+        if not depth_name or depth_name not in data.dims:
+            raise ValueError("Bottom oxygen requires an explicit vertical dimension.")
+        coordinate = dataset[depth_name]
+        if str(coordinate.attrs.get("units", "")).lower() not in {"m", "metre", "meter", "metres", "meters"} or coordinate.attrs.get("positive", "down") != "down":
+            raise ValueError("Bottom oxygen requires depth in metres, positive down.")
+        lat_name = _find_coordinate_name(dataset, ["latitude", "lat"])
+        lon_name = _find_coordinate_name(dataset, ["longitude", "lon"])
+        data = data.transpose("time", depth_name, lat_name, lon_name)
+        if data.sizes["time"] != 1:
+            raise ValueError("Process one oxygen timestamp at a time.")
+        values, depths = bottom_values(data.values[0], coordinate.values, depth_axis=0)
+        timestamp_iso = _normalize_timestamp(_time_coord_values(data["time"].values)[0])
+        return values, {"bottom_depth_m": depths}, str(data.attrs.get("units", config["units"])), False, timestamp_iso
 
     data = _surface_dataarray(dataset, str(config["primary_variable"]))
     values = data.values.astype(np.float32)
@@ -530,7 +550,7 @@ def _restore_frames(
     previous_query_index: dict[str, Any] | None,
     previous_frame_payloads: dict[str, dict[str, Any]] | None,
 ) -> list[FrameBundle]:
-    if not previous_metadata or not previous_query_index:
+    if not previous_metadata or not previous_query_index or not compatible_vertical_selection(config, previous_metadata):
         return []
 
     latitudes = np.array(previous_query_index["latitudes"], dtype=np.float64)
@@ -641,6 +661,7 @@ def _build_condition_outputs(
     frames: list[FrameBundle],
     carried_forward_count: int,
     downloaded_count: int,
+    preserved_metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     frames = sorted(frames, key=lambda frame: pd.Timestamp(frame.time_utc))
     condition_root = SITE_OCEAN_ROOT / config["id"]
@@ -656,7 +677,7 @@ def _build_condition_outputs(
     frame_root = condition_root / FRAME_DATA_DIRECTORY_NAME
     frame_root.mkdir(parents=True, exist_ok=True)
 
-    display_min, display_max = _nice_display_range(values_stack)
+    display_min, display_max = _nice_display_range(values_stack, nonnegative=config["id"] in {"currents", "salinity", "oxygen", "waves"})
     valid_mask = np.any(np.isfinite(values_stack), axis=0)
     _build_land_mask(valid_mask).save(condition_root / LAND_MASK_FILENAME)
 
@@ -734,6 +755,9 @@ def _build_condition_outputs(
         else:
             payload["min_value"] = frame.min_value
             payload["max_value"] = frame.max_value
+        if "bottom_depth_m" in frame.components:
+            depth_values = frame.components["bottom_depth_m"]
+            payload["bottom_depth_range_m"] = {"min": float(np.nanmin(depth_values)), "max": float(np.nanmax(depth_values))}
         frame_payloads.append(payload)
         query_index_frames.append(
             {
@@ -896,6 +920,16 @@ def _build_condition_outputs(
             "display_min": display_min,
             "display_max": display_max,
         }
+    if config.get("depth_label"):
+        metadata_payload["depth_label"] = config["depth_label"]
+    if preserved_metadata:
+        # Repackaging old files is not a successful download. Retain their original meaning and update time.
+        metadata_payload["condition"] = preserved_metadata["condition"]
+        metadata_payload["provenance"] = preserved_metadata["provenance"]
+        metadata_payload["layer"] = preserved_metadata.get("layer", metadata_payload["layer"])
+        metadata_payload.pop("depth_label", None)
+        if "depth_label" in preserved_metadata:
+            metadata_payload["depth_label"] = preserved_metadata["depth_label"]
     (condition_root / MANIFEST_NAME).write_text(json.dumps(metadata_payload, indent=2), encoding="utf-8")
     return metadata_payload
 
@@ -907,6 +941,7 @@ def _write_root_manifest(available_metadata: dict[str, dict[str, Any]]) -> None:
         definition = definitions[condition_id]
         metadata = available_metadata.get(condition_id)
         if metadata:
+            definition = metadata.get("condition", definition)
             conditions.append(
                 {
                     "id": definition["id"],
@@ -961,7 +996,7 @@ def _update_condition(
     previous_metadata, previous_query_index, previous_frame_payloads = _previous_condition_state(config["id"], site_url)
     access_info = _dataset_access_info(str(config["dataset_id"]), config, credentials)
     desired_times = _desired_times(config, access_info.available_times)
-    existing_times = set(previous_metadata.get("availableTimes", [])) if previous_metadata else set()
+    existing_times = set(previous_metadata.get("availableTimes", [])) if previous_metadata and compatible_vertical_selection(config, previous_metadata) else set()
     _log(
         f"{config['label']}: desired window has {len(desired_times)} timestamps"
         + (f" from {desired_times[0]} to {desired_times[-1]}" if desired_times else "")
@@ -1041,8 +1076,11 @@ def update_all_conditions(site_url: str | None, force_full_refresh: bool = False
             _log(f"{config['label']}: update failed, keeping previous valid data if available. Reason: {exc}")
             previous_metadata, previous_query_index, previous_frame_payloads = _previous_condition_state(condition_id, site_url)
             if previous_metadata and previous_query_index:
+                preserved_config = dict(config)
+                if not compatible_vertical_selection(config, previous_metadata):
+                    preserved_config["depth"] = "surface"
                 preserved_frames = _restore_frames(
-                    config=config,
+                    config=preserved_config,
                     desired_times=list(previous_metadata.get("availableTimes", [])),
                     refresh_times=set(),
                     previous_metadata=previous_metadata,
@@ -1051,10 +1089,11 @@ def update_all_conditions(site_url: str | None, force_full_refresh: bool = False
                 )
                 if preserved_frames:
                     available_metadata[condition_id] = _build_condition_outputs(
-                        config=config,
+                        config=preserved_config,
                         frames=preserved_frames,
                         carried_forward_count=len(preserved_frames),
                         downloaded_count=0,
+                        preserved_metadata=previous_metadata,
                     )
 
     _write_root_manifest(available_metadata)

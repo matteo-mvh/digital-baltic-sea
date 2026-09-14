@@ -145,7 +145,7 @@ def build_site() -> None:
         shutil.rmtree(SITE_DIR)
     SITE_DIR.mkdir(parents=True, exist_ok=True)
 
-    for filename in ("index.html", "app.js", "styles.css"):
+    for filename in ("index.html", "app.js", "styles.css", "ocean-data.mjs"):
         shutil.copy2(FRONTEND_DIR / filename, SITE_DIR / filename)
 
     _copy_tree(FRONTEND_DIR / "locales", SITE_DIR / "locales")
